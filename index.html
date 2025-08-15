@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CancerCare Nutrition - Dietary Guidance for Cancer Patients</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Accessibility Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <i class="fas fa-heartbeat"></i>
+                <h1>CancerCare Nutrition</h1>
+            </div>
+            <button class="accessibility-btn" id="toggleHighContrast" aria-label="Toggle high contrast mode">
+                <i class="fas fa-eye"></i>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-container">
+        <!-- Welcome Section -->
+        <section class="welcome-section" id="welcomeSection">
+            <div class="welcome-content">
+                <div class="healthcare-image" style="width: 120px; height: 120px; margin: 0 auto var(--space-8); border-radius: var(--radius-full);">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <h2>Welcome to Your Personalized Nutrition Journey</h2>
+                <p class="welcome-text">Get evidence-based dietary guidance tailored to your cancer type and treatment stage. Our comprehensive platform combines clinical nutrition expertise with personalized care.</p>
+                <div class="quick-actions">
+                    <button class="btn btn-primary" onclick="showSection('profileSection')">
+                        <i class="fas fa-user-circle"></i> Start Assessment
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- User Profile Section -->
+        <section class="content-section hidden" id="profileSection">
+            <div class="section-header">
+                <div class="healthcare-image" style="width: 80px; height: 80px; margin: 0 auto var(--space-4);">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <h2><i class="fas fa-clipboard-check"></i> Personal Assessment</h2>
+                <p>Help us personalize your nutrition guidance with evidence-based recommendations</p>
+            </div>
+            
+            <form class="assessment-form" id="assessmentForm">
+                <div class="form-group">
+                    <label for="cancerType">Cancer Type *</label>
+                    <select id="cancerType" required>
+                        <option value="">Select your cancer type</option>
+                        <!-- Most Common Cancers -->
+                        <option value="breast">Breast Cancer</option>
+                        <option value="lung">Lung Cancer</option>
+                        <option value="colorectal">Colorectal Cancer</option>
+                        <option value="prostate">Prostate Cancer</option>
+                        <option value="skin">Skin Cancer (Melanoma)</option>
+                        <option value="bladder">Bladder Cancer</option>
+                        <option value="kidney">Kidney Cancer</option>
+                        <option value="thyroid">Thyroid Cancer</option>
+                        <option value="pancreatic">Pancreatic Cancer</option>
+                        <option value="liver">Liver Cancer</option>
+                        <!-- Blood Cancers -->
+                        <option value="leukemia">Leukemia</option>
+                        <option value="lymphoma">Lymphoma (Hodgkin's & Non-Hodgkin's)</option>
+                        <option value="myeloma">Multiple Myeloma</option>
+                        <!-- Head & Neck Cancers -->
+                        <option value="head-neck">Head & Neck Cancer</option>
+                        <option value="brain">Brain Cancer</option>
+                        <option value="oral">Oral Cancer</option>
+                        <option value="throat">Throat Cancer</option>
+                        <!-- Digestive System Cancers -->
+                        <option value="stomach">Stomach Cancer</option>
+                        <option value="esophageal">Esophageal Cancer</option>
+                        <option value="gallbladder">Gallbladder Cancer</option>
+                        <option value="bile-duct">Bile Duct Cancer</option>
+                        <option value="small-intestine">Small Intestine Cancer</option>
+                        <!-- Gynecologic Cancers -->
+                        <option value="ovarian">Ovarian Cancer</option>
+                        <option value="cervical">Cervical Cancer</option>
+                        <option value="uterine">Uterine Cancer</option>
+                        <option value="vulvar">Vulvar Cancer</option>
+                        <option value="vaginal">Vaginal Cancer</option>
+                        <!-- Urologic Cancers -->
+                        <option value="testicular">Testicular Cancer</option>
+                        <option value="penile">Penile Cancer</option>
+                        <!-- Bone & Soft Tissue -->
+                        <option value="bone">Bone Cancer</option>
+                        <option value="soft-tissue">Soft Tissue Sarcoma</option>
+                        <!-- Endocrine Cancers -->
+                        <option value="adrenal">Adrenal Cancer</option>
+                        <option value="parathyroid">Parathyroid Cancer</option>
+                        <!-- Rare Cancers -->
+                        <option value="mesothelioma">Mesothelioma</option>
+                        <option value="neuroendocrine">Neuroendocrine Tumors</option>
+                        <option value="carcinoid">Carcinoid Tumor</option>
+                        <option value="gastrointestinal-stromal">GIST (Gastrointestinal Stromal Tumor)</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="treatmentStage">Treatment Stage *</label>
+                    <select id="treatmentStage" required>
+                        <option value="">Select your current stage</option>
+                        <option value="pre-treatment">Pre-Treatment</option>
+                        <option value="active-treatment">During Treatment</option>
+                        <option value="post-treatment">Post-Treatment Recovery</option>
+                        <option value="survivorship">Long-term Survivorship</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Current Location *</label>
+                    <select id="location" required>
+                        <option value="">Select your location</option>
+                        <option value="north-america">North America (US/Canada)</option>
+                        <option value="europe">Europe</option>
+                        <option value="asia-pacific">Asia-Pacific</option>
+                        <option value="middle-east">Middle East</option>
+                        <option value="africa">Africa</option>
+                        <option value="south-america">South America</option>
+                        <option value="australia">Australia/Oceania</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="specificLocation">Specific Country/Region</label>
+                    <input type="text" id="specificLocation" placeholder="e.g., United States, Germany, Japan...">
+                </div>
+
+                <div class="form-group">
+                    <label>Current Symptoms (check all that apply)</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="symptoms" value="nausea"> Nausea/Vomiting
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="symptoms" value="appetite-loss"> Loss of Appetite
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="symptoms" value="mouth-sores"> Mouth Sores
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="symptoms" value="fatigue"> Severe Fatigue
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="symptoms" value="taste-changes"> Taste Changes
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="symptoms" value="digestive"> Digestive Issues
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="allergies">Food Allergies/Restrictions</label>
+                    <textarea id="allergies" placeholder="List any food allergies, intolerances, or dietary restrictions..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="clearProfileForm()">
+                        <i class="fas fa-times"></i> Clear Form
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Profile & Get Recommendations
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- General Guidance Section -->
+        <section class="content-section hidden" id="guidanceSection">
+            <div class="section-header">
+                <h2><i class="fas fa-book-medical"></i> General Dietary Guidance</h2>
+                <p>Evidence-based nutrition principles for cancer patients</p>
+            </div>
+
+            <div class="guidance-grid">
+                <div class="guidance-card">
+                    <div class="card-icon icon-medical">
+                        <i class="fas fa-shield-virus"></i>
+                    </div>
+                    <h3>Food Safety First</h3>
+                    <ul>
+                        <li>Wash hands frequently with antibacterial soap</li>
+                        <li>Cook foods to safe internal temperatures</li>
+                        <li>Avoid raw or undercooked foods during treatment</li>
+                        <li>Store foods properly and check expiration dates</li>
+                        <li>Use separate cutting boards for raw and cooked foods</li>
+                    </ul>
+                </div>
+
+                <div class="guidance-card">
+                    <div class="card-icon icon-wellness">
+                        <i class="fas fa-tint"></i>
+                    </div>
+                    <h3>Stay Hydrated</h3>
+                    <ul>
+                        <li>Aim for 8-10 glasses of water daily minimum</li>
+                        <li>Include herbal teas, broths, and electrolyte drinks</li>
+                        <li>Limit caffeine and avoid alcohol during treatment</li>
+                        <li>Monitor urine color as hydration indicator</li>
+                        <li>Sip fluids throughout the day, not just at meals</li>
+                    </ul>
+                </div>
+
+                <div class="guidance-card">
+                    <div class="card-icon icon-nutrition">
+                        <i class="fas fa-dumbbell"></i>
+                    </div>
+                    <h3>Protein Power</h3>
+                    <ul>
+                        <li>Include high-quality protein at every meal</li>
+                        <li>Choose lean sources: fish, poultry, eggs, legumes</li>
+                        <li>Consider protein supplements if needed</li>
+                        <li>Aim for 1.2-1.6g per kg body weight daily</li>
+                        <li>Combine plant proteins for complete amino acids</li>
+                    </ul>
+                </div>
+
+                <div class="guidance-card">
+                    <div class="card-icon icon-exercise">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <h3>Nutritious Choices</h3>
+                    <ul>
+                        <li>Eat a rainbow of colorful fruits and vegetables</li>
+                        <li>Choose whole grains over refined options</li>
+                        <li>Include healthy fats: avocado, nuts, olive oil</li>
+                        <li>Consider small, frequent meals (5-6 per day)</li>
+                        <li>Focus on nutrient-dense, anti-inflammatory foods</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Personalized Recommendations Section -->
+        <section class="content-section hidden" id="recommendationsSection">
+            <div class="section-header">
+                <h2><i class="fas fa-user-md"></i> Your Personalized Recommendations</h2>
+                <p>Based on your profile assessment</p>
+            </div>
+            
+            <div id="personalizedContent">
+                <!-- Content will be dynamically generated -->
+            </div>
+        </section>
+
+        <!-- Recipe Suggestions Section -->
+        <section class="content-section hidden" id="recipesSection">
+            <div class="section-header">
+                <div class="healthcare-image" style="width: 80px; height: 80px; margin: 0 auto var(--space-4);">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <h2><i class="fas fa-utensils"></i> Therapeutic Recipes</h2>
+                <p>Nutritious, cancer-friendly recipes designed by nutrition experts</p>
+            </div>
+
+            <div class="recipe-filters">
+                <button class="filter-btn active" data-filter="all">All Recipes</button>
+                <button class="filter-btn" data-filter="general-healthy">General Healthy</button>
+                <button class="filter-btn" data-filter="symptom-management">Symptom Management</button>
+                <button class="filter-btn" data-filter="high-protein-high-calorie">High Protein/Calorie</button>
+                <button class="filter-btn" data-filter="texture-modified">Texture Modified</button>
+                <button class="filter-btn" data-filter="therapeutic-medical">Therapeutic/Medical</button>
+            </div>
+
+            <div class="recipes-grid" id="recipesGrid">
+                <!-- Recipes will be dynamically loaded -->
+            </div>
+        </section>
+
+        <!-- Food Tracking Section -->
+        <section class="content-section hidden" id="trackingSection">
+            <div class="section-header">
+                <div class="healthcare-image" style="width: 80px; height: 80px; margin: 0 auto var(--space-4);">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <h2><i class="fas fa-chart-line"></i> Nutrition Tracking</h2>
+                <p>Monitor your daily nutrition intake and stay on track with your health goals</p>
+            </div>
+
+            <div class="tracking-container">
+                <div class="tracking-header">
+                    <div class="date-selector">
+                        <button class="btn btn-sm" id="prevDay"><i class="fas fa-chevron-left"></i></button>
+                        <span id="currentDate"></span>
+                        <button class="btn btn-sm" id="nextDay"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <div class="tracking-buttons">
+                        <button class="btn btn-primary" onclick="openFoodModal()">
+                            <i class="fas fa-plus"></i> Add Food
+                        </button>
+                        <button class="btn btn-secondary" onclick="openFluidModal()">
+                            <i class="fas fa-tint"></i> Add Fluid
+                        </button>
+                    </div>
+                </div>
+
+                <div class="nutrition-summary">
+                    <div class="nutrition-card">
+                        <h4>Calories</h4>
+                        <div class="progress-ring">
+                            <span id="caloriesCount">0</span> / <span id="caloriesGoal">2000</span>
+                        </div>
+                    </div>
+                    <div class="nutrition-card">
+                        <h4>Protein (g)</h4>
+                        <div class="progress-ring">
+                            <span id="proteinCount">0</span> / <span id="proteinGoal">80</span>
+                        </div>
+                    </div>
+                    <div class="nutrition-card">
+                        <h4>Fluids (ml)</h4>
+                        <div class="progress-ring">
+                            <span id="fluidsCount">0</span> / <span id="fluidsGoal">2000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="food-log">
+                    <div class="food-log-header">
+                        <h3>Today's Food Log</h3>
+                        <button class="btn btn-secondary btn-sm" onclick="clearTodayTracking()">
+                            <i class="fas fa-trash"></i> Clear Today
+                        </button>
+                    </div>
+                    <div id="foodLogEntries">
+                        <p class="empty-log">No foods logged today. Start by adding your first meal!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Learning Section -->
+        <section class="content-section hidden" id="learnSection">
+            <div class="section-header">
+                <div class="healthcare-image" style="width: 80px; height: 80px; margin: 0 auto var(--space-4);">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h2><i class="fas fa-book-reader"></i> Learn About Cancer Nutrition</h2>
+                <p>Educational content to help you understand nutrition during cancer treatment</p>
+            </div>
+
+            <div class="learning-content">
+                <div class="learning-categories">
+                    <button class="learning-tab active" data-tab="basics">Nutrition Basics</button>
+                    <button class="learning-tab" data-tab="symptoms">Managing Symptoms</button>
+                    <button class="learning-tab" data-tab="treatments">Treatment Types</button>
+                    <button class="learning-tab" data-tab="food-safety">Food Safety</button>
+                    <button class="learning-tab" data-tab="global-nutrition">Global Perspectives</button>
+                    <button class="learning-tab" data-tab="myths">Myths vs Facts</button>
+                </div>
+
+                <div class="learning-panels">
+                    <!-- Nutrition Basics Panel -->
+                    <div class="learning-panel active" id="basics-panel">
+                        <h3><i class="fas fa-apple"></i> Nutrition Fundamentals</h3>
+                        <div class="learning-cards">
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-dumbbell"></i>
+                                </div>
+                                <h4>Protein During Treatment</h4>
+                                <p>Protein needs increase during cancer treatment to help repair tissues, maintain immune function, and prevent muscle loss. Aim for 1.2-1.6g per kg of body weight.</p>
+                                <div class="learning-tips">
+                                    <strong>Good Sources:</strong> Lean meats, fish, eggs, beans, dairy products, nuts, quinoa, soy products
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> Based on NCI Protein Requirements Guidelines 2024</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-fire"></i>
+                                </div>
+                                <h4>Calories & Energy</h4>
+                                <p>Maintaining adequate calorie intake prevents unwanted weight loss and provides energy for healing and daily activities. Cancer patients may need 25-35 calories per kg body weight.</p>
+                                <div class="learning-tips">
+                                    <strong>Energy-Dense Foods:</strong> Nuts, avocados, olive oil, smoothies, dried fruits, whole grain cereals
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> ACS Nutrition Guidelines for Cancer Survivors</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-tint"></i>
+                                </div>
+                                <h4>Hydration Importance</h4>
+                                <p>Proper hydration helps manage side effects, supports kidney function, aids in drug metabolism, and helps prevent constipation during treatment.</p>
+                                <div class="learning-tips">
+                                    <strong>Hydration Tips:</strong> Water, herbal teas, broths, water-rich fruits and vegetables, diluted fruit juices
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> WHO Hydration Guidelines for Cancer Patients</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-seedling"></i>
+                                </div>
+                                <h4>Micronutrients & Vitamins</h4>
+                                <p>Vitamins and minerals play crucial roles in immune function, wound healing, and energy metabolism during cancer treatment.</p>
+                                <div class="learning-tips">
+                                    <strong>Key Nutrients:</strong> Vitamin D, B-complex, Vitamin C, zinc, selenium, folate
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> WHO Micronutrient Requirements for Cancer Care</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-heartbeat"></i>
+                                </div>
+                                <h4>Fiber & Digestive Health</h4>
+                                <p>Adequate fiber intake supports digestive health, helps maintain gut microbiome, and may reduce treatment-related constipation.</p>
+                                <div class="learning-tips">
+                                    <strong>Fiber Sources:</strong> Whole grains, legumes, fruits with skin, vegetables, nuts and seeds
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> Journal of Clinical Oncology 2024</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <h4>Antioxidants & Immune Support</h4>
+                                <p>Antioxidants help protect cells from damage and support immune function. Focus on food sources rather than high-dose supplements.</p>
+                                <div class="learning-tips">
+                                    <strong>Antioxidant Foods:</strong> Berries, colorful vegetables, green tea, dark leafy greens, tomatoes
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> Nutrition and Cancer Journal 2024</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Managing Symptoms Panel -->
+                    <div class="learning-panel" id="symptoms-panel">
+                        <h3><i class="fas fa-heartbeat"></i> Managing Treatment Side Effects</h3>
+                        <div class="learning-cards">
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-dizzy"></i>
+                                </div>
+                                <h4>Nausea & Vomiting</h4>
+                                <p>Small, frequent meals work better than large ones. Cold or room temperature foods may be better tolerated than hot foods. Ginger has clinically proven anti-nausea properties.</p>
+                                <div class="learning-tips">
+                                    <strong>Helpful Foods:</strong> Ginger tea, crackers, toast, clear broths, peppermint, bland starches
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> NCI Managing Nausea Clinical Guidelines</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-comment"></i>
+                                </div>
+                                <h4>Mouth Sores & Mucositis</h4>
+                                <p>Choose soft, moist foods and avoid acidic, spicy, or rough-textured foods. Maintain oral hygiene and consider nutritional supplements if eating is severely impacted.</p>
+                                <div class="learning-tips">
+                                    <strong>Gentle Options:</strong> Smoothies, yogurt, mashed fruits, soups, ice cream, protein shakes
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> Supportive Care in Cancer Journal</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-utensils"></i>
+                                </div>
+                                <h4>Changes in Taste & Smell</h4>
+                                <p>Treatment can alter taste perception (dysgeusia) and smell (anosmia). Experiment with herbs, spices, and temperature to enhance flavors and maintain nutrition.</p>
+                                <div class="learning-tips">
+                                    <strong>Flavor Enhancers:</strong> Lemon, herbs, marinades, different temperatures, strong spices
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> Oncology Nutrition Connection</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-battery-empty"></i>
+                                </div>
+                                <h4>Fatigue & Low Energy</h4>
+                                <p>Cancer-related fatigue affects eating patterns. Plan meals and snacks when energy levels are highest, usually mornings for many patients.</p>
+                                <div class="learning-tips">
+                                    <strong>Energy Strategies:</strong> Meal prep, ready-to-eat snacks, liquid nutrition, small frequent meals
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> ACS Nutrition Guidelines</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-weight"></i>
+                                </div>
+                                <h4>Appetite Changes</h4>
+                                <p>Both appetite loss and increased appetite can occur. Focus on nutrient-dense foods and work with your healthcare team to manage changes.</p>
+                                <div class="learning-tips">
+                                    <strong>Appetite Support:</strong> Regular meal schedule, pleasant eating environment, social dining
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> NCI Eating Hints Guidelines</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-stomach"></i>
+                                </div>
+                                <h4>Diarrhea & Digestive Issues</h4>
+                                <p>Some treatments cause digestive upset. BRAT diet (Bananas, Rice, Applesauce, Toast) can help, along with probiotics and adequate fluid replacement.</p>
+                                <div class="learning-tips">
+                                    <strong>Gentle Foods:</strong> BRAT foods, probiotics, electrolyte solutions, cooked vegetables
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> WHO Food Safety Guidelines</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Treatment Types Panel -->
+                    <div class="learning-panel" id="treatments-panel">
+                        <h3><i class="fas fa-stethoscope"></i> Nutrition by Treatment Type</h3>
+                        <div class="learning-cards">
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-syringe"></i>
+                                </div>
+                                <h4>Chemotherapy Nutrition</h4>
+                                <p>Focus on maintaining weight and managing side effects. Eat before treatment when appetite is usually better. Immune system may be compromised, requiring food safety precautions.</p>
+                                <div class="learning-tips">
+                                    <strong>Key Points:</strong> Food safety protocols, nausea management, maintain hydration, nutrient timing
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> NCI Nutrition in Cancer Care PDQ 2024</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-atom"></i>
+                                </div>
+                                <h4>Radiation Therapy</h4>
+                                <p>Nutrition needs vary by treatment area. GI radiation may cause different side effects than head/neck radiation. Skin care and adequate nutrition support healing.</p>
+                                <div class="learning-tips">
+                                    <strong>Considerations:</strong> Location-specific side effects, skin care nutrition, hydration, energy needs
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> ACS Treatment-Specific Nutrition Guide</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-pills"></i>
+                                </div>
+                                <h4>Targeted & Immunotherapy</h4>
+                                <p>Side effects vary by specific medication. Some may cause diarrhea, others skin changes affecting eating. Work with your team for personalized guidance.</p>
+                                <div class="learning-tips">
+                                    <strong>Approach:</strong> Medication-specific nutrition guidance, symptom management, timing considerations
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> Journal of Clinical Oncology 2024</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-cut"></i>
+                                </div>
+                                <h4>Surgery & Recovery</h4>
+                                <p>Pre-operative nutrition status affects recovery. Post-surgery, focus on protein for wound healing and gradual return to normal eating patterns.</p>
+                                <div class="learning-tips">
+                                    <strong>Surgery Focus:</strong> Pre-op optimization, post-op protein needs, gradual diet progression
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> Supportive Care in Cancer</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-bone"></i>
+                                </div>
+                                <h4>Bone Marrow Transplant</h4>
+                                <p>Requires strict food safety protocols due to severe immunosuppression. Nutrition support is critical for engraftment and recovery.</p>
+                                <div class="learning-tips">
+                                    <strong>BMT Nutrition:</strong> Neutropenic diet, sterile food preparation, nutrient density focus
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> WHO Food Safety for Immunocompromised</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-heartbeat"></i>
+                                </div>
+                                <h4>Supportive Care</h4>
+                                <p>Palliative and supportive care focus on comfort and quality of life. Nutrition goals may shift to maintaining enjoyment of food and comfort.</p>
+                                <div class="learning-tips">
+                                    <strong>Comfort Care:</strong> Quality of life focus, food enjoyment, symptom management, family involvement
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> Oncology Nutrition Connection</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Food Safety Panel -->
+                    <div class="learning-panel" id="food-safety-panel">
+                        <h3><i class="fas fa-shield-alt"></i> Food Safety for Cancer Patients</h3>
+                        <div class="learning-cards">
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-thermometer"></i>
+                                </div>
+                                <h4>Safe Food Temperatures</h4>
+                                <p>Proper cooking temperatures kill harmful bacteria. Use food thermometers and avoid undercooked foods, especially during immunosuppression.</p>
+                                <div class="learning-tips">
+                                    <strong>Temperature Guide:</strong> Poultry 165°F, Ground meat 160°F, Whole cuts 145°F, Seafood 145°F
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> ACS Food Safety Guidelines 2024</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-hands-wash"></i>
+                                </div>
+                                <h4>Hygiene & Hand Washing</h4>
+                                <p>Proper hand hygiene and clean food preparation surfaces are critical for preventing foodborne illness in immunocompromised patients.</p>
+                                <div class="learning-tips">
+                                    <strong>Safety Steps:</strong> Wash hands 20 seconds, clean surfaces, separate raw/cooked foods, wash produce
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> WHO Food Safety for Immunocompromised</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-ban"></i>
+                                </div>
+                                <h4>Foods to Avoid</h4>
+                                <p>During immunosuppression, certain high-risk foods should be avoided to prevent foodborne infections that could be life-threatening.</p>
+                                <div class="learning-tips">
+                                    <strong>Avoid:</strong> Raw/undercooked meat, unpasteurized dairy, raw sprouts, unwashed produce, deli meats
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> NCI Food Safety for Cancer Patients</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-store"></i>
+                                </div>
+                                <h4>Safe Food Shopping</h4>
+                                <p>Choose reputable stores, check expiration dates, maintain cold chain, and shop for perishables last to maintain food quality and safety.</p>
+                                <div class="learning-tips">
+                                    <strong>Shopping Tips:</strong> Check dates, cold foods last, separate raw meats, sanitize cart handles
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> CDC Food Safety Recommendations</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-snowflake"></i>
+                                </div>
+                                <h4>Proper Food Storage</h4>
+                                <p>Correct storage temperatures and timing prevent bacterial growth. Follow first-in-first-out principles and monitor refrigerator temperatures.</p>
+                                <div class="learning-tips">
+                                    <strong>Storage Guide:</strong> Refrigerator ≤40°F, Freezer 0°F, Use leftovers within 3-4 days
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> FDA Food Storage Guidelines</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-utensils"></i>
+                                </div>
+                                <h4>Restaurant & Takeout Safety</h4>
+                                <p>When eating out, choose reputable establishments, avoid buffets, and ensure hot foods are hot and cold foods are cold upon delivery.</p>
+                                <div class="learning-tips">
+                                    <strong>Dining Out:</strong> Choose busy restaurants, avoid buffets, check food temperature, ask about ingredients
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> ACS Safe Dining Guidelines</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Global Perspectives Panel -->
+                    <div class="learning-panel" id="global-nutrition-panel">
+                        <h3><i class="fas fa-globe-americas"></i> Global Nutrition Perspectives</h3>
+                        <div class="learning-cards">
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-leaf"></i>
+                                </div>
+                                <h4>Mediterranean Diet Patterns</h4>
+                                <p>Rich in antioxidants, healthy fats, and anti-inflammatory compounds. May support cancer recovery and overall health outcomes.</p>
+                                <div class="learning-tips">
+                                    <strong>Key Components:</strong> Olive oil, fish, vegetables, whole grains, legumes, moderate red wine
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> Mediterranean Diet and Cancer Research 2024</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-yin-yang"></i>
+                                </div>
+                                <h4>Asian Dietary Patterns</h4>
+                                <p>Traditional Asian diets emphasize plant foods, soy products, green tea, and fish. These patterns are associated with lower cancer rates in some populations.</p>
+                                <div class="learning-tips">
+                                    <strong>Asian Elements:</strong> Soy foods, green tea, vegetables, rice, fish, minimal processed foods
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> Asian Diet Patterns and Cancer Prevention</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-seedling"></i>
+                                </div>
+                                <h4>Plant-Based Approaches</h4>
+                                <p>Emphasis on plant foods may provide protective compounds and fiber. Can be adapted globally while respecting cultural food preferences.</p>
+                                <div class="learning-tips">
+                                    <strong>Plant Focus:</strong> Vegetables, fruits, whole grains, legumes, nuts, seeds, limited animal products
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> Plant-Based Nutrition in the Americas</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-map"></i>
+                                </div>
+                                <h4>Regional Food Access</h4>
+                                <p>Nutrition recommendations must consider regional food availability, cultural practices, and economic factors affecting food access globally.</p>
+                                <div class="learning-tips">
+                                    <strong>Access Considerations:</strong> Local foods, seasonal availability, cultural preferences, economic factors
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> WHO Regional Food Access Study</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <h4>Cultural Dietary Considerations</h4>
+                                <p>Cancer nutrition care must respect cultural food practices, religious dietary laws, and traditional healing approaches while ensuring nutritional adequacy.</p>
+                                <div class="learning-tips">
+                                    <strong>Cultural Aspects:</strong> Religious practices, traditional foods, family involvement, cooking methods
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> ACS Cultural Dietary Considerations</small>
+                                </div>
+                            </div>
+                            <div class="learning-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <h4>WHO Global Nutrition Targets</h4>
+                                <p>International guidelines focus on reducing malnutrition, improving micronutrient status, and addressing nutrition-related chronic diseases including cancer.</p>
+                                <div class="learning-tips">
+                                    <strong>Global Goals:</strong> Reduce malnutrition, improve micronutrient status, prevent chronic diseases
+                                </div>
+                                <div class="evidence-note">
+                                    <small><i class="fas fa-info-circle"></i> WHO Global Nutrition Targets 2025</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Myths vs Facts Panel -->
+                    <div class="learning-panel" id="myths-panel">
+                        <h3><i class="fas fa-balance-scale"></i> Separating Myths from Facts</h3>
+                        <div class="myth-fact-cards">
+                            <div class="myth-fact-card">
+                                <div class="myth-section">
+                                    <h4><i class="fas fa-times-circle"></i> Myth</h4>
+                                    <p>"Sugar feeds cancer, so avoid all carbohydrates"</p>
+                                </div>
+                                <div class="fact-section">
+                                    <h4><i class="fas fa-check-circle"></i> Fact</h4>
+                                    <p>All cells use glucose for energy. Complex carbohydrates provide sustained energy and important nutrients needed during treatment. Focus on nutrient-dense carbs.</p>
+                                </div>
+                            </div>
+                            <div class="myth-fact-card">
+                                <div class="myth-section">
+                                    <h4><i class="fas fa-times-circle"></i> Myth</h4>
+                                    <p>"Supplements can replace a healthy diet"</p>
+                                </div>
+                                <div class="fact-section">
+                                    <h4><i class="fas fa-check-circle"></i> Fact</h4>
+                                    <p>Whole foods provide nutrients in forms that are better absorbed and utilized. Supplements should only be used under medical supervision to address specific deficiencies.</p>
+                                </div>
+                            </div>
+                            <div class="myth-fact-card">
+                                <div class="myth-section">
+                                    <h4><i class="fas fa-times-circle"></i> Myth</h4>
+                                    <p>"Organic foods prevent cancer recurrence"</p>
+                                </div>
+                                <div class="fact-section">
+                                    <h4><i class="fas fa-check-circle"></i> Fact</h4>
+                                    <p>While organic foods may reduce pesticide exposure, there's no evidence they prevent recurrence. Focus on eating a variety of fruits and vegetables, organic or conventional.</p>
+                                </div>
+                            </div>
+                            <div class="myth-fact-card">
+                                <div class="myth-section">
+                                    <h4><i class="fas fa-times-circle"></i> Myth</h4>
+                                    <p>"Alkaline diets cure cancer by changing body pH"</p>
+                                </div>
+                                <div class="fact-section">
+                                    <h4><i class="fas fa-check-circle"></i> Fact</h4>
+                                    <p>The body tightly regulates pH levels. Diet cannot significantly change blood pH. Focus on balanced nutrition rather than trying to manipulate body chemistry.</p>
+                                </div>
+                            </div>
+                            <div class="myth-fact-card">
+                                <div class="myth-section">
+                                    <h4><i class="fas fa-times-circle"></i> Myth</h4>
+                                    <p>"Antioxidant supplements boost immunity during treatment"</p>
+                                </div>
+                                <div class="fact-section">
+                                    <h4><i class="fas fa-check-circle"></i> Fact</h4>
+                                    <p>High-dose antioxidant supplements may interfere with certain cancer treatments. Get antioxidants from food sources and consult your oncology team about supplements.</p>
+                                </div>
+                            </div>
+                            <div class="myth-fact-card">
+                                <div class="myth-section">
+                                    <h4><i class="fas fa-times-circle"></i> Myth</h4>
+                                    <p>"Fasting during treatment helps kill cancer cells"</p>
+                                </div>
+                                <div class="fact-section">
+                                    <h4><i class="fas fa-check-circle"></i> Fact</h4>
+                                    <p>Cancer patients need adequate nutrition to support their immune system and healing. Fasting can lead to malnutrition and worsen treatment outcomes.</p>
+                                </div>
+                            </div>
+                            <div class="myth-fact-card">
+                                <div class="myth-section">
+                                    <h4><i class="fas fa-times-circle"></i> Myth</h4>
+                                    <p>"Dairy products cause cancer to spread"</p>
+                                </div>
+                                <div class="fact-section">
+                                    <h4><i class="fas fa-check-circle"></i> Fact</h4>
+                                    <p>There's no scientific evidence that dairy causes cancer to spread. Dairy products provide important protein, calcium, and vitamins during treatment.</p>
+                                </div>
+                            </div>
+                            <div class="myth-fact-card">
+                                <div class="myth-section">
+                                    <h4><i class="fas fa-times-circle"></i> Myth</h4>
+                                    <p>"Herbal remedies are safe because they're natural"</p>
+                                </div>
+                                <div class="fact-section">
+                                    <h4><i class="fas fa-check-circle"></i> Fact</h4>
+                                    <p>Natural doesn't always mean safe. Many herbs can interact with cancer treatments or cause side effects. Always discuss herbal products with your healthcare team.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources Section -->
+        <section class="content-section hidden" id="resourcesSection">
+            <div class="section-header">
+                <div class="healthcare-image" style="width: 80px; height: 80px; margin: 0 auto var(--space-4);">
+                    <i class="fas fa-microscope"></i>
+                </div>
+                <h2><i class="fas fa-book-open"></i> Evidence-Based Resources</h2>
+                <p>Trusted sources and peer-reviewed research for informed nutrition decisions</p>
+            </div>
+
+            <div class="resources-grid">
+                <div class="resource-category">
+                    <h3><i class="fas fa-hospital"></i> National Cancer Institute (NCI)</h3>
+                    <div class="resource-links">
+                        <a href="#" class="resource-link" onclick="openResource('nci-nutrition-cancer')">
+                            <i class="fas fa-external-link-alt"></i>
+                            Nutrition in Cancer Care (PDQ®) - 2024 Update
+                        </a>
+                        <a href="#" class="resource-link" onclick="openResource('nci-eating-hints')">
+                            <i class="fas fa-external-link-alt"></i>
+                            Eating Hints: Before, During, and After Treatment
+                        </a>
+                        <a href="#" class="resource-link" onclick="openResource('nci-nausea-management')">
+                            <i class="fas fa-external-link-alt"></i>
+                            Managing Nausea and Vomiting - Clinical Guidelines
+                        </a>
+                        <a href="#" class="resource-link" onclick="openResource('nci-protein-needs')">
+                            <i class="fas fa-external-link-alt"></i>
+                            Protein Requirements During Cancer Treatment (2024)
+                        </a>
+                    </div>
+                </div>
+
+                <div class="resource-category">
+                    <h3><i class="fas fa-ribbon"></i> American Cancer Society (ACS)</h3>
+                    <div class="resource-links">
+                        <a href="#" class="resource-link" onclick="openResource('acs-nutrition-guidelines')">
+                            <i class="fas fa-external-link-alt"></i>
+                            Cancer Prevention & Early Detection Guidelines 2024
+                        </a>
+                        <a href="#" class="resource-link" onclick="openResource('acs-food-safety')">
+                            <i class="fas fa-external-link-alt"></i>
+                            Food Safety for People with Cancer (ACS, 2024)
+                        </a>
+                        <a href="#" class="resource-link" onclick="openResource('acs-weight-management')">
+                            <i class="fas fa-external-link-alt"></i>
+                            Nutrition & Physical Activity Guidelines for Cancer Survivors
+                        </a>
+                        <a href="#" class="resource-link" onclick="openResource('acs-regional-diets')">
+                            <i class="fas fa-external-link-alt"></i>
+                            Cultural Dietary Considerations in Cancer Care
+                        </a>
+                    </div>
+                </div>
+
+                <div class="resource-category">
+                    <h3><i class="fas fa-globe"></i> World Health Organization (WHO)</h3>
+                    <div class="resource-links">
+                        <a href="#" class="resource-link" onclick="openResource('who-global-nutrition')">
+                            <i class="fas fa-external-link-alt"></i>
+                            Global Nutrition Targets 2025 - Cancer Care Focus
+                        </a>
+                        <a href="#" class="resource-link" onclick="openResource('who-food-safety-cancer')">
+                            <i class="fas fa-external-link-alt"></i>
+                            WHO Food Safety Guidelines for Immunocompromised Patients
+                        </a>
+                        <a href="#" class="resource-link" onclick="openResource('who-regional-nutrition')">
+                            <i class="fas fa-external-link-alt"></i>
+                            Regional Nutrition Patterns & Cancer Recovery (2024)
+                        </a>
+                        <a href="#" class="resource-link" onclick="openResource('who-micronutrients')">
+                            <i class="fas fa-external-link-alt"></i>
+                            Micronutrient Deficiencies in Cancer Care - WHO Report
+                        </a>
+                    </div>
+                </div>
+
+                <div class="resource-category">
+                    <h3><i class="fas fa-journal-whills"></i> Clinical Research Journals</h3>
+                    <div class="resource-links">
+                        <a href="#" class="resource-link" onclick="openResource('jco-nutrition-2024')">
+                            <i class="fas fa-external-link-alt"></i>
+                            Journal of Clinical Oncology: Nutrition Interventions (2024)
+                        </a>
+                        <a href="#" class="resource-link" onclick="openResource('nutrition-cancer-journal')">
+                            <i class="fas fa-external-link-alt"></i>
+                            Nutrition and Cancer: Geographic Dietary Patterns (2024)
+                        </a>
+                        <a href="#" class="resource-link" onclick="openResource('supportive-care-cancer')">
+                            <i class="fas fa-external-link-alt"></i>
+                            Supportive Care in Cancer: Regional Food Guidelines
+                        </a>
+                        <a href="#" class="resource-link" onclick="openResource('oncology-nutrition')">
+                            <i class="fas fa-external-link-alt"></i>
+                            Clinical Journal of Oncology Nutrition (Latest Issue)
+                        </a>
+                    </div>
+                </div>
+
+                <div class="resource-category">
+                    <h3><i class="fas fa-map-marked-alt"></i> Geographic Nutrition Guidelines</h3>
+                    <div class="resource-links">
+                        <a href="#" class="resource-link" onclick="openResource('mediterranean-diet-cancer')">
+                            <i class="fas fa-external-link-alt"></i>
+                            Mediterranean Diet in Cancer Prevention (Europe)
+                        </a>
+                        <a href="#" class="resource-link" onclick="openResource('asian-diet-patterns')">
+                            <i class="fas fa-external-link-alt"></i>
+                            Traditional Asian Diets & Cancer Recovery
+                        </a>
+                        <a href="#" class="resource-link" onclick="openResource('plant-based-americas')">
+                            <i class="fas fa-external-link-alt"></i>
+                            Plant-Based Nutrition in the Americas
+                        </a>
+                        <a href="#" class="resource-link" onclick="openResource('regional-food-access')">
+                            <i class="fas fa-external-link-alt"></i>
+                            Food Security & Cancer Care by Region
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="showSection('welcomeSection')" data-section="welcome">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </button>
+        <button class="nav-item" onclick="showSection('profileSection')" data-section="profile">
+            <i class="fas fa-user-circle"></i>
+            <span>Profile</span>
+        </button>
+        <button class="nav-item" onclick="showSection('recommendationsSection')" data-section="recommendations">
+            <i class="fas fa-user-md"></i>
+            <span>My Plan</span>
+        </button>
+        <button class="nav-item" onclick="showSection('recipesSection')" data-section="recipes">
+            <i class="fas fa-utensils"></i>
+            <span>Recipes</span>
+        </button>
+        <button class="nav-item" onclick="showSection('trackingSection')" data-section="tracking">
+            <i class="fas fa-chart-line"></i>
+            <span>Track</span>
+        </button>
+        <button class="nav-item" onclick="showSection('learnSection')" data-section="learn">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Learn</span>
+        </button>
+        <button class="nav-item" onclick="showSection('resourcesSection')" data-section="resources">
+            <i class="fas fa-book-open"></i>
+            <span>Resources</span>
+        </button>
+    </nav>
+
+    <!-- Add Food Modal -->
+    <div id="foodModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Food Item</h3>
+                <button class="close-modal" onclick="closeFoodModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="foodName">Food Item</label>
+                    <input type="text" id="foodName" placeholder="Search or enter food name...">
+                </div>
+                <div class="form-group">
+                    <label for="portion">Portion Size</label>
+                    <input type="text" id="portion" placeholder="e.g., 1 cup, 100g, 1 medium">
+                </div>
+                <div class="form-group">
+                    <label for="mealType">Meal</label>
+                    <select id="mealType">
+                        <option value="breakfast">Breakfast</option>
+                        <option value="lunch">Lunch</option>
+                        <option value="dinner">Dinner</option>
+                        <option value="snack">Snack</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeFoodModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="addFoodItem()">Add Food</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Fluid Modal -->
+    <div id="fluidModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Fluid Intake</h3>
+                <button class="close-modal" onclick="closeFluidModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="fluidType">Fluid Type</label>
+                    <select id="fluidType">
+                        <option value="water">Water</option>
+                        <option value="herbal-tea">Herbal Tea</option>
+                        <option value="green-tea">Green Tea</option>
+                        <option value="broth">Broth/Soup</option>
+                        <option value="juice">100% Fruit/Vegetable Juice</option>
+                        <option value="milk">Milk/Plant-based Milk</option>
+                        <option value="smoothie">Smoothie</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group" id="customFluidGroup" style="display: none;">
+                    <label for="customFluid">Specify Fluid</label>
+                    <input type="text" id="customFluid" placeholder="Enter fluid type...">
+                </div>
+                <div class="form-group">
+                    <label for="fluidAmount">Amount (ml)</label>
+                    <input type="number" id="fluidAmount" placeholder="e.g., 250, 500..." min="1" max="2000">
+                </div>
+                <div class="form-group">
+                    <label for="fluidTime">Time</label>
+                    <select id="fluidTime">
+                        <option value="morning">Morning</option>
+                        <option value="afternoon">Afternoon</option>
+                        <option value="evening">Evening</option>
+                        <option value="night">Night</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeFluidModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="addFluidItem()">Add Fluid</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recipe Detail Modal -->
+    <div id="recipeModal" class="modal recipe-modal hidden">
+        <div class="modal-content">
+            <div class="recipe-modal-image" id="recipeModalImage">
+                <div class="recipe-modal-overlay">
+                    <div class="recipe-modal-region" id="recipeModalRegion">Mediterranean</div>
+                    <h3 class="recipe-modal-title" id="recipeModalTitle">Recipe Name</h3>
+                </div>
+            </div>
+            <div class="modal-header" style="padding: var(--space-6) var(--space-8) 0;">
+                <div></div>
+                <button class="close-modal" onclick="closeRecipeModal()" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="recipe-modal-body">
+                <div class="recipe-modal-stats">
+                    <div class="recipe-stat">
+                        <span class="recipe-stat-value" id="modalPrepTime">25 min</span>
+                        <div class="recipe-stat-label">Prep Time</div>
+                    </div>
+                    <div class="recipe-stat">
+                        <span class="recipe-stat-value" id="modalProtein">18g</span>
+                        <div class="recipe-stat-label">Protein</div>
+                    </div>
+                    <div class="recipe-stat">
+                        <span class="recipe-stat-value" id="modalCalories">280</span>
+                        <div class="recipe-stat-label">Calories</div>
+                    </div>
+                </div>
+
+                <div class="recipe-modal-section">
+                    <h4><i class="fas fa-list-ul"></i> Ingredients</h4>
+                    <ul class="recipe-ingredients-list" id="modalIngredients">
+                        <!-- Ingredients will be populated by JavaScript -->
+                    </ul>
+                </div>
+
+                <div class="recipe-modal-section">
+                    <h4><i class="fas fa-clipboard-list"></i> Instructions</h4>
+                    <ol class="recipe-instructions-list" id="modalInstructions">
+                        <!-- Instructions will be populated by JavaScript -->
+                    </ol>
+                </div>
+
+                <div class="recipe-benefits">
+                    <h4><i class="fas fa-heart"></i> Cancer Care Benefits</h4>
+                    <p id="modalNutritionTips">Nutrition information will be displayed here.</p>
+                    <p id="modalCancerBenefits">Cancer-specific benefits will be displayed here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner hidden">
+        <div class="spinner"></div>
+        <p>Loading your personalized recommendations...</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
