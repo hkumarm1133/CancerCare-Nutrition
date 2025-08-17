@@ -1,6 +1,15 @@
-// Global Recipe Data - Organized by Cancer Patient Needs
+﻿// Global CAM Recipe Data - Organized by Holistic & Complementary Medicine Approaches
 // Global variables for user recommendations
 let currentUserRecommendedFilters = [];
+let currentRecipeMode = 'cam'; // 'conventional' or 'cam'
+
+// Global object for user holistic preferences
+let userHolisticPreferences = {
+    approach: 'conventional',
+    traditions: [],
+    mindBody: [],
+    constitution: ''
+};
 
 // Utility functions for safe localStorage operations
 function safeLocalStorageGet(key, defaultValue = null) {
@@ -23,8 +32,9 @@ function safeLocalStorageSet(key, value) {
     }
 }
 
-const recipeData = {
-    'general-healthy': [
+// Conventional Recipe Data - Original categories
+const conventionalRecipeData = {
+    'healthy': [
         {
             id: 1,
             name: 'Mediterranean Chickpea Salad',
@@ -90,34 +100,37 @@ const recipeData = {
                 '1 cup red lentils',
                 '3 cups water',
                 '1 onion, chopped',
-                '1 tomato, chopped',
-                '1 tsp turmeric powder',
+                '2 tomatoes, chopped',
+                '1 tsp turmeric',
                 '1 tsp cumin seeds',
-                '1 tbsp cooking oil'
+                '2 tbsp ghee or oil',
+                'Salt to taste'
             ],
             instructions: [
-                'Rinse lentils; cook with turmeric in water until soft',
-                'Heat oil, add cumin seeds, onion, and tomato; sauté 3 minutes',
-                'Mix sautéed spices into cooked lentils, simmer 5 minutes'
+                'Rinse lentils and boil with turmeric until soft',
+                'Heat ghee, add cumin seeds until they splutter',
+                'Add onions, cook until golden, then add tomatoes',
+                'Mix with cooked lentils, simmer for 10 minutes'
             ],
-            nutritionTips: 'Red lentils are rich in protein, folate, and iron. Turmeric provides anti-inflammatory compounds.',
-            cancerBenefits: 'Turmeric contains curcumin with potential anti-inflammatory properties. Easy to digest protein source.'
+            nutritionTips: 'Red lentils are high in folate and iron. Complete protein when paired with rice.',
+            cancerBenefits: 'Easy to digest protein source. Turmeric provides anti-inflammatory benefits.'
         },
         {
-            id: 4,
+            id: 201,
             name: 'Quinoa & Roasted Vegetable Bowl',
-            description: 'Complete protein bowl with colorful roasted vegetables',
-            tags: ['healthy', 'american', 'complete-protein', 'colorful'],
-            prepTime: '35 min',
+            description: 'Nutrient-dense superfood bowl with complete protein quinoa',
+            tags: ['healthy', 'vegetarian', 'complete-protein', 'fiber-rich'],
+            prepTime: '30 min',
             protein: '14g',
             calories: '350',
             region: 'Americas',
-            image: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&h=300&fit=crop',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '1 cup quinoa, cooked',
                 '1 cup mixed vegetables (zucchini, bell peppers, carrots)',
                 '1 tbsp olive oil',
-                '1 tsp dried oregano or thyme'
+                '1 tsp dried oregano or thyme',
+                'Salt and pepper to taste'
             ],
             instructions: [
                 'Preheat oven to 375°F (190°C)',
@@ -126,45 +139,126 @@ const recipeData = {
                 'Serve over quinoa'
             ],
             nutritionTips: 'Quinoa is a complete protein containing all essential amino acids. Colorful vegetables provide diverse antioxidants.',
-            cancerBenefits: 'Complete protein supports tissue repair. Variety of antioxidants may help protect against cellular damage.'
+            cancerBenefits: 'High in fiber and plant-based protein. Antioxidants from mixed vegetables support immune function and may help reduce inflammation.'
         },
         {
-            id: 5,
+            id: 202,
             name: 'Avocado & Black Bean Wrap',
-            description: 'Nutrient-dense wrap with heart-healthy fats and fiber',
-            tags: ['healthy', 'latin-american', 'portable', 'heart-healthy'],
+            description: 'Heart-healthy wrap with plant protein and healthy fats',
+            tags: ['healthy', 'vegetarian', 'portable', 'heart-healthy'],
             prepTime: '10 min',
-            protein: '15g',
-            calories: '380',
+            protein: '12g',
+            calories: '320',
             region: 'Latin America',
-            image: 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=400&h=300&fit=crop',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '1 whole wheat tortilla',
                 '1/2 avocado, mashed',
                 '1/2 cup cooked black beans',
                 '1/4 cup shredded lettuce',
-                '1 tbsp lime juice'
+                '1 tbsp lime juice',
+                'Salt and pepper to taste'
             ],
             instructions: [
                 'Spread mashed avocado on tortilla',
                 'Add beans, lettuce, and drizzle lime juice',
+                'Season with salt and pepper',
                 'Roll up and serve'
             ],
-            nutritionTips: 'Avocado provides healthy monounsaturated fats and potassium. Black beans offer protein and fiber.',
-            cancerBenefits: 'Healthy fats support nutrient absorption. High fiber content promotes digestive health and satiety.'
+            nutritionTips: 'Avocados provide monounsaturated fats and potassium. Black beans offer plant protein and fiber.',
+            cancerBenefits: 'Rich in folate and fiber. Healthy fats support nutrient absorption and may help reduce inflammation.'
         }
     ],
+    
     'symptom-management': [
         {
-            id: 6,
-            name: 'Ginger & Honey Herbal Tea',
-            description: 'Soothing herbal tea specifically designed for nausea relief',
-            tags: ['nausea-relief', 'anti-inflammatory', 'herbal', 'warming'],
-            prepTime: '10 min',
+            id: 4,
+            name: 'Ginger Mint Tea',
+            description: 'Soothing herbal tea to combat nausea and digestive discomfort',
+            tags: ['nausea', 'herbal', 'digestive', 'warm'],
+            prepTime: '5 min',
             protein: '0g',
-            calories: '20',
+            calories: '5',
             region: 'Global',
-            image: 'https://images.unsplash.com/photo-1571934811356-5cc061b6821f?w=400&h=300&fit=crop',
+            image: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&h=300&fit=crop',
+            ingredients: [
+                '1 inch fresh ginger root',
+                '10 fresh mint leaves',
+                '2 cups water',
+                '1 tsp honey (optional)'
+            ],
+            instructions: [
+                'Slice ginger thinly',
+                'Boil water with ginger for 5 minutes',
+                'Add mint leaves, steep for 2 minutes',
+                'Strain and add honey if desired'
+            ],
+            nutritionTips: 'Ginger contains gingerol, which helps reduce nausea. Mint soothes the digestive tract.',
+            cancerBenefits: 'Highly effective for chemotherapy-induced nausea. Helps maintain hydration.'
+        },
+        {
+            id: 5,
+            name: 'Banana Rice Porridge',
+            description: 'Gentle, easy-to-digest meal for sensitive stomachs',
+            tags: ['bland', 'easy-digest', 'comfort', 'potassium'],
+            prepTime: '15 min',
+            protein: '4g',
+            calories: '180',
+            region: 'Global',
+            image: 'https://images.unsplash.com/photo-1571771019784-3ff35f4f4277?w=400&h=300&fit=crop',
+            ingredients: [
+                '½ cup white rice',
+                '2 cups water',
+                '1 ripe banana, mashed',
+                '1 tbsp honey',
+                '⅛ tsp cinnamon',
+                'Pinch of salt'
+            ],
+            instructions: [
+                'Cook rice with extra water until very soft',
+                'Mash banana and mix into warm rice',
+                'Add honey, cinnamon, and salt',
+                'Serve warm in small portions'
+            ],
+            nutritionTips: 'Bananas provide potassium and easy carbohydrates. White rice is easily digestible.',
+            cancerBenefits: 'Ideal for mouth sores or digestive upset. Provides quick energy and electrolytes.'
+        },
+        {
+            id: 6,
+            name: 'Coconut Water Smoothie',
+            description: 'Hydrating smoothie with electrolytes for treatment days',
+            tags: ['hydrating', 'electrolytes', 'cold', 'refreshing'],
+            prepTime: '5 min',
+            protein: '2g',
+            calories: '120',
+            region: 'Tropical',
+            image: 'https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=400&h=300&fit=crop',
+            ingredients: [
+                '1 cup coconut water',
+                '½ frozen banana',
+                '¼ cup frozen mango chunks',
+                '1 tbsp chia seeds',
+                '1 tsp fresh lime juice'
+            ],
+            instructions: [
+                'Combine all ingredients in blender',
+                'Blend until smooth',
+                'Add ice if thinner consistency desired',
+                'Serve immediately'
+            ],
+            nutritionTips: 'Coconut water naturally contains electrolytes. Chia seeds provide omega-3s and fiber.',
+            cancerBenefits: 'Excellent for hydration during treatment. Gentle on sensitive stomachs.'
+        },
+        {
+            id: 203,
+            name: 'Ginger & Honey Herbal Tea',
+            description: 'Anti-nausea herbal tea with natural ginger and soothing honey',
+            tags: ['nausea', 'herbal', 'digestive', 'anti-inflammatory'],
+            prepTime: '8 min',
+            protein: '0g',
+            calories: '15',
+            region: 'Global',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '1 cup hot water',
                 '1-inch fresh ginger root, sliced',
@@ -174,21 +268,22 @@ const recipeData = {
             instructions: [
                 'Steep ginger slices in hot water for 5–7 minutes',
                 'Strain into a cup',
-                'Stir in honey and lemon juice if desired. Serve warm'
+                'Stir in honey and lemon juice if desired',
+                'Serve warm'
             ],
-            nutritionTips: 'Ginger contains gingerol compounds that help reduce nausea. Honey provides gentle energy.',
-            cancerBenefits: 'Ginger is clinically proven to reduce chemotherapy-induced nausea. Warm liquids help with hydration and comfort.'
+            nutritionTips: 'Fresh ginger contains gingerol compounds that effectively reduce nausea. Honey provides gentle energy.',
+            cancerBenefits: 'Highly effective for chemotherapy-induced nausea. Natural anti-inflammatory properties support digestive comfort.'
         },
         {
-            id: 7,
+            id: 204,
             name: 'Creamy Banana-Oat Smoothie',
-            description: 'High-calorie smoothie for appetite loss and weight maintenance',
-            tags: ['weight-gain', 'appetite-loss', 'creamy', 'nutritious'],
+            description: 'High-calorie smoothie for appetite stimulation and weight maintenance',
+            tags: ['appetite-loss', 'weight-gain', 'high-calorie', 'protein'],
             prepTime: '20 min',
             protein: '12g',
-            calories: '420',
+            calories: '380',
             region: 'Global',
-            image: 'https://images.unsplash.com/photo-1638176066666-ffb2f013c7dd?w=400&h=300&fit=crop',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '1 banana',
                 '1/2 cup rolled oats (soaked in water or milk for 15 minutes)',
@@ -197,23 +292,24 @@ const recipeData = {
                 'Honey to taste'
             ],
             instructions: [
+                'Soak oats in water or milk for 15 minutes',
                 'Blend banana, soaked oats, milk, and nut butter until smooth',
                 'Sweeten with honey if desired',
                 'Serve immediately for best texture'
             ],
-            nutritionTips: 'Oats provide fiber and complex carbs. Nut butter adds healthy fats and protein for sustained energy.',
-            cancerBenefits: 'High calorie density helps combat weight loss. Smooth texture easy to consume when appetite is poor.'
+            nutritionTips: 'Oats provide sustained energy and fiber. Nut butter adds healthy fats and protein for weight maintenance.',
+            cancerBenefits: 'Excellent for patients with appetite loss. High-calorie content helps prevent unintended weight loss during treatment.'
         },
         {
-            id: 8,
+            id: 205,
             name: 'Soft Scrambled Eggs with Spinach',
-            description: 'Gentle, protein-rich meal perfect for mouth sores and chewing difficulties',
-            tags: ['soft-texture', 'mouth-sores', 'protein-rich', 'gentle'],
-            prepTime: '10 min',
+            description: 'Gentle protein-rich meal for patients with mouth sores or swallowing difficulties',
+            tags: ['mouth-sores', 'soft-texture', 'protein', 'easy-chew'],
+            prepTime: '8 min',
             protein: '14g',
             calories: '180',
             region: 'Global',
-            image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&h=300&fit=crop',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '2 eggs',
                 '2 tbsp milk',
@@ -224,21 +320,22 @@ const recipeData = {
             instructions: [
                 'Beat eggs with milk in a bowl',
                 'Heat olive oil in a pan, add spinach, and cook for 1–2 minutes',
-                'Add egg mixture, stir slowly over low heat until creamy'
+                'Add egg mixture, stir slowly over low heat until creamy',
+                'Remove from heat while still soft and creamy'
             ],
-            nutritionTips: 'Eggs provide complete protein and B vitamins. Spinach adds folate and iron in an easily digestible form.',
-            cancerBenefits: 'Soft, creamy texture ideal for sensitive mouths. High-quality protein supports healing and immune function.'
+            nutritionTips: 'Eggs provide complete protein and choline. Spinach adds iron, folate, and vitamins A, C, and K.',
+            cancerBenefits: 'Soft texture ideal for mouth sores or chewing difficulties. High-quality protein supports tissue repair and immune function.'
         },
         {
-            id: 9,
+            id: 206,
             name: 'Mashed Sweet Potato with Greek Yogurt',
-            description: 'Comforting, nutrient-dense dish for digestive comfort and sustained energy',
-            tags: ['digestive-comfort', 'energy-boost', 'comfort-food', 'nutritious'],
-            prepTime: '25 min',
+            description: 'Comforting, easy-to-digest meal with probiotics and sustained energy',
+            tags: ['digestive-comfort', 'probiotics', 'energy', 'soft-texture'],
+            prepTime: '20 min',
             protein: '8g',
             calories: '220',
-            region: 'Global (US, Asia, Africa)',
-            image: 'https://images.unsplash.com/photo-1557844352-761f2565b576?w=400&h=300&fit=crop',
+            region: 'Global',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '1 medium sweet potato, peeled and cubed',
                 '1/4 cup plain Greek yogurt',
@@ -250,19 +347,19 @@ const recipeData = {
                 'Mash well, mix in Greek yogurt, cinnamon, and salt',
                 'Serve warm'
             ],
-            nutritionTips: 'Sweet potatoes are rich in beta-carotene and fiber. Greek yogurt adds probiotics and protein.',
-            cancerBenefits: 'Easy to digest and gentle on the stomach. Beta-carotene supports immune function and may help with healing.'
+            nutritionTips: 'Sweet potatoes provide beta-carotene and complex carbohydrates. Greek yogurt adds probiotics and protein.',
+            cancerBenefits: 'Gentle on digestive system. Probiotics support gut health during treatment. Beta-carotene supports immune function.'
         },
         {
-            id: 10,
+            id: 207,
             name: 'Miso Soup with Tofu & Seaweed',
-            description: 'Light, hydrating soup with probiotics and essential minerals',
-            tags: ['hydrating', 'light-nutrition', 'probiotics', 'mineral-rich'],
-            prepTime: '15 min',
+            description: 'Light, hydrating soup with umami flavors and gentle nutrition',
+            tags: ['hydration', 'light-nutrition', 'probiotics', 'easy-digest'],
+            prepTime: '10 min',
             protein: '6g',
             calories: '80',
             region: 'East Asia',
-            image: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '2 cups water or low-sodium vegetable broth',
                 '1 tbsp miso paste',
@@ -276,21 +373,80 @@ const recipeData = {
                 'Dissolve miso paste in a small bowl with some broth, then stir into soup',
                 'Garnish with green onion before serving'
             ],
-            nutritionTips: 'Miso provides probiotics and umami flavor. Seaweed offers iodine and minerals.',
-            cancerBenefits: 'Probiotics support gut health during treatment. Light, warm broth helps with hydration and is easy to digest.'
+            nutritionTips: 'Miso provides probiotics and umami flavor. Seaweed offers iodine and minerals. Tofu adds plant-based protein.',
+            cancerBenefits: 'Light and hydrating for treatment days. Probiotics support digestive health. Easy to consume when appetite is low.'
         }
     ],
+    
     'high-protein-high-calorie': [
         {
             id: 7,
+            name: 'Protein-Packed Smoothie Bowl',
+            description: 'Nutrient-dense breakfast bowl with plant and dairy proteins',
+            tags: ['protein', 'calories', 'breakfast', 'antioxidants'],
+            prepTime: '10 min',
+            protein: '22g',
+            calories: '450',
+            region: 'Modern/Global',
+            image: 'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=400&h=300&fit=crop',
+            ingredients: [
+                '1 scoop vanilla protein powder',
+                '1 cup whole milk or fortified plant milk',
+                '½ avocado',
+                '½ frozen banana',
+                '1 tbsp almond butter',
+                '1 tbsp ground flaxseed',
+                '¼ cup blueberries',
+                '1 tbsp chopped almonds'
+            ],
+            instructions: [
+                'Blend protein powder, milk, avocado, banana, and almond butter',
+                'Pour into bowl',
+                'Top with flaxseed, blueberries, and almonds',
+                'Serve immediately'
+            ],
+            nutritionTips: 'Combines complete proteins with healthy fats. Avocado adds calories and creaminess.',
+            cancerBenefits: 'High calorie density helps prevent weight loss. Antioxidants support immune function.'
+        },
+        {
+            id: 8,
+            name: 'Quinoa Power Salad',
+            description: 'Complete protein salad with quinoa, nuts, and tahini dressing',
+            tags: ['protein', 'complete-protein', 'filling', 'mediterranean'],
+            prepTime: '20 min',
+            protein: '18g',
+            calories: '420',
+            region: 'Mediterranean/Andean',
+            image: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400&h=300&fit=crop',
+            ingredients: [
+                '1 cup cooked quinoa',
+                '¼ cup chickpeas',
+                '2 tbsp mixed nuts (walnuts, almonds)',
+                '2 tbsp tahini',
+                '1 tbsp olive oil',
+                '1 tbsp lemon juice',
+                'Mixed greens',
+                'Cherry tomatoes'
+            ],
+            instructions: [
+                'Mix cooked quinoa with chickpeas and nuts',
+                'Whisk tahini, olive oil, and lemon juice for dressing',
+                'Toss quinoa mixture with dressing',
+                'Serve over mixed greens with tomatoes'
+            ],
+            nutritionTips: 'Quinoa provides all essential amino acids. Tahini adds healthy fats and calcium.',
+            cancerBenefits: 'Plant-based complete protein supports tissue repair. High in fiber and antioxidants.'
+        },
+        {
+            id: 208,
             name: 'Lentil & Chicken Stew',
-            description: 'Hearty protein-rich stew combining red lentils and tender chicken',
-            tags: ['high-protein', 'high-calorie', 'south-asian', 'middle-eastern', 'comfort'],
-            prepTime: '30 min',
+            description: 'Protein-rich stew combining lean chicken with fiber-packed lentils',
+            tags: ['protein', 'comfort', 'high-calorie', 'warming'],
+            prepTime: '35 min',
             protein: '28g',
             calories: '420',
             region: 'South Asia / Middle East',
-            image: 'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=400&h=300&fit=crop',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '1/2 cup red lentils (masoor dal), rinsed',
                 '100g chicken breast or thigh, diced',
@@ -307,19 +463,19 @@ const recipeData = {
                 'Add lentils, tomato, and water; simmer 20–25 minutes until lentils are soft',
                 'Serve warm with whole wheat bread or rice'
             ],
-            nutritionTips: 'Complete protein from chicken combined with plant protein from lentils. Turmeric provides anti-inflammatory compounds.',
+            nutritionTips: 'Combines complete animal protein with plant protein and fiber. Turmeric provides anti-inflammatory benefits.',
             cancerBenefits: 'High protein content supports muscle maintenance during treatment. Easy to digest and very filling.'
         },
         {
-            id: 8,
+            id: 209,
             name: 'Peanut Butter Banana Overnight Oats',
-            description: 'No-cook breakfast packed with protein, healthy fats, and fiber',
-            tags: ['high-protein', 'high-calorie', 'american', 'no-cook', 'breakfast'],
-            prepTime: '5 min prep + overnight',
-            protein: '22g',
+            description: 'High-calorie breakfast with plant protein and healthy fats',
+            tags: ['protein', 'high-calorie', 'breakfast', 'make-ahead'],
+            prepTime: '5 min (overnight)',
+            protein: '16g',
             calories: '480',
             region: 'Americas',
-            image: 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&h=300&fit=crop',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '1/2 cup rolled oats',
                 '1 tbsp chia seeds',
@@ -333,19 +489,19 @@ const recipeData = {
                 'Stir well, cover, and refrigerate overnight',
                 'Drizzle with honey before eating'
             ],
-            nutritionTips: 'Peanut butter provides healthy fats and protein. Chia seeds add omega-3s and fiber.',
-            cancerBenefits: 'No cooking required when energy is low. High calorie density helps with weight maintenance.'
+            nutritionTips: 'Peanut butter provides plant protein and healthy fats. Chia seeds add omega-3s and fiber.',
+            cancerBenefits: 'High calorie density for weight maintenance. Easy to prepare when energy is low. Rich in protein for muscle support.'
         },
         {
-            id: 9,
+            id: 210,
             name: 'Salmon & Quinoa Bowl',
-            description: 'Complete protein powerhouse with omega-3 rich salmon and quinoa',
-            tags: ['high-protein', 'high-calorie', 'european', 'omega-3', 'bowl'],
+            description: 'Omega-3 rich salmon with complete protein quinoa and vegetables',
+            tags: ['protein', 'omega-3', 'anti-inflammatory', 'complete-meal'],
             prepTime: '20 min',
-            protein: '35g',
+            protein: '32g',
             calories: '520',
             region: 'Europe / Global',
-            image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&h=300&fit=crop',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '100g salmon fillet',
                 '1 cup cooked quinoa',
@@ -359,19 +515,19 @@ const recipeData = {
                 'Arrange quinoa, broccoli, and salmon in a bowl',
                 'Drizzle with olive oil and lemon juice, season with salt & pepper'
             ],
-            nutritionTips: 'Salmon provides complete protein and omega-3 fatty acids. Quinoa offers all essential amino acids.',
-            cancerBenefits: 'Anti-inflammatory omega-3s support immune function. Complete proteins aid in tissue repair and recovery.'
+            nutritionTips: 'Salmon provides high-quality protein and omega-3 fatty acids. Quinoa offers complete plant protein.',
+            cancerBenefits: 'Omega-3s may help reduce inflammation. High protein supports tissue repair and immune function.'
         },
         {
-            id: 10,
+            id: 211,
             name: 'Chickpea & Tahini Power Hummus',
-            description: 'Protein-rich, creamy hummus with sesame tahini for extra calories',
-            tags: ['high-protein', 'high-calorie', 'middle-eastern', 'no-cook', 'dip'],
+            description: 'Protein-rich Middle Eastern dip with complete amino acid profile',
+            tags: ['protein', 'plant-based', 'healthy-fats', 'versatile'],
             prepTime: '10 min',
-            protein: '18g',
-            calories: '320',
+            protein: '12g',
+            calories: '280',
             region: 'Middle East',
-            image: 'https://images.unsplash.com/photo-1571197113382-3a3d3b0f711a?w=400&h=300&fit=crop',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '1 cup cooked chickpeas',
                 '2 tbsp tahini (sesame paste)',
@@ -385,19 +541,19 @@ const recipeData = {
                 'Drizzle in olive oil while blending to get a creamy texture',
                 'Serve with whole wheat pita bread or veggie sticks'
             ],
-            nutritionTips: 'Chickpeas provide plant protein and fiber. Tahini adds healthy fats and calcium.',
-            cancerBenefits: 'Easy to eat when appetite is poor. High in protein for muscle maintenance and calories for energy.'
+            nutritionTips: 'Chickpeas and tahini together provide complete protein. Rich in fiber, folate, and healthy fats.',
+            cancerBenefits: 'Plant-based protein supports muscle maintenance. Easy to eat and digest. High in folate for cell repair.'
         },
         {
-            id: 11,
+            id: 212,
             name: 'Greek Yogurt Parfait with Nuts & Berries',
-            description: 'Layered protein-rich parfait with antioxidant berries and healthy nuts',
-            tags: ['high-protein', 'high-calorie', 'european', 'north-american', 'breakfast'],
+            description: 'Probiotic-rich parfait with protein, antioxidants, and healthy fats',
+            tags: ['protein', 'probiotics', 'antioxidants', 'quick'],
             prepTime: '5 min',
             protein: '20g',
-            calories: '380',
+            calories: '350',
             region: 'Europe / North America',
-            image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=300&fit=crop',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '1 cup plain Greek yogurt',
                 '1/4 cup mixed nuts (walnuts, almonds, cashews)',
@@ -409,21 +565,76 @@ const recipeData = {
                 'Drizzle with honey for sweetness',
                 'Serve chilled'
             ],
-            nutritionTips: 'Greek yogurt is rich in protein and probiotics. Mixed nuts provide healthy fats and additional protein.',
-            cancerBenefits: 'Probiotics support digestive health during treatment. Easy to customize based on taste preferences.'
+            nutritionTips: 'Greek yogurt provides probiotics and high-quality protein. Nuts add healthy fats and vitamin E.',
+            cancerBenefits: 'Probiotics support gut health during treatment. High protein helps maintain muscle mass. Antioxidants from berries support immune function.'
         }
     ],
+    
     'texture-modified': [
         {
-            id: 12,
-            name: 'Creamy Carrot & Lentil Soup',
-            description: 'Smooth, nutrient-rich soup perfect for sensitive mouths and swallowing difficulties',
-            tags: ['pureed', 'smooth', 'european', 'south-asian', 'comfort'],
-            prepTime: '25 min',
-            protein: '12g',
-            calories: '180',
-            region: 'Europe / South Asia',
+            id: 9,
+            name: 'Silky Butternut Squash Soup',
+            description: 'Smooth, nutritious soup perfect for swallowing difficulties',
+            tags: ['smooth', 'pureed', 'vitamins', 'comfort'],
+            prepTime: '35 min',
+            protein: '6g',
+            calories: '165',
+            region: 'Global',
             image: 'https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?w=400&h=300&fit=crop',
+            ingredients: [
+                '2 cups roasted butternut squash',
+                '2 cups low-sodium vegetable broth',
+                '¼ cup coconut milk',
+                '1 tsp fresh ginger, grated',
+                '⅛ tsp nutmeg',
+                'Salt and pepper to taste'
+            ],
+            instructions: [
+                'Roast cubed squash at 400°F for 25 minutes',
+                'Blend roasted squash with broth until smooth',
+                'Heat gently, stir in coconut milk and seasonings',
+                'Strain if extra smooth texture needed'
+            ],
+            nutritionTips: 'High in vitamin A and beta-carotene. Coconut milk adds healthy fats.',
+            cancerBenefits: 'Easy to swallow for mouth sores. Provides essential nutrients in smooth form.'
+        },
+        {
+            id: 10,
+            name: 'Protein-Enriched Mashed Sweet Potato',
+            description: 'Creamy mashed sweet potato fortified with protein powder',
+            tags: ['smooth', 'protein', 'beta-carotene', 'comfort'],
+            prepTime: '25 min',
+            protein: '15g',
+            calories: '280',
+            region: 'Global',
+            image: 'https://images.unsplash.com/photo-1447433589675-4aaa569f3e05?w=400&h=300&fit=crop',
+            ingredients: [
+                '2 medium sweet potatoes',
+                '1 scoop unflavored protein powder',
+                '2 tbsp butter or ghee',
+                '¼ cup warm milk',
+                '1 tsp cinnamon',
+                'Pinch of salt'
+            ],
+            instructions: [
+                'Bake sweet potatoes until very soft',
+                'Scoop out flesh and mash until smooth',
+                'Mix protein powder with warm milk',
+                'Combine all ingredients, adjust consistency as needed'
+            ],
+            nutritionTips: 'Sweet potatoes are rich in vitamin A. Added protein supports healing.',
+            cancerBenefits: 'Smooth texture for swallowing difficulties. High nutritional density.'
+        },
+        {
+            id: 213,
+            name: 'Creamy Carrot & Lentil Soup',
+            description: 'Smooth, protein-rich soup with beta-carotene and plant protein',
+            tags: ['smooth', 'pureed', 'protein', 'beta-carotene'],
+            prepTime: '25 min',
+            protein: '10g',
+            calories: '200',
+            region: 'Europe / South Asia',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '2 medium carrots, peeled & diced',
                 '1/2 cup red lentils',
@@ -437,19 +648,19 @@ const recipeData = {
                 'Add carrots, lentils, and broth; simmer 20 minutes',
                 'Blend until smooth; serve warm'
             ],
-            nutritionTips: 'Carrots provide beta-carotene and fiber. Red lentils offer plant-based protein and folate.',
-            cancerBenefits: 'Completely smooth texture ideal for mouth sores or swallowing difficulties. Nutrient-dense and easy to digest.'
+            nutritionTips: 'Carrots provide beta-carotene for immune support. Red lentils offer easily digestible plant protein.',
+            cancerBenefits: 'Completely smooth texture ideal for swallowing difficulties. High in immune-supporting nutrients.'
         },
         {
-            id: 13,
+            id: 214,
             name: 'Mashed Avocado & Cottage Cheese Bowl',
-            description: 'Creamy, protein-rich bowl that requires no chewing',
-            tags: ['smooth', 'no-chew', 'north-american', 'latin-american', 'protein-rich'],
+            description: 'Creamy, protein-rich bowl with healthy fats and probiotics',
+            tags: ['smooth', 'protein', 'healthy-fats', 'probiotics'],
             prepTime: '5 min',
-            protein: '16g',
+            protein: '14g',
             calories: '280',
             region: 'North America / Latin America',
-            image: 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=400&h=300&fit=crop',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '1 ripe avocado',
                 '1/2 cup cottage cheese',
@@ -461,19 +672,19 @@ const recipeData = {
                 'Mix with cottage cheese and season with salt',
                 'Drizzle with olive oil before serving'
             ],
-            nutritionTips: 'Avocado provides healthy monounsaturated fats. Cottage cheese adds complete protein and calcium.',
-            cancerBenefits: 'Soft, creamy texture perfect for mouth sores. High protein content supports healing and muscle maintenance.'
+            nutritionTips: 'Avocados provide monounsaturated fats and potassium. Cottage cheese adds complete protein and probiotics.',
+            cancerBenefits: 'Soft, creamy texture perfect for mouth sores. High in calories and protein for weight maintenance.'
         },
         {
-            id: 14,
+            id: 215,
             name: 'Silken Tofu & Banana Smoothie',
-            description: 'Ultra-smooth, protein-rich smoothie with silky texture',
-            tags: ['smooth', 'liquid', 'east-asian', 'global', 'protein-rich'],
+            description: 'Ultra-smooth protein smoothie with plant-based nutrition',
+            tags: ['smooth', 'protein', 'plant-based', 'easy-digest'],
             prepTime: '5 min',
             protein: '12g',
             calories: '220',
             region: 'East Asia / Global',
-            image: 'https://images.unsplash.com/photo-1610970881699-44a5587cabec?w=400&h=300&fit=crop',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '1 cup silken tofu',
                 '1 banana',
@@ -484,19 +695,19 @@ const recipeData = {
                 'Blend all ingredients until silky smooth',
                 'Serve chilled'
             ],
-            nutritionTips: 'Silken tofu provides complete protein and isoflavones. Banana adds potassium and natural sweetness.',
-            cancerBenefits: 'Completely liquid nutrition perfect for severe swallowing difficulties. Cold temperature may help with mouth sores.'
+            nutritionTips: 'Silken tofu provides complete plant protein with smooth texture. Bananas add potassium and natural sweetness.',
+            cancerBenefits: 'Completely smooth for swallowing difficulties. Plant-based protein supports healing without digestive strain.'
         },
         {
-            id: 15,
+            id: 216,
             name: 'Pumpkin & Potato Mash',
-            description: 'Smooth, comforting mash rich in vitamins and easy to swallow',
-            tags: ['smooth', 'mashed', 'australian', 'global', 'comfort-food'],
-            prepTime: '20 min',
+            description: 'Smooth, comforting mash rich in beta-carotene and potassium',
+            tags: ['smooth', 'comfort', 'beta-carotene', 'warming'],
+            prepTime: '25 min',
             protein: '4g',
             calories: '160',
             region: 'Australia / Global',
-            image: 'https://images.unsplash.com/photo-1509358271058-acd22cc93898?w=400&h=300&fit=crop',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '1 cup pumpkin, peeled & cubed',
                 '1 medium potato, peeled & cubed',
@@ -509,19 +720,19 @@ const recipeData = {
                 'Mash with butter, nutmeg, and salt until smooth',
                 'Serve warm'
             ],
-            nutritionTips: 'Pumpkin is rich in vitamin A and beta-carotene. Potatoes provide potassium and complex carbohydrates.',
-            cancerBenefits: 'Smooth, warm texture is soothing for sensitive mouths. Beta-carotene supports immune function.'
+            nutritionTips: 'Pumpkin is rich in beta-carotene and vitamin A. Potatoes provide potassium and energy.',
+            cancerBenefits: 'Completely smooth texture for oral difficulties. Rich in immune-supporting vitamins and minerals.'
         },
         {
-            id: 16,
+            id: 217,
             name: 'Oatmeal with Stewed Apples',
-            description: 'Soft, creamy breakfast with tender fruit pieces',
-            tags: ['soft-texture', 'breakfast', 'european', 'north-american', 'fiber-rich'],
+            description: 'Soft, comforting oatmeal with naturally sweetened fruit',
+            tags: ['smooth', 'comfort', 'fiber', 'warming'],
             prepTime: '15 min',
             protein: '8g',
             calories: '240',
             region: 'Europe / North America',
-            image: 'https://images.unsplash.com/photo-1517686469429-8bdb88b9f907?w=400&h=300&fit=crop',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '1/2 cup rolled oats',
                 '1 cup milk (or plant-based milk)',
@@ -534,21 +745,80 @@ const recipeData = {
                 'In a separate pan, stew apples with cinnamon until soft',
                 'Mix apples into oatmeal and drizzle with honey'
             ],
-            nutritionTips: 'Oats provide soluble fiber and protein. Apples add natural sweetness and additional fiber.',
-            cancerBenefits: 'Soft, easy-to-swallow texture. Soluble fiber supports digestive health during treatment.'
+            nutritionTips: 'Oats provide soluble fiber and sustained energy. Stewed apples are easy to digest and naturally sweet.',
+            cancerBenefits: 'Soft texture suitable for oral difficulties. Fiber supports digestive health during treatment.'
         }
     ],
+    
     'therapeutic-medical': [
         {
-            id: 17,
+            id: 11,
+            name: 'Anti-Inflammatory Golden Milk',
+            description: 'Turmeric-based drink with proven anti-inflammatory benefits',
+            tags: ['anti-inflammatory', 'turmeric', 'therapeutic', 'warming'],
+            prepTime: '8 min',
+            protein: '8g',
+            calories: '150',
+            region: 'India/Global',
+            image: 'https://images.unsplash.com/photo-1571934811356-5cc061b6821f?w=400&h=300&fit=crop',
+            ingredients: [
+                '1 cup whole milk or fortified plant milk',
+                '1 tsp turmeric powder',
+                '½ tsp ginger powder',
+                '¼ tsp cinnamon',
+                'Pinch of black pepper',
+                '1 tsp honey or maple syrup',
+                '1 tsp coconut oil'
+            ],
+            instructions: [
+                'Gently heat milk in a saucepan',
+                'Whisk in turmeric, ginger, cinnamon, and pepper',
+                'Simmer for 5 minutes, stirring constantly',
+                'Add honey and coconut oil, whisk until smooth'
+            ],
+            nutritionTips: 'Curcumin absorption enhanced by black pepper and fat. Anti-inflammatory properties.',
+            cancerBenefits: 'May help reduce treatment-related inflammation. Supports immune function.'
+        },
+        {
+            id: 12,
+            name: 'Omega-3 Rich Salmon Bowl',
+            description: 'Therapeutic bowl with wild salmon and anti-inflammatory vegetables',
+            tags: ['omega-3', 'anti-inflammatory', 'protein', 'therapeutic'],
+            prepTime: '25 min',
+            protein: '35g',
+            calories: '485',
+            region: 'Nordic/Global',
+            image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=300&fit=crop',
+            ingredients: [
+                '5 oz wild salmon fillet',
+                '1 cup steamed broccoli',
+                '½ cup cooked brown rice',
+                '¼ avocado, sliced',
+                '1 tbsp olive oil',
+                '1 tsp lemon juice',
+                '1 tsp fresh dill',
+                'Sea salt and pepper'
+            ],
+            instructions: [
+                'Season salmon with salt, pepper, and dill',
+                'Bake at 400°F for 15 minutes',
+                'Steam broccoli until tender',
+                'Arrange salmon over rice with vegetables',
+                'Drizzle with olive oil and lemon juice'
+            ],
+            nutritionTips: 'Wild salmon provides high-quality omega-3 fatty acids. Complete protein source.',
+            cancerBenefits: 'Omega-3s may help reduce inflammation. High-quality protein supports healing.'
+        },
+        {
+            id: 218,
             name: 'Omega-3 Rich Salmon & Spinach Soup',
-            description: 'Anti-inflammatory, immune support soup with omega-3 rich salmon',
-            tags: ['therapeutic', 'anti-inflammatory', 'immune-support', 'european', 'north-american'],
+            description: 'Anti-inflammatory soup with salmon and iron-rich spinach for immune support',
+            tags: ['anti-inflammatory', 'omega-3', 'immune-support', 'protein'],
             prepTime: '20 min',
-            protein: '22g',
-            calories: '280',
+            protein: '25g',
+            calories: '320',
             region: 'Europe / North America',
-            image: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&h=300&fit=crop',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '100g salmon fillet, diced',
                 '1 cup baby spinach leaves',
@@ -564,19 +834,19 @@ const recipeData = {
                 'Stir in spinach; cook 1–2 minutes until wilted',
                 'Serve warm'
             ],
-            nutritionTips: 'Salmon provides omega-3 fatty acids EPA and DHA. Spinach offers folate and iron. Turmeric contains curcumin with anti-inflammatory properties.',
-            cancerBenefits: 'Anti-inflammatory omega-3s support immune function during treatment. Turmeric may help reduce inflammation. Easy to digest liquid nutrition.'
+            nutritionTips: 'Salmon provides omega-3 fatty acids that reduce inflammation. Spinach offers iron, folate, and vitamin K.',
+            cancerBenefits: 'Anti-inflammatory omega-3s support healing. Iron from spinach helps prevent treatment-related anemia.'
         },
         {
-            id: 18,
+            id: 219,
             name: 'Turmeric & Ginger Rice Congee',
-            description: 'Anti-nausea, digestive soothing congee for gentle nutrition',
-            tags: ['therapeutic', 'anti-nausea', 'digestive-soothing', 'south-asian', 'east-asian'],
+            description: 'Soothing anti-nausea congee with therapeutic spices for digestive comfort',
+            tags: ['anti-nausea', 'digestive-soothing', 'turmeric', 'therapeutic'],
             prepTime: '60 min',
-            protein: '8g',
+            protein: '6g',
             calories: '180',
             region: 'South Asia / East Asia',
-            image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&h=300&fit=crop',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '1/2 cup jasmine or basmati rice',
                 '4 cups water or chicken broth',
@@ -590,19 +860,19 @@ const recipeData = {
                 'Reduce heat and simmer 45–60 minutes until rice is very soft and porridge-like',
                 'Serve warm; can be pureed for extra softness'
             ],
-            nutritionTips: 'Ginger contains gingerol compounds that help reduce nausea. Turmeric provides anti-inflammatory curcumin. Rice offers easily digestible carbohydrates.',
-            cancerBenefits: 'Ginger clinically proven to reduce chemotherapy-induced nausea. Soft, warm texture is gentle on digestive system. Easy to consume when appetite is poor.'
+            nutritionTips: 'Ginger contains gingerol compounds that combat nausea. Turmeric provides anti-inflammatory curcumin.',
+            cancerBenefits: 'Highly effective for chemotherapy-induced nausea. Easy to digest and provides sustained energy.'
         },
         {
-            id: 19,
+            id: 220,
             name: 'Iron & Folate Boost Lentil Spinach Curry',
-            description: 'Anemia support curry rich in iron and folate',
-            tags: ['therapeutic', 'anemia-support', 'iron-rich', 'south-asian', 'middle-eastern'],
-            prepTime: '35 min',
+            description: 'Therapeutic curry designed to combat treatment-related anemia',
+            tags: ['anemia-support', 'iron-rich', 'folate', 'therapeutic'],
+            prepTime: '30 min',
             protein: '16g',
-            calories: '220',
+            calories: '280',
             region: 'South Asia / Middle East',
-            image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&h=300&fit=crop',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '1/2 cup red or yellow lentils',
                 '2 cups baby spinach',
@@ -618,19 +888,19 @@ const recipeData = {
                 'Stir in lentils and water; simmer 20–25 minutes',
                 'Add spinach, cook until wilted; mash lightly before serving'
             ],
-            nutritionTips: 'Lentils provide iron and folate. Spinach offers additional iron, folate, and vitamin C which enhances iron absorption.',
-            cancerBenefits: 'High in iron and folate to combat treatment-related anemia. Protein supports muscle maintenance. Easy to digest when mashed.'
+            nutritionTips: 'Lentils provide iron and folate essential for blood production. Spinach enhances iron absorption when combined with vitamin C.',
+            cancerBenefits: 'Specifically designed to combat chemotherapy-induced anemia. High in blood-building nutrients.'
         },
         {
-            id: 20,
+            id: 221,
             name: 'Calcium-Boosted Almond & Berry Smoothie',
             description: 'Bone health support smoothie for post-treatment recovery',
-            tags: ['therapeutic', 'bone-health', 'post-treatment', 'global', 'smoothie'],
+            tags: ['bone-health', 'calcium-rich', 'recovery', 'antioxidants'],
             prepTime: '5 min',
             protein: '15g',
             calories: '280',
             region: 'Global',
-            image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '1 cup fortified almond milk',
                 '1/2 cup Greek yogurt',
@@ -642,19 +912,19 @@ const recipeData = {
                 'Blend all ingredients until smooth',
                 'Serve chilled'
             ],
-            nutritionTips: 'Fortified almond milk and Greek yogurt provide calcium for bone health. Berries offer antioxidants and vitamin C.',
-            cancerBenefits: 'High calcium content supports bone health during and after treatment. Antioxidants from berries may help with recovery. Easy liquid nutrition.'
+            nutritionTips: 'Fortified almond milk and Greek yogurt provide calcium for bone health. Berries offer antioxidants for recovery.',
+            cancerBenefits: 'Supports bone health during and after treatment. Antioxidants aid in cellular repair and recovery.'
         },
         {
-            id: 21,
+            id: 222,
             name: 'Low-Fiber White Fish Stew',
-            description: 'Gentle stew for bowel rest during GI irritation',
-            tags: ['therapeutic', 'low-fiber', 'gi-friendly', 'mediterranean', 'gentle'],
-            prepTime: '25 min',
-            protein: '20g',
+            description: 'Gentle stew for bowel rest during gastrointestinal irritation',
+            tags: ['low-fiber', 'bowel-rest', 'gi-friendly', 'gentle'],
+            prepTime: '18 min',
+            protein: '22g',
             calories: '200',
             region: 'Mediterranean',
-            image: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&h=300&fit=crop',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '100g white fish (cod, tilapia, haddock)',
                 '1 carrot, finely diced',
@@ -668,19 +938,19 @@ const recipeData = {
                 'Add broth and fish; simmer until fish is flaky and vegetables are soft (10–12 minutes)',
                 'Mash lightly for easier digestion'
             ],
-            nutritionTips: 'White fish provides lean protein that is easy to digest. Low-fiber vegetables reduce GI irritation.',
-            cancerBenefits: 'Low-fiber content is gentle on irritated digestive system. High-quality protein supports healing without digestive stress.'
+            nutritionTips: 'White fish provides easily digestible protein. Low-fiber vegetables reduce digestive strain.',
+            cancerBenefits: 'Designed for patients with gastrointestinal side effects. Provides nutrition while allowing bowel rest.'
         },
         {
-            id: 22,
+            id: 223,
             name: 'Papaya & Pineapple Digestive Bowl',
-            description: 'Enzyme support bowl for improved digestion',
-            tags: ['therapeutic', 'digestive-enzymes', 'tropical', 'global', 'enzyme-support'],
+            description: 'Enzyme-rich fruit bowl to support digestion and nutrient absorption',
+            tags: ['digestive-enzymes', 'tropical', 'enzyme-support', 'probiotics'],
             prepTime: '5 min',
-            protein: '6g',
-            calories: '150',
+            protein: '8g',
+            calories: '160',
             region: 'Tropical / Global',
-            image: 'https://images.unsplash.com/photo-1505394033641-40c6ad1178d7?w=400&h=300&fit=crop',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '1/2 cup papaya, diced',
                 '1/2 cup pineapple, diced',
@@ -691,19 +961,19 @@ const recipeData = {
                 'Mix papaya, pineapple, and yogurt in a bowl',
                 'Sprinkle with chia seeds before serving'
             ],
-            nutritionTips: 'Papaya contains papain enzyme, pineapple contains bromelain - both aid protein digestion. Chia seeds provide omega-3s.',
-            cancerBenefits: 'Natural digestive enzymes help break down proteins when digestion is compromised. Gentle on stomach and supports nutrient absorption.'
+            nutritionTips: 'Papaya contains papain enzyme, pineapple contains bromelain - both aid protein digestion. Probiotics support gut health.',
+            cancerBenefits: 'Natural digestive enzymes help with treatment-related digestive issues. Supports nutrient absorption and gut health.'
         },
         {
-            id: 23,
+            id: 224,
             name: 'Zinc-Rich Chickpea & Pumpkin Soup',
-            description: 'Immune support and wound healing soup rich in zinc',
-            tags: ['therapeutic', 'immune-support', 'wound-healing', 'middle-eastern', 'global'],
-            prepTime: '30 min',
+            description: 'Immune-boosting soup with zinc for wound healing and immune support',
+            tags: ['immune-support', 'zinc-rich', 'wound-healing', 'therapeutic'],
+            prepTime: '25 min',
             protein: '12g',
-            calories: '190',
+            calories: '220',
             region: 'Middle East / Global',
-            image: 'https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?w=400&h=300&fit=crop',
+            image: 'file:///c:/Users/hkumarm/Pictures/Screenshots/Screenshot%202025-08-16%20125956.png',
             ingredients: [
                 '1 cup pumpkin, cubed',
                 '1/2 cup cooked chickpeas',
@@ -717,8 +987,2476 @@ const recipeData = {
                 'Add pumpkin, chickpeas, broth; simmer until pumpkin is tender',
                 'Blend until smooth; season with cinnamon'
             ],
-            nutritionTips: 'Chickpeas are rich in zinc, essential for immune function. Pumpkin provides beta-carotene and vitamin A.',
-            cancerBenefits: 'High zinc content supports immune system and wound healing. Beta-carotene supports tissue repair. Smooth texture is easy to digest.'
+            nutritionTips: 'Chickpeas are high in zinc, essential for immune function and wound healing. Pumpkin provides beta-carotene.',
+            cancerBenefits: 'Zinc supports immune system recovery and wound healing post-surgery. Beta-carotene aids in cellular repair.'
+        }
+    ]
+};
+
+// Function to count recipes in each category
+function getRecipeCounts(recipeData) {
+    const counts = {};
+    let total = 0;
+    
+    for (const category in recipeData) {
+        counts[category] = recipeData[category].length;
+        total += recipeData[category].length;
+    }
+    
+    counts.all = total;
+    return counts;
+}
+
+// Enhanced CAM Recipe Data Structure
+const camRecipeData = {
+    'ayurveda': [
+        {
+            id: 'ayur_001',
+            name: 'Golden Turmeric Khichdi',
+            description: 'Traditional Ayurvedic healing porridge with mung dal and basmati rice',
+            tradition: 'Ayurveda',
+            region: 'South Asia',
+            origin: 'Ancient India (3000+ years)',
+            purpose: 'Digestive healing, inflammation reduction, easy assimilation during treatment',
+            prepTime: '30 min',
+            servings: '4',
+            image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&h=300&fit=crop',
+            ingredients: [
+                'Â½ cup split yellow mung dal',
+                'Â½ cup basmati rice',
+                '1 tsp turmeric powder',
+                '1 tsp ghee (clarified butter)',
+                '1 tsp cumin seeds',
+                '1 inch fresh ginger, minced',
+                '4 cups water',
+                'Rock salt to taste'
+            ],
+            instructions: [
+                'Wash and soak mung dal and rice for 20 minutes',
+                'Heat ghee, add cumin seeds and ginger',
+                'Add drained dal and rice, stir for 2 minutes',
+                'Add water, turmeric, and salt',
+                'Simmer on low heat for 25-30 minutes until soft',
+                'Serve warm with ghee drizzle'
+            ],
+            benefits: [
+                'Easy to digest during chemo',
+                'Anti-inflammatory properties',
+                'Balances all three doshas',
+                'Provides complete protein'
+            ],
+            researchLinks: [
+                {
+                    title: 'Turmeric in Cancer Care',
+                    summary: 'Curcumin shows anti-inflammatory and antioxidant properties beneficial for cancer patients',
+                    source: 'Journal of Clinical Medicine, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '245',
+                protein: '12g',
+                carbs: '42g',
+                fiber: '6g',
+                fat: '3g'
+            }
+        },
+        {
+            id: 'ayur_002',
+            name: 'Tridoshic Vegetable Soup',
+            description: 'Balanced soup that harmonizes Vata, Pitta, and Kapha doshas',
+            tradition: 'Ayurveda',
+            region: 'South Asia',
+            origin: 'Ancient India (3000+ years)',
+            purpose: 'Constitutional balance, immune support, gentle nourishment',
+            prepTime: '25 min',
+            servings: '4',
+            image: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&h=300&fit=crop',
+            ingredients: [
+                '1 cup mixed seasonal vegetables (carrots, zucchini, green beans)',
+                '1 tsp ghee',
+                'Â½ tsp ground coriander',
+                'Â½ tsp ground fennel',
+                'Â¼ tsp ground turmeric',
+                '3 cups vegetable broth',
+                'Fresh cilantro for garnish',
+                'Lime juice to taste'
+            ],
+            instructions: [
+                'Heat ghee in a pot, add spices and sautÃ© for 30 seconds',
+                'Add chopped vegetables and cook for 5 minutes',
+                'Pour in broth and simmer for 15 minutes',
+                'Blend partially for desired consistency',
+                'Garnish with cilantro and lime juice'
+            ],
+            benefits: [
+                'Balances all constitutional types',
+                'Easy digestion',
+                'Supports agni (digestive fire)',
+                'Hydrating and nourishing'
+            ],
+            researchLinks: [
+                {
+                    title: 'Ayurvedic Nutrition in Oncology',
+                    summary: 'Traditional Ayurvedic principles show promise in supportive cancer care',
+                    source: 'Integrative Cancer Therapies, 2020'
+                }
+            ],
+            nutritionFacts: {
+                calories: '125',
+                protein: '4g',
+                carbs: '18g',
+                fiber: '5g',
+                fat: '4g'
+            }
+        },
+        {
+            id: 'ayur_003',
+            name: 'Abhayarista Digestive Elixir',
+            description: 'Traditional fermented herbal tonic for digestive health and appetite stimulation',
+            tradition: 'Ayurveda',
+            region: 'South Asia',
+            origin: 'Ancient India (3000+ years)',
+            purpose: 'Digestive strength, appetite enhancement, toxin elimination',
+            prepTime: '15 min',
+            servings: '2',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '2 cups water',
+                '1 tsp dried haritaki powder',
+                '1/2 tsp dried ginger powder',
+                '1/4 tsp long pepper powder',
+                '1 tbsp raw honey',
+                '1/2 tsp ghee',
+                'Pinch of rock salt'
+            ],
+            instructions: [
+                'Boil water and let it cool to lukewarm',
+                'Mix haritaki, ginger, and long pepper powders',
+                'Add spice mixture to warm water',
+                'Stir in honey and ghee',
+                'Add rock salt and mix well',
+                'Consume 30 minutes before meals'
+            ],
+            benefits: [
+                'Enhances digestive fire (agni)',
+                'Stimulates appetite naturally',
+                'Supports liver detoxification',
+                'Balances Vata and Kapha doshas'
+            ],
+            researchLinks: [
+                {
+                    title: 'Ayurvedic Digestive Formulations',
+                    summary: 'Traditional Ayurvedic digestive tonics show promise in improving appetite and digestion',
+                    source: 'Journal of Ayurveda Research, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '35',
+                protein: '0g',
+                carbs: '9g',
+                fiber: '1g',
+                fat: '2g'
+            }
+        },
+        {
+            id: 'ayur_004',
+            name: 'Spiced Mung Bean Pancakes (Pesalu)',
+            description: 'Protein-rich savory pancakes made with fermented mung bean batter',
+            tradition: 'Ayurveda',
+            region: 'South Asia',
+            origin: 'Ancient India (3000+ years)',
+            purpose: 'Easy protein absorption, digestive comfort, sustained energy',
+            prepTime: '20 min (plus 4 hours soaking)',
+            servings: '4',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '1 cup whole green mung beans',
+                '1/4 cup fresh ginger',
+                '2 green chilies',
+                '1 tsp cumin seeds',
+                '1/2 tsp asafoetida',
+                '1 tsp rock salt',
+                '2 tbsp coconut oil',
+                'Fresh curry leaves'
+            ],
+            instructions: [
+                'Soak mung beans for 4 hours, then drain',
+                'Grind beans with ginger and chilies to coarse paste',
+                'Add cumin, asafoetida, and salt to batter',
+                'Heat oil in pan, add curry leaves',
+                'Pour batter to form small pancakes',
+                'Cook until golden on both sides'
+            ],
+            benefits: [
+                'High in easily digestible protein',
+                'Supports muscle maintenance',
+                'Gentle on sensitive stomachs',
+                'Provides sustained energy'
+            ],
+            researchLinks: [
+                {
+                    title: 'Mung Bean Nutrition in Clinical Care',
+                    summary: 'Mung beans provide complete protein and are easily digestible for patients',
+                    source: 'Clinical Nutrition Research, 2020'
+                }
+            ],
+            nutritionFacts: {
+                calories: '195',
+                protein: '14g',
+                carbs: '28g',
+                fiber: '8g',
+                fat: '6g'
+            }
+        },
+        {
+            id: 'ayur_005',
+            name: 'Ashwagandha Moon Milk',
+            description: 'Calming bedtime drink with adaptogenic herbs for stress relief and sleep',
+            tradition: 'Ayurveda',
+            region: 'South Asia',
+            origin: 'Ancient India (3000+ years)',
+            purpose: 'Stress reduction, sleep enhancement, nervous system support',
+            prepTime: '10 min',
+            servings: '1',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '1 cup warm almond milk',
+                '1/2 tsp ashwagandha powder',
+                '1/4 tsp turmeric powder',
+                'Pinch of cardamom powder',
+                'Pinch of nutmeg',
+                '1 tsp ghee',
+                '1 tsp raw honey',
+                'Few strands of saffron'
+            ],
+            instructions: [
+                'Warm almond milk gently in a saucepan',
+                'Whisk in ashwagandha and turmeric',
+                'Add cardamom, nutmeg, and saffron',
+                'Stir in ghee until well blended',
+                'Remove from heat and add honey',
+                'Drink warm 30 minutes before bedtime'
+            ],
+            benefits: [
+                'Reduces stress and anxiety',
+                'Promotes restful sleep',
+                'Supports adrenal function',
+                'Enhances immune resilience'
+            ],
+            researchLinks: [
+                {
+                    title: 'Ashwagandha in Cancer Care',
+                    summary: 'Withania somnifera shows stress-reducing and immune-supporting properties',
+                    source: 'Integrative Medicine Research, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '145',
+                protein: '6g',
+                carbs: '12g',
+                fiber: '2g',
+                fat: '9g'
+            }
+        },
+        {
+            id: 'ayur_006',
+            name: 'Triphala Detox Water',
+            description: 'Traditional three-fruit formula for gentle detoxification and digestive balance',
+            tradition: 'Ayurveda',
+            region: 'South Asia',
+            origin: 'Ancient India (3000+ years)',
+            purpose: 'Gentle detoxification, digestive regulation, antioxidant support',
+            prepTime: '5 min (plus overnight steeping)',
+            servings: '1',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '1/2 tsp triphala powder',
+                '1 cup lukewarm water',
+                '1/4 tsp raw honey (optional)',
+                '1 drop lime juice',
+                'Pinch of rock salt'
+            ],
+            instructions: [
+                'Mix triphala powder with lukewarm water',
+                'Let steep overnight at room temperature',
+                'Strain in the morning if desired',
+                'Add honey and lime juice',
+                'Add pinch of salt and stir',
+                'Drink on empty stomach'
+            ],
+            benefits: [
+                'Supports natural detoxification',
+                'Regulates digestive function',
+                'Rich in vitamin C and antioxidants',
+                'Balances all three doshas'
+            ],
+            researchLinks: [
+                {
+                    title: 'Triphala in Digestive Health',
+                    summary: 'Triphala shows beneficial effects on digestive health and antioxidant status',
+                    source: 'Journal of Alternative Medicine, 2020'
+                }
+            ],
+            nutritionFacts: {
+                calories: '10',
+                protein: '0g',
+                carbs: '3g',
+                fiber: '1g',
+                fat: '0g'
+            }
+        },
+        {
+            id: 'ayur_007',
+            name: 'Ojas-Building Date and Nut Balls',
+            description: 'Energy-dense sweet treats made with dates, nuts, and rejuvenative spices',
+            tradition: 'Ayurveda',
+            region: 'South Asia',
+            origin: 'Ancient India (3000+ years)',
+            purpose: 'Vital energy (ojas) building, strength restoration, immune support',
+            prepTime: '15 min',
+            servings: '8',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '1 cup pitted Medjool dates',
+                '1/2 cup almonds, soaked',
+                '1/4 cup cashews',
+                '1 tbsp ghee',
+                '1/2 tsp cardamom powder',
+                '1/4 tsp saffron threads',
+                '2 tbsp coconut flakes',
+                '1 tbsp sesame seeds'
+            ],
+            instructions: [
+                'Soak almonds in warm water for 2 hours',
+                'Remove almond skins and roughly chop',
+                'Pit dates and mash into paste',
+                'Mix dates with nuts, ghee, and spices',
+                'Form mixture into small balls',
+                'Roll in coconut flakes and sesame seeds',
+                'Chill for 30 minutes before serving'
+            ],
+            benefits: [
+                'Builds vital energy and strength',
+                'Supports immune function',
+                'Provides healthy fats and proteins',
+                'Natural energy boost'
+            ],
+            researchLinks: [
+                {
+                    title: 'Nutrient-Dense Foods in Recovery',
+                    summary: 'Date and nut combinations provide concentrated nutrition for healing',
+                    source: 'Nutrition in Clinical Practice, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '185',
+                protein: '5g',
+                carbs: '22g',
+                fiber: '4g',
+                fat: '9g'
+            }
+        },
+        {
+            id: 'ayur_008',
+            name: 'Brahmi Ghee Infusion',
+            description: 'Memory-enhancing medicated ghee with Brahmi (Bacopa monnieri) for cognitive support',
+            tradition: 'Ayurveda',
+            region: 'South Asia',
+            origin: 'Ancient India (3000+ years)',
+            purpose: 'Cognitive support, memory enhancement, nervous system nourishment',
+            prepTime: '25 min',
+            servings: '10',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '1/2 cup organic ghee',
+                '2 tbsp dried Brahmi (Bacopa) leaves',
+                '1 tbsp fresh Brahmi juice (if available)',
+                '1/4 tsp turmeric powder',
+                '2 green cardamom pods',
+                '1 tsp raw honey'
+            ],
+            instructions: [
+                'Heat ghee gently in heavy-bottomed pan',
+                'Add dried Brahmi leaves and cardamom',
+                'Simmer on lowest heat for 15 minutes',
+                'Add turmeric and fresh Brahmi juice',
+                'Strain through fine cloth',
+                'Cool slightly and mix in honey',
+                'Store in glass jar, take 1 tsp daily'
+            ],
+            benefits: [
+                'Enhances memory and concentration',
+                'Supports nervous system health',
+                'Reduces mental fatigue',
+                'Provides brain-nourishing fats'
+            ],
+            researchLinks: [
+                {
+                    title: 'Bacopa monnieri in Cognitive Health',
+                    summary: 'Brahmi shows neuroprotective and memory-enhancing properties',
+                    source: 'Phytotherapy Research, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '45',
+                protein: '0g',
+                carbs: '1g',
+                fiber: '0g',
+                fat: '5g'
+            }
+        }
+    ],
+    'tcm': [
+        {
+            id: 'tcm_001',
+            name: 'Healing Congee with Goji Berries',
+            description: 'Traditional Chinese rice porridge for blood nourishment and energy restoration',
+            tradition: 'Traditional Chinese Medicine',
+            region: 'East Asia',
+            origin: 'Ancient China (2000+ years)',
+            purpose: 'Blood building, Qi restoration, digestive healing',
+            prepTime: '45 min',
+            servings: '4',
+            image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&h=300&fit=crop',
+            ingredients: [
+                'Â¾ cup jasmine rice',
+                '6 cups water',
+                '2 tbsp dried goji berries',
+                '4 dried red dates (jujube)',
+                '1 tbsp dried longan (optional)',
+                '1 tsp fresh ginger, sliced',
+                'Pinch of sea salt'
+            ],
+            instructions: [
+                'Rinse rice until water runs clear',
+                'Combine rice and water in slow cooker or heavy pot',
+                'Add goji berries, dates, longan, and ginger',
+                'Cook on low heat for 40-45 minutes, stirring occasionally',
+                'Season with salt and serve warm'
+            ],
+            benefits: [
+                'Tonifies blood and Qi',
+                'Strengthens spleen and stomach',
+                'Easy to digest',
+                'Supports immune function'
+            ],
+            researchLinks: [
+                {
+                    title: 'Goji Berries in Cancer Support',
+                    summary: 'Lycium barbarum shows immunomodulatory effects in cancer patients',
+                    source: 'Evidence-Based Complementary Medicine, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '180',
+                protein: '5g',
+                carbs: '38g',
+                fiber: '2g',
+                fat: '1g'
+            }
+        },
+        {
+            id: 'tcm_002',
+            name: 'Black Sesame Walnut Porridge',
+            description: 'Kidney-nourishing porridge with black sesame and walnuts for essence building',
+            tradition: 'Traditional Chinese Medicine',
+            region: 'East Asia',
+            origin: 'Ancient China (2000+ years)',
+            purpose: 'Kidney essence nourishment, bone marrow support, brain function',
+            prepTime: '35 min',
+            servings: '3',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '1/2 cup black glutinous rice',
+                '3 tbsp black sesame seeds',
+                '1/4 cup walnuts',
+                '4 cups water',
+                '2 tbsp rock sugar',
+                '1 tbsp Chinese black vinegar',
+                'Pinch of sea salt'
+            ],
+            instructions: [
+                'Soak black rice for 2 hours',
+                'Toast sesame seeds and walnuts lightly',
+                'Grind sesame seeds and walnuts to powder',
+                'Cook rice in water for 25 minutes until soft',
+                'Stir in ground nuts and seeds',
+                'Add rock sugar, vinegar, and salt',
+                'Simmer 5 more minutes and serve warm'
+            ],
+            benefits: [
+                'Nourishes kidney essence (jing)',
+                'Supports bone and marrow health',
+                'Enhances brain function',
+                'Provides healthy fats and minerals'
+            ],
+            researchLinks: [
+                {
+                    title: 'Black Sesame in Bone Health',
+                    summary: 'Sesamol and sesamin in black sesame support bone density and calcium absorption',
+                    source: 'Journal of Nutritional Biochemistry, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '285',
+                protein: '8g',
+                carbs: '35g',
+                fiber: '5g',
+                fat: '14g'
+            }
+        },
+        {
+            id: 'tcm_003',
+            name: 'Five-Element Harmony Soup',
+            description: 'Balanced soup representing all five elements with organ-supporting ingredients',
+            tradition: 'Traditional Chinese Medicine',
+            region: 'East Asia',
+            origin: 'Ancient China (2000+ years)',
+            purpose: 'Organ system harmony, elemental balance, comprehensive nourishment',
+            prepTime: '40 min',
+            servings: '4',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '1/2 cup mung beans (green - liver/wood)',
+                '1/4 cup adzuki beans (red - heart/fire)',
+                '1/4 cup yellow soybeans (earth - spleen)',
+                '2 tbsp pearl barley (white - lung/metal)',
+                '2 tbsp black beans (water - kidney)',
+                '6 cups vegetable broth',
+                '1 tbsp Chinese cooking wine',
+                'White pepper to taste'
+            ],
+            instructions: [
+                'Soak all beans overnight separately',
+                'Drain and rinse all beans',
+                'Combine beans with broth in large pot',
+                'Bring to boil, then simmer 35 minutes',
+                'Add cooking wine in final 5 minutes',
+                'Season with white pepper',
+                'Serve with balanced portions of each bean'
+            ],
+            benefits: [
+                'Harmonizes all organ systems',
+                'Provides complete amino acid profile',
+                'Supports elemental balance',
+                'Rich in fiber and minerals'
+            ],
+            researchLinks: [
+                {
+                    title: 'Traditional Chinese Nutrition Theory',
+                    summary: 'Five-element nutrition shows promise in supporting overall health balance',
+                    source: 'Integrative Medicine International, 2020'
+                }
+            ],
+            nutritionFacts: {
+                calories: '225',
+                protein: '16g',
+                carbs: '38g',
+                fiber: '12g',
+                fat: '2g'
+            }
+        },
+        {
+            id: 'tcm_004',
+            name: 'Cordyceps and Chicken Essence',
+            description: 'Concentrated broth with cordyceps mushrooms for lung and kidney support',
+            tradition: 'Traditional Chinese Medicine',
+            region: 'East Asia',
+            origin: 'Ancient China (2000+ years)',
+            purpose: 'Lung and kidney qi tonification, immune enhancement, energy restoration',
+            prepTime: '2 hours',
+            servings: '6',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '1 whole organic chicken (3 lbs)',
+                '10g dried cordyceps mushrooms',
+                '4 slices fresh ginger',
+                '2 green onions',
+                '8 cups filtered water',
+                '1 tbsp Shaoxing wine',
+                '1 tsp sea salt'
+            ],
+            instructions: [
+                'Blanch chicken in boiling water for 5 minutes',
+                'Rinse and place in slow cooker',
+                'Add cordyceps, ginger, and green onions',
+                'Cover with water and wine',
+                'Cook on low for 2 hours',
+                'Strain and season with salt',
+                'Serve warm in small cups'
+            ],
+            benefits: [
+                'Tonifies lung and kidney qi',
+                'Enhances immune function',
+                'Supports respiratory health',
+                'Provides easily absorbed protein'
+            ],
+            researchLinks: [
+                {
+                    title: 'Cordyceps in Cancer Supportive Care',
+                    summary: 'Cordyceps militaris shows immunomodulatory and anti-fatigue effects',
+                    source: 'Evidence-Based Complementary Medicine, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '165',
+                protein: '25g',
+                carbs: '2g',
+                fiber: '0g',
+                fat: '6g'
+            }
+        },
+        {
+            id: 'tcm_005',
+            name: 'Chrysanthemum and Pear Cooling Tea',
+            description: 'Heat-clearing herbal tea with chrysanthemum flowers and Asian pears',
+            tradition: 'Traditional Chinese Medicine',
+            region: 'East Asia',
+            origin: 'Ancient China (2000+ years)',
+            purpose: 'Heat clearing, liver fire reduction, eye and throat soothing',
+            prepTime: '15 min',
+            servings: '2',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '2 tbsp dried chrysanthemum flowers',
+                '1 Asian pear, sliced',
+                '1 tbsp dried wolfberries (goji)',
+                '3 cups hot water',
+                '1 tbsp raw honey',
+                '1/2 tsp lemon juice'
+            ],
+            instructions: [
+                'Rinse chrysanthemum flowers',
+                'Place flowers and pear slices in teapot',
+                'Add wolfberries',
+                'Pour hot water (not boiling) over herbs',
+                'Steep for 10 minutes',
+                'Strain and add honey and lemon',
+                'Serve warm or at room temperature'
+            ],
+            benefits: [
+                'Clears heat and inflammation',
+                'Soothes dry throat and eyes',
+                'Supports liver detoxification',
+                'Hydrating and cooling'
+            ],
+            researchLinks: [
+                {
+                    title: 'Chrysanthemum in Traditional Medicine',
+                    summary: 'Chrysanthemum morifolium shows anti-inflammatory and hepatoprotective effects',
+                    source: 'Journal of Ethnopharmacology, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '55',
+                protein: '1g',
+                carbs: '14g',
+                fiber: '3g',
+                fat: '0g'
+            }
+        },
+        {
+            id: 'tcm_006',
+            name: 'Dang Gui Blood-Building Soup',
+            description: 'Traditional herbal soup with Angelica sinensis for blood nourishment',
+            tradition: 'Traditional Chinese Medicine',
+            region: 'East Asia',
+            origin: 'Ancient China (2000+ years)',
+            purpose: 'Blood nourishment, circulation improvement, women\'s health support',
+            prepTime: '45 min',
+            servings: '4',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '15g dried Dang Gui (Angelica sinensis)',
+                '1/2 cup red dates, pitted',
+                '1 tbsp dried longan meat',
+                '1/4 cup Chinese yam, sliced',
+                '6 cups vegetable broth',
+                '1 tbsp brown sugar',
+                '1 tsp sesame oil'
+            ],
+            instructions: [
+                'Rinse Dang Gui and soak for 30 minutes',
+                'Combine all herbs in soup pot',
+                'Add vegetable broth and bring to boil',
+                'Reduce heat and simmer 35 minutes',
+                'Strain herbs if desired',
+                'Stir in brown sugar and sesame oil',
+                'Serve warm in small bowls'
+            ],
+            benefits: [
+                'Nourishes blood and yin',
+                'Improves circulation',
+                'Supports hormonal balance',
+                'Reduces fatigue and weakness'
+            ],
+            researchLinks: [
+                {
+                    title: 'Angelica sinensis in Hematological Support',
+                    summary: 'Dang Gui shows promise in supporting healthy blood formation and circulation',
+                    source: 'Chinese Medicine Research, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '95',
+                protein: '2g',
+                carbs: '22g',
+                fiber: '3g',
+                fat: '1g'
+            }
+        },
+        {
+            id: 'tcm_007',
+            name: 'Schisandra Berry Liver Tonic',
+            description: 'Five-flavor berry preparation for liver protection and mental clarity',
+            tradition: 'Traditional Chinese Medicine',
+            region: 'East Asia',
+            origin: 'Ancient China (2000+ years)',
+            purpose: 'Liver protection, mental clarity, stress adaptation, kidney support',
+            prepTime: '20 min',
+            servings: '3',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '2 tbsp dried schisandra berries',
+                '1 tbsp dried licorice root',
+                '1 tsp dried orange peel',
+                '3 cups water',
+                '1 tbsp Chinese rock sugar',
+                '1/2 tsp apple cider vinegar'
+            ],
+            instructions: [
+                'Lightly crush schisandra berries',
+                'Combine berries, licorice, and orange peel',
+                'Bring water to boil, add herbs',
+                'Simmer on low heat for 15 minutes',
+                'Strain through fine mesh',
+                'Stir in rock sugar and vinegar',
+                'Drink warm, 1/2 cup twice daily'
+            ],
+            benefits: [
+                'Protects liver function',
+                'Enhances mental clarity',
+                'Supports stress adaptation',
+                'Tonifies kidney essence'
+            ],
+            researchLinks: [
+                {
+                    title: 'Schisandra in Hepatoprotection',
+                    summary: 'Schisandra chinensis shows significant liver protective and adaptogenic properties',
+                    source: 'Phytomedicine Journal, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '25',
+                protein: '0g',
+                carbs: '6g',
+                fiber: '1g',
+                fat: '0g'
+            }
+        }
+    ],
+    'herbal-remedies': [
+        {
+            id: 'herb_001',
+            name: 'Immune-Boosting Green Tea Blend',
+            description: 'Adaptogenic herbal tea with green tea, astragalus, and ginger',
+            tradition: 'Global Herbalism',
+            region: 'Global',
+            origin: 'Traditional herbalism worldwide',
+            purpose: 'Immune support, antioxidant protection, energy balance',
+            prepTime: '10 min',
+            servings: '2',
+            image: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&h=300&fit=crop',
+            ingredients: [
+                '2 tsp high-quality green tea',
+                '1 tsp dried astragalus root',
+                '½ tsp fresh ginger, grated',
+                '1 tsp raw honey (optional)',
+                '2 cups filtered water',
+                'Lemon slice for serving'
+            ],
+            instructions: [
+                'Bring water to 175°F (just before boiling)',
+                'Add astragalus and simmer for 5 minutes',
+                'Remove from heat, add green tea and ginger',
+                'Steep for 3-4 minutes',
+                'Strain, add honey if desired, serve with lemon'
+            ],
+            benefits: [
+                'Powerful antioxidants',
+                'Immune system support',
+                'Anti-inflammatory properties',
+                'Gentle energy boost'
+            ],
+            researchLinks: [
+                {
+                    title: 'Green Tea in Cancer Prevention',
+                    summary: 'EGCG in green tea shows protective effects against various cancers',
+                    source: 'Nutrients Journal, 2022'
+                }
+            ],
+            nutritionFacts: {
+                calories: '5',
+                protein: '0g',
+                carbs: '1g',
+                fiber: '0g',
+                fat: '0g'
+            }
+        },
+        {
+            id: 'herb_002',
+            name: 'Reishi Mushroom Immunity Broth',
+            description: 'Healing bone broth with reishi mushrooms and anti-inflammatory herbs',
+            tradition: 'Traditional Chinese Medicine',
+            origin: 'Ancient Chinese healing practices',
+            purpose: 'Immune modulation, stress adaptation, energy restoration',
+            prepTime: '45 min',
+            servings: '4',
+            image: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&h=300&fit=crop',
+            ingredients: [
+                '4 cups organic bone broth',
+                '2 tsp dried reishi mushroom powder',
+                '1 tbsp fresh ginger, sliced',
+                '2 cloves garlic, minced',
+                '1 tsp turmeric powder',
+                '½ tsp astragalus powder',
+                '1 tbsp coconut aminos',
+                '1 green onion, chopped',
+                'Sea salt to taste'
+            ],
+            instructions: [
+                'Heat bone broth in a large pot',
+                'Add ginger, garlic, and reishi powder',
+                'Simmer gently for 20 minutes',
+                'Stir in turmeric and astragalus',
+                'Season with coconut aminos and salt',
+                'Garnish with green onions before serving'
+            ],
+            benefits: [
+                'Adaptogenic immune support',
+                'Stress reduction properties',
+                'Anti-inflammatory compounds',
+                'Gut health promotion'
+            ],
+            researchLinks: [
+                {
+                    title: 'Reishi Mushroom in Cancer Support',
+                    summary: 'Reishi shows immune-modulating effects beneficial for cancer patients',
+                    source: 'Integrative Cancer Therapies, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '45',
+                protein: '8g',
+                carbs: '2g',
+                fiber: '1g',
+                fat: '1g'
+            }
+        },
+        {
+            id: 'herb_003',
+            name: 'Nettle & Dandelion Detox Tea',
+            description: 'Gentle detoxifying herbal blend with liver-supporting herbs',
+            tradition: 'European Herbalism',
+            origin: 'Traditional European folk medicine',
+            purpose: 'Liver support, gentle detoxification, mineral replenishment',
+            prepTime: '15 min',
+            servings: '3',
+            image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&h=300&fit=crop',
+            ingredients: [
+                '1 tbsp dried nettle leaves',
+                '1 tbsp dried dandelion root',
+                '1 tsp dried red clover',
+                '1 tsp dried burdock root',
+                '3 cups filtered water',
+                'Fresh lemon juice (optional)',
+                'Raw honey (optional)'
+            ],
+            instructions: [
+                'Bring water to a boil',
+                'Add dandelion and burdock root, simmer 10 minutes',
+                'Remove from heat, add nettle and red clover',
+                'Steep covered for 5 minutes',
+                'Strain and add lemon or honey if desired'
+            ],
+            benefits: [
+                'Liver detoxification support',
+                'Rich in minerals and vitamins',
+                'Anti-inflammatory properties',
+                'Gentle diuretic effect'
+            ],
+            researchLinks: [
+                {
+                    title: 'Herbal Support for Cancer Treatment',
+                    summary: 'Traditional herbs may support liver function during cancer therapy',
+                    source: 'Phytotherapy Research, 2022'
+                }
+            ],
+            nutritionFacts: {
+                calories: '3',
+                protein: '0g',
+                carbs: '1g',
+                fiber: '0g',
+                fat: '0g'
+            }
+        },
+        {
+            id: 'herb_004',
+            name: 'Elderberry Immune Syrup',
+            description: 'Traditional elderberry syrup with immune-boosting herbs and spices',
+            tradition: 'Traditional European Medicine',
+            origin: 'European folk healing traditions',
+            purpose: 'Immune system strengthening, antiviral support, respiratory health',
+            prepTime: '30 min + cooling',
+            servings: '16',
+            image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop',
+            ingredients: [
+                '1 cup dried elderberries',
+                '3 cups filtered water',
+                '1 inch fresh ginger, sliced',
+                '4 whole cloves',
+                '1 cinnamon stick',
+                '1 tsp echinacea powder',
+                '½ cup raw honey',
+                '2 tbsp apple cider vinegar'
+            ],
+            instructions: [
+                'Combine elderberries, water, ginger, cloves, and cinnamon',
+                'Bring to boil, reduce heat and simmer 20 minutes',
+                'Strain out solids, pressing berries to extract juice',
+                'Let cool to lukewarm, stir in echinacea',
+                'Add honey and vinegar, mix well',
+                'Store in refrigerator, take 1 tbsp daily'
+            ],
+            benefits: [
+                'High antioxidant content',
+                'Immune system support',
+                'Anti-inflammatory effects',
+                'Natural antiviral properties'
+            ],
+            researchLinks: [
+                {
+                    title: 'Elderberry for Immune Support',
+                    summary: 'Elderberry shows significant immune-enhancing properties in clinical studies',
+                    source: 'Journal of Functional Foods, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '25',
+                protein: '0g',
+                carbs: '7g',
+                fiber: '1g',
+                fat: '0g'
+            }
+        },
+        {
+            id: 'herb_005',
+            name: 'Milk Thistle Liver Support Decoction',
+            description: 'Concentrated herbal decoction for liver health and detoxification',
+            tradition: 'Mediterranean Herbalism',
+            origin: 'Ancient Greek and Roman medicine',
+            purpose: 'Liver protection, cellular regeneration, toxin elimination',
+            prepTime: '40 min',
+            servings: '4',
+            image: 'https://images.unsplash.com/photo-1565552645632-d725f8bfc19a?w=400&h=300&fit=crop',
+            ingredients: [
+                '2 tbsp milk thistle seeds, ground',
+                '1 tbsp yellow dock root',
+                '1 tbsp Oregon grape root',
+                '1 tsp fennel seeds',
+                '4 cups filtered water',
+                '1 tsp raw honey per serving',
+                'Fresh lemon juice to taste'
+            ],
+            instructions: [
+                'Combine all herbs and water in a pot',
+                'Bring to boil, reduce heat to low simmer',
+                'Cover and simmer for 30 minutes',
+                'Strain through fine mesh, pressing herbs',
+                'Serve warm with honey and lemon',
+                'Drink ½ cup twice daily before meals'
+            ],
+            benefits: [
+                'Liver cell protection and regeneration',
+                'Enhanced detoxification processes',
+                'Antioxidant protection',
+                'Digestive system support'
+            ],
+            researchLinks: [
+                {
+                    title: 'Milk Thistle in Cancer Care',
+                    summary: 'Silymarin shows hepatoprotective effects during chemotherapy',
+                    source: 'Cancer Chemotherapy and Pharmacology, 2020'
+                }
+            ],
+            nutritionFacts: {
+                calories: '8',
+                protein: '0g',
+                carbs: '2g',
+                fiber: '1g',
+                fat: '0g'
+            }
+        },
+        {
+            id: 'herb_009',
+            name: 'Echinacea Immune Defense Tincture',
+            description: 'Potent immune-supporting herbal extract with echinacea and elderberry',
+            tradition: 'Global Herbalism',
+            region: 'Americas/Europe',
+            origin: 'Native American & European traditions (500+ years)',
+            purpose: 'Immune system activation, infection prevention, lymphatic support',
+            prepTime: '10 min (plus 2 weeks extraction)',
+            servings: '30',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '1/4 cup dried echinacea root',
+                '2 tbsp dried elderberries',
+                '1 tbsp dried astragalus root',
+                '2 cups 80-proof vodka',
+                '1 tbsp raw honey',
+                'Glass jar with tight lid'
+            ],
+            instructions: [
+                'Combine all dried herbs in glass jar',
+                'Pour vodka over herbs completely',
+                'Seal jar and store in dark place',
+                'Shake daily for 2 weeks',
+                'Strain through cheesecloth',
+                'Add honey to finished tincture',
+                'Take 1 dropper full as needed'
+            ],
+            benefits: [
+                'Activates immune response',
+                'Supports lymphatic drainage',
+                'Reduces infection duration',
+                'Antioxidant and anti-inflammatory'
+            ],
+            researchLinks: [
+                {
+                    title: 'Echinacea in Immune Support',
+                    summary: 'Echinacea species show immunomodulatory effects and reduced infection risk',
+                    source: 'Cochrane Review, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '5',
+                protein: '0g',
+                carbs: '1g',
+                fiber: '0g',
+                fat: '0g'
+            }
+        },
+        {
+            id: 'herb_010',
+            name: 'Nettle and Red Clover Mineral Tea',
+            description: 'Nutrient-rich herbal blend for mineral replenishment and blood cleansing',
+            tradition: 'Global Herbalism',
+            region: 'Europe',
+            origin: 'European folk medicine (1000+ years)',
+            purpose: 'Mineral restoration, blood purification, gentle detoxification',
+            prepTime: '15 min',
+            servings: '2',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '2 tbsp dried nettle leaves',
+                '1 tbsp dried red clover blossoms',
+                '1 tsp dried dandelion leaf',
+                '1 tsp dried alfalfa',
+                '3 cups boiling water',
+                '1 tsp raw honey',
+                'Lemon slice for garnish'
+            ],
+            instructions: [
+                'Combine all dried herbs in teapot',
+                'Pour boiling water over herbs',
+                'Cover and steep for 10 minutes',
+                'Strain herbs from liquid',
+                'Add honey while tea is warm',
+                'Garnish with lemon slice',
+                'Drink 1 cup morning and evening'
+            ],
+            benefits: [
+                'Rich in minerals and vitamins',
+                'Supports kidney and liver function',
+                'Gentle blood cleansing',
+                'Alkalizing and anti-inflammatory'
+            ],
+            researchLinks: [
+                {
+                    title: 'Nettle in Nutritional Support',
+                    summary: 'Urtica dioica provides significant mineral content and anti-inflammatory compounds',
+                    source: 'Journal of Herbal Medicine, 2020'
+                }
+            ],
+            nutritionFacts: {
+                calories: '15',
+                protein: '1g',
+                carbs: '3g',
+                fiber: '1g',
+                fat: '0g'
+            }
+        },
+        {
+            id: 'herb_011',
+            name: 'Milk Thistle Liver Support Decoction',
+            description: 'Concentrated herbal preparation for liver protection and regeneration',
+            tradition: 'Global Herbalism',
+            region: 'Mediterranean',
+            origin: 'Mediterranean traditional medicine (2000+ years)',
+            purpose: 'Liver protection, hepatocyte regeneration, toxin elimination',
+            prepTime: '30 min',
+            servings: '3',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '3 tbsp crushed milk thistle seeds',
+                '1 tbsp dried dandelion root',
+                '1 tsp dried burdock root',
+                '1 tsp dried yellow dock root',
+                '4 cups water',
+                '1/2 tsp ginger powder',
+                'Pinch of black pepper'
+            ],
+            instructions: [
+                'Combine all roots and seeds in pot',
+                'Add water and bring to boil',
+                'Reduce heat and simmer 20 minutes',
+                'Add ginger and black pepper',
+                'Simmer 5 more minutes',
+                'Strain through fine mesh',
+                'Drink 1/2 cup three times daily'
+            ],
+            benefits: [
+                'Protects liver cells from damage',
+                'Supports liver regeneration',
+                'Enhances detoxification pathways',
+                'Anti-inflammatory and antioxidant'
+            ],
+            researchLinks: [
+                {
+                    title: 'Silymarin in Hepatoprotection',
+                    summary: 'Milk thistle seed extract shows significant liver protective and regenerative effects',
+                    source: 'World Journal of Hepatology, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '20',
+                protein: '1g',
+                carbs: '4g',
+                fiber: '2g',
+                fat: '0g'
+            }
+        },
+        {
+            id: 'herb_006',
+            name: 'Calendula and Chamomile Healing Balm',
+            description: 'Topical herbal preparation for skin healing and inflammation reduction',
+            tradition: 'Global Herbalism',
+            region: 'Europe',
+            origin: 'European folk medicine (1000+ years)',
+            purpose: 'Skin healing, inflammation reduction, wound care support',
+            prepTime: '45 min',
+            servings: '1 jar',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '1/4 cup dried calendula petals',
+                '2 tbsp dried chamomile flowers',
+                '1 tbsp dried plantain leaves',
+                '1/2 cup olive oil',
+                '2 tbsp beeswax pellets',
+                '10 drops lavender essential oil'
+            ],
+            instructions: [
+                'Infuse herbs in olive oil for 2 weeks, or',
+                'Heat oil and herbs gently for 2 hours',
+                'Strain oil through cheesecloth',
+                'Melt beeswax in double boiler',
+                'Combine infused oil with melted wax',
+                'Add lavender oil and stir',
+                'Pour into clean jar and cool'
+            ],
+            benefits: [
+                'Promotes skin healing',
+                'Reduces inflammation and irritation',
+                'Antimicrobial properties',
+                'Soothes damaged skin'
+            ],
+            researchLinks: [
+                {
+                    title: 'Calendula in Wound Healing',
+                    summary: 'Calendula officinalis shows significant wound healing and anti-inflammatory effects',
+                    source: 'Evidence-Based Complementary Medicine, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '0',
+                protein: '0g',
+                carbs: '0g',
+                fiber: '0g',
+                fat: '0g'
+            }
+        },
+        {
+            id: 'herb_007',
+            name: 'Elderberry Antiviral Syrup',
+            description: 'Traditional immune-boosting syrup with elderberries and warming spices',
+            tradition: 'Global Herbalism',
+            region: 'Europe',
+            origin: 'European folk medicine (1000+ years)',
+            purpose: 'Antiviral support, immune enhancement, respiratory health',
+            prepTime: '40 min',
+            servings: '20',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '1 cup dried elderberries',
+                '3 cups water',
+                '1 cinnamon stick',
+                '4 whole cloves',
+                '1 tbsp fresh ginger, sliced',
+                '1 cup raw honey',
+                '2 tbsp apple cider vinegar'
+            ],
+            instructions: [
+                'Combine elderberries, water, and spices',
+                'Bring to boil, then simmer 20 minutes',
+                'Mash berries lightly with spoon',
+                'Simmer 10 more minutes until reduced by half',
+                'Strain through fine mesh',
+                'Cool to lukewarm, add honey and vinegar',
+                'Take 1 tbsp daily for prevention'
+            ],
+            benefits: [
+                'Powerful antiviral properties',
+                'Supports immune function',
+                'Rich in antioxidants',
+                'Respiratory system support'
+            ],
+            researchLinks: [
+                {
+                    title: 'Elderberry in Immune Support',
+                    summary: 'Sambucus nigra shows significant antiviral and immune-enhancing effects',
+                    source: 'Nutrients Journal, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '35',
+                protein: '0g',
+                carbs: '9g',
+                fiber: '0g',
+                fat: '0g'
+            }
+        },
+        {
+            id: 'herb_008',
+            name: 'Adaptogenic Stress-Relief Blend',
+            description: 'Balanced herbal formula with adaptogens for stress management and energy',
+            tradition: 'Global Herbalism',
+            region: 'Global',
+            origin: 'Multiple traditions (3000+ years combined)',
+            purpose: 'Stress adaptation, energy regulation, hormone balance',
+            prepTime: '12 min',
+            servings: '2',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '1 tsp dried rhodiola root',
+                '1 tsp dried holy basil (tulsi)',
+                '1/2 tsp dried ashwagandha root',
+                '1/2 tsp dried licorice root',
+                '2 cups hot water',
+                '1 tsp coconut oil',
+                '1/2 tsp raw honey'
+            ],
+            instructions: [
+                'Combine all dried herbs in teapot',
+                'Pour hot (not boiling) water over herbs',
+                'Cover and steep for 8 minutes',
+                'Strain herbs from liquid',
+                'Stir in coconut oil and honey',
+                'Drink warm twice daily',
+                'Best taken between meals'
+            ],
+            benefits: [
+                'Helps body adapt to stress',
+                'Balances cortisol levels',
+                'Supports sustained energy',
+                'Calms nervous system'
+            ],
+            researchLinks: [
+                {
+                    title: 'Adaptogens in Stress Management',
+                    summary: 'Multiple adaptogenic herbs show stress-reducing and energy-balancing effects',
+                    source: 'Pharmaceuticals Journal, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '25',
+                protein: '0g',
+                carbs: '3g',
+                fiber: '0g',
+                fat: '2g'
+            }
+        }
+    ],
+    'functional-foods': [
+        {
+            id: 'func_001',
+            name: 'Omega-3 Rich Chia Seed Pudding',
+            description: 'Nutrient-dense pudding with chia seeds, berries, and plant-based milk',
+            tradition: 'Modern Functional Nutrition',
+            region: 'Global',
+            origin: 'Contemporary nutritional science',
+            purpose: 'Omega-3 delivery, antioxidant support, sustained energy',
+            prepTime: '5 min + 4 hours chilling',
+            servings: '2',
+            image: 'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=400&h=300&fit=crop',
+            ingredients: [
+                '¼ cup black chia seeds',
+                '1 cup unsweetened almond milk',
+                '2 tbsp pure maple syrup',
+                '½ tsp vanilla extract',
+                '½ cup mixed berries',
+                '1 tbsp chopped walnuts',
+                '1 tsp ground flaxseed'
+            ],
+            instructions: [
+                'Whisk chia seeds, almond milk, maple syrup, and vanilla',
+                'Let sit for 10 minutes, whisk again to prevent clumping',
+                'Refrigerate for at least 4 hours or overnight',
+                'Serve topped with berries, walnuts, and flaxseed'
+            ],
+            benefits: [
+                'High in omega-3 fatty acids',
+                'Complete protein source',
+                'Rich in antioxidants',
+                'Supports heart health'
+            ],
+            researchLinks: [
+                {
+                    title: 'Omega-3s in Cancer Care',
+                    summary: 'Omega-3 fatty acids may help reduce inflammation and support treatment outcomes',
+                    source: 'Clinical Nutrition, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '220',
+                protein: '8g',
+                carbs: '22g',
+                fiber: '12g',
+                fat: '12g'
+            }
+        },
+        {
+            id: 'func_002',
+            name: 'Fermented Kimchi & Quinoa Bowl',
+            description: 'Probiotic-rich bowl with fermented vegetables and complete protein',
+            tradition: 'Functional Medicine',
+            origin: 'Korean fermentation + Modern nutrition',
+            purpose: 'Gut microbiome support, immune enhancement, digestive health',
+            prepTime: '20 min',
+            servings: '2',
+            image: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400&h=300&fit=crop',
+            ingredients: [
+                '1 cup cooked quinoa',
+                '½ cup fermented kimchi',
+                '¼ cup edamame beans',
+                '1 tbsp sesame oil',
+                '1 tsp rice vinegar',
+                '1 tsp low-sodium tamari',
+                '1 tbsp pumpkin seeds',
+                '1 sheet nori, shredded',
+                '1 avocado, sliced'
+            ],
+            instructions: [
+                'Cook quinoa according to package directions',
+                'Mix sesame oil, vinegar, and tamari for dressing',
+                'Arrange quinoa in bowls',
+                'Top with kimchi, edamame, and avocado',
+                'Drizzle with dressing',
+                'Sprinkle with pumpkin seeds and nori'
+            ],
+            benefits: [
+                'Beneficial probiotics',
+                'Complete amino acid profile',
+                'Anti-inflammatory compounds',
+                'Digestive system support'
+            ],
+            researchLinks: [
+                {
+                    title: 'Probiotics in Cancer Treatment',
+                    summary: 'Fermented foods may help maintain gut health during cancer therapy',
+                    source: 'Gut Microbes Journal, 2022'
+                }
+            ],
+            nutritionFacts: {
+                calories: '385',
+                protein: '14g',
+                carbs: '42g',
+                fiber: '11g',
+                fat: '18g'
+            }
+        },
+        {
+            id: 'func_003',
+            name: 'Antioxidant Superfood Smoothie',
+            description: 'Concentrated antioxidant blend with superfoods and adaptogens',
+            tradition: 'Functional Nutrition',
+            origin: 'Modern superfood science',
+            purpose: 'Oxidative stress reduction, cellular protection, energy boost',
+            prepTime: '8 min',
+            servings: '1',
+            image: 'https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=400&h=300&fit=crop',
+            ingredients: [
+                '1 cup coconut water',
+                '½ frozen banana',
+                '½ cup frozen wild blueberries',
+                '1 tbsp açaí powder',
+                '1 tsp spirulina powder',
+                '1 tbsp almond butter',
+                '1 tsp maca powder',
+                '1 tbsp hemp hearts',
+                '½ tsp cinnamon'
+            ],
+            instructions: [
+                'Add coconut water and banana to blender',
+                'Add blueberries, açaí, and spirulina',
+                'Include almond butter and maca powder',
+                'Blend until completely smooth',
+                'Top with hemp hearts and cinnamon'
+            ],
+            benefits: [
+                'Extremely high antioxidant content',
+                'Adaptogenic stress support',
+                'Natural energy enhancement',
+                'Cellular protection compounds'
+            ],
+            researchLinks: [
+                {
+                    title: 'Antioxidants in Cancer Prevention',
+                    summary: 'High-antioxidant foods may help protect against treatment-related oxidative stress',
+                    source: 'Free Radical Biology & Medicine, 2023'
+                }
+            ],
+            nutritionFacts: {
+                calories: '295',
+                protein: '12g',
+                carbs: '38g',
+                fiber: '8g',
+                fat: '12g'
+            }
+        },
+        {
+            id: 'func_004',
+            name: 'Prebiotic-Rich Leek & Garlic Soup',
+            description: 'Gut-healing soup with prebiotic fibers and anti-inflammatory spices',
+            tradition: 'Functional Medicine',
+            origin: 'Modern gut health research',
+            purpose: 'Microbiome nourishment, digestive healing, immune support',
+            prepTime: '35 min',
+            servings: '4',
+            image: 'https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?w=400&h=300&fit=crop',
+            ingredients: [
+                '3 large leeks, white and light green parts',
+                '6 cloves garlic, minced',
+                '1 large onion, chopped',
+                '4 cups vegetable broth',
+                '1 can white beans, drained',
+                '2 tbsp olive oil',
+                '1 tsp turmeric',
+                '1 tbsp fresh thyme',
+                'Sea salt and pepper to taste'
+            ],
+            instructions: [
+                'Clean and slice leeks thoroughly',
+                'Heat olive oil, sauté onions and leeks until soft',
+                'Add garlic, cook for 1 minute until fragrant',
+                'Add broth, beans, turmeric, and thyme',
+                'Simmer for 20 minutes until vegetables are tender',
+                'Season with salt and pepper before serving'
+            ],
+            benefits: [
+                'Rich in prebiotic fibers',
+                'Supports beneficial gut bacteria',
+                'Anti-inflammatory compounds',
+                'Immune system enhancement'
+            ],
+            researchLinks: [
+                {
+                    title: 'Prebiotics in Cancer Recovery',
+                    summary: 'Prebiotic fibers support gut health and immune function during treatment',
+                    source: 'Nutrition and Cancer, 2022'
+                }
+            ],
+            nutritionFacts: {
+                calories: '165',
+                protein: '8g',
+                carbs: '28g',
+                fiber: '7g',
+                fat: '4g'
+            }
+        },
+        {
+            id: 'func_005',
+            name: 'Adaptogenic Cacao Energy Bars',
+            description: 'No-bake bars with adaptogens, superfoods, and sustained energy',
+            tradition: 'Functional Nutrition',
+            origin: 'Modern adaptogen research',
+            purpose: 'Stress adaptation, sustained energy, cognitive support',
+            prepTime: '20 min + 2 hours setting',
+            servings: '12 bars',
+            image: 'https://images.unsplash.com/photo-1606787620819-8bdf0c44c293?w=400&h=300&fit=crop',
+            ingredients: [
+                '2 cups pitted dates',
+                '1 cup raw almonds',
+                '3 tbsp raw cacao powder',
+                '2 tbsp coconut oil',
+                '1 tsp ashwagandha powder',
+                '1 tsp rhodiola powder',
+                '1 tbsp chia seeds',
+                '2 tbsp goji berries',
+                'Pinch of sea salt'
+            ],
+            instructions: [
+                'Process almonds in food processor until fine',
+                'Add dates, process until paste forms',
+                'Mix in cacao, coconut oil, and adaptogens',
+                'Fold in chia seeds and goji berries',
+                'Press into lined 8x8 pan',
+                'Refrigerate 2 hours, cut into bars'
+            ],
+            benefits: [
+                'Adaptogenic stress support',
+                'Sustained energy release',
+                'Cognitive function support',
+                'Antioxidant protection'
+            ],
+            researchLinks: [
+                {
+                    title: 'Adaptogens in Cancer Support',
+                    summary: 'Adaptogenic herbs may help manage treatment-related stress and fatigue',
+                    source: 'Integrative Medicine Research, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '145',
+                protein: '4g',
+                carbs: '18g',
+                fiber: '4g',
+                fat: '7g'
+            }
+        },
+        {
+            id: 'func_003',
+            name: 'Miso-Glazed Tempeh Power Bowl',
+            description: 'Fermented protein bowl with probiotic-rich miso and nutrient-dense vegetables',
+            tradition: 'Modern Functional Nutrition',
+            region: 'East Asia',
+            origin: 'Asian fermentation traditions adapted (1000+ years)',
+            purpose: 'Gut health support, complete protein, microbiome nourishment',
+            prepTime: '25 min',
+            servings: '2',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '8 oz tempeh, sliced',
+                '2 tbsp white miso paste',
+                '1 tbsp rice vinegar',
+                '1 tsp sesame oil',
+                '2 cups cooked quinoa',
+                '1 cup steamed broccoli',
+                '1/2 avocado, sliced',
+                '1 tbsp hemp seeds',
+                '1 sheet nori, crumbled'
+            ],
+            instructions: [
+                'Steam tempeh slices for 10 minutes',
+                'Mix miso, vinegar, and sesame oil for glaze',
+                'Pan-fry tempeh with miso glaze until golden',
+                'Arrange quinoa in bowls',
+                'Top with glazed tempeh and broccoli',
+                'Add avocado slices',
+                'Sprinkle with hemp seeds and nori'
+            ],
+            benefits: [
+                'Rich in probiotics and prebiotics',
+                'Complete amino acid profile',
+                'Supports digestive health',
+                'Anti-inflammatory compounds'
+            ],
+            researchLinks: [
+                {
+                    title: 'Fermented Foods in Cancer Care',
+                    summary: 'Fermented soy products show beneficial effects on gut microbiome and immune function',
+                    source: 'Current Opinion in Clinical Nutrition, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '485',
+                protein: '28g',
+                carbs: '52g',
+                fiber: '12g',
+                fat: '18g'
+            }
+        },
+        {
+            id: 'func_004',
+            name: 'Spirulina Energy Smoothie Bowl',
+            description: 'Antioxidant-rich smoothie bowl with spirulina, berries, and superfoods',
+            tradition: 'Modern Functional Nutrition',
+            region: 'Global',
+            origin: 'Ancient superfood traditions modernized (500+ years)',
+            purpose: 'Detoxification support, antioxidant boost, sustained energy',
+            prepTime: '10 min',
+            servings: '2',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '1 frozen banana',
+                '1 cup frozen mixed berries',
+                '1 tsp spirulina powder',
+                '1 tbsp almond butter',
+                '1 cup coconut milk',
+                '1 tbsp chia seeds',
+                '1 tbsp cacao nibs',
+                '1/4 cup granola',
+                'Fresh berries for topping'
+            ],
+            instructions: [
+                'Blend banana, berries, and coconut milk',
+                'Add spirulina and almond butter',
+                'Blend until smooth and creamy',
+                'Pour into bowls',
+                'Top with chia seeds, cacao nibs',
+                'Add granola and fresh berries',
+                'Serve immediately'
+            ],
+            benefits: [
+                'High in antioxidants and phytonutrients',
+                'Supports cellular detoxification',
+                'Provides sustained energy',
+                'Rich in essential fatty acids'
+            ],
+            researchLinks: [
+                {
+                    title: 'Spirulina in Clinical Nutrition',
+                    summary: 'Spirulina platensis shows antioxidant and immunomodulatory effects in cancer patients',
+                    source: 'Marine Drugs Journal, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '295',
+                protein: '8g',
+                carbs: '35g',
+                fiber: '10g',
+                fat: '12g'
+            }
+        },
+        {
+            id: 'func_005',
+            name: 'Mushroom Immunity Broth',
+            description: 'Concentrated medicinal mushroom broth with reishi, shiitake, and maitake',
+            tradition: 'Modern Functional Nutrition',
+            region: 'East Asia',
+            origin: 'Traditional Asian medicine modernized (2000+ years)',
+            purpose: 'Immune system support, cellular protection, energy restoration',
+            prepTime: '2 hours',
+            servings: '6',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '1 oz dried reishi mushrooms',
+                '1 cup fresh shiitake mushrooms',
+                '1 cup fresh maitake mushrooms',
+                '8 cups vegetable broth',
+                '2 tbsp miso paste',
+                '1 tbsp coconut aminos',
+                '1 tsp fresh ginger, minced',
+                '2 green onions, sliced'
+            ],
+            instructions: [
+                'Soak reishi mushrooms for 30 minutes',
+                'Slice fresh mushrooms',
+                'Combine all mushrooms with broth',
+                'Simmer on low for 1.5 hours',
+                'Strain if desired, or leave mushrooms in',
+                'Whisk in miso and coconut aminos',
+                'Garnish with ginger and green onions'
+            ],
+            benefits: [
+                'Powerful immune system support',
+                'Adaptogenic stress response',
+                'Anti-cancer compounds',
+                'Liver and kidney support'
+            ],
+            researchLinks: [
+                {
+                    title: 'Medicinal Mushrooms in Oncology',
+                    summary: 'Multiple mushroom species show immunomodulatory and anti-tumor effects',
+                    source: 'Integrative Cancer Therapies, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '45',
+                protein: '3g',
+                carbs: '8g',
+                fiber: '2g',
+                fat: '1g'
+            }
+        },
+        {
+            id: 'func_006',
+            name: 'Fermented Turmeric Kvass',
+            description: 'Probiotic-rich fermented drink with turmeric and ginger for gut health',
+            tradition: 'Modern Functional Nutrition',
+            region: 'Global',
+            origin: 'Traditional fermentation adapted (1000+ years)',
+            purpose: 'Gut microbiome support, inflammation reduction, digestive health',
+            prepTime: '15 min (plus 3-5 days fermentation)',
+            servings: '8',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '2 tbsp fresh turmeric, grated',
+                '1 tbsp fresh ginger, grated',
+                '1/4 cup organic sugar',
+                '1/4 tsp sea salt',
+                '4 cups filtered water',
+                '1/4 cup whey or kombucha starter',
+                '1 lemon, juiced'
+            ],
+            instructions: [
+                'Dissolve sugar and salt in warm water',
+                'Cool to room temperature',
+                'Add grated turmeric and ginger',
+                'Stir in whey or starter culture',
+                'Add lemon juice',
+                'Cover with cloth and ferment 3-5 days',
+                'Strain and refrigerate, drink 4 oz daily'
+            ],
+            benefits: [
+                'Supports beneficial gut bacteria',
+                'Powerful anti-inflammatory effects',
+                'Enhances nutrient absorption',
+                'Supports immune function'
+            ],
+            researchLinks: [
+                {
+                    title: 'Fermented Turmeric Benefits',
+                    summary: 'Fermented curcumin shows enhanced bioavailability and anti-inflammatory effects',
+                    source: 'Journal of Functional Foods, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '25',
+                protein: '0g',
+                carbs: '6g',
+                fiber: '0g',
+                fat: '0g'
+            }
+        },
+        {
+            id: 'func_007',
+            name: 'Chlorella Protein Power Bars',
+            description: 'Nutrient-dense energy bars with chlorella, nuts, and seeds',
+            tradition: 'Modern Functional Nutrition',
+            region: 'Global',
+            origin: 'Modern superfood nutrition (50+ years)',
+            purpose: 'Cellular detoxification, sustained energy, protein support',
+            prepTime: '20 min',
+            servings: '12',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '1 cup almonds',
+                '1/2 cup walnuts',
+                '1/4 cup sunflower seeds',
+                '2 tbsp chlorella powder',
+                '1/4 cup protein powder (plant-based)',
+                '1/2 cup pitted dates',
+                '2 tbsp almond butter',
+                '1 tbsp coconut oil'
+            ],
+            instructions: [
+                'Process nuts and seeds until roughly chopped',
+                'Add chlorella and protein powder',
+                'Process dates until paste-like',
+                'Add almond butter and coconut oil',
+                'Process until mixture holds together',
+                'Press into lined 8x8 pan',
+                'Refrigerate 2 hours, cut into bars'
+            ],
+            benefits: [
+                'Supports cellular detoxification',
+                'High in plant-based protein',
+                'Rich in essential fatty acids',
+                'Sustained energy release'
+            ],
+            researchLinks: [
+                {
+                    title: 'Chlorella in Detoxification',
+                    summary: 'Chlorella vulgaris shows significant heavy metal detoxification and immune support',
+                    source: 'Nutrients Journal, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '165',
+                protein: '7g',
+                carbs: '12g',
+                fiber: '4g',
+                fat: '11g'
+            }
+        },
+        {
+            id: 'func_008',
+            name: 'Adaptogenic Golden Latte',
+            description: 'Anti-inflammatory golden milk with multiple adaptogens and healthy fats',
+            tradition: 'Modern Functional Nutrition',
+            region: 'Global',
+            origin: 'Ancient Ayurveda + Modern Adaptation (3000+ years)',
+            purpose: 'Stress adaptation, inflammation reduction, immune support',
+            prepTime: '8 min',
+            servings: '1',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '1 cup coconut milk',
+                '1 tsp turmeric powder',
+                '1/2 tsp ashwagandha powder',
+                '1/4 tsp rhodiola powder',
+                '1/4 tsp cinnamon',
+                'Pinch of black pepper',
+                '1 tsp ghee or coconut oil',
+                '1 tsp raw honey'
+            ],
+            instructions: [
+                'Heat coconut milk gently in saucepan',
+                'Whisk in turmeric, ashwagandha, rhodiola',
+                'Add cinnamon and black pepper',
+                'Stir in ghee or coconut oil',
+                'Heat until steaming but not boiling',
+                'Remove from heat, add honey',
+                'Froth with immersion blender if desired'
+            ],
+            benefits: [
+                'Supports stress adaptation',
+                'Powerful anti-inflammatory effects',
+                'Enhances immune function',
+                'Promotes restful sleep'
+            ],
+            researchLinks: [
+                {
+                    title: 'Adaptogenic Herbs in Wellness',
+                    summary: 'Multiple adaptogens show synergistic effects in stress management and immune support',
+                    source: 'Phytotherapy Research, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '195',
+                protein: '2g',
+                carbs: '8g',
+                fiber: '1g',
+                fat: '18g'
+            }
+        }
+    ],
+    'mind-body-energy': [
+        {
+            id: 'mind_001',
+            name: 'Meditation Moon Milk',
+            description: 'Calming bedtime drink with adaptogenic herbs and warm spices',
+            tradition: 'Mind-Body Medicine',
+            region: 'Global',
+            origin: 'Ancient Ayurveda + Modern Adaptation',
+            purpose: 'Stress reduction, sleep support, nervous system calming',
+            prepTime: '8 min',
+            servings: '1',
+            image: 'https://images.unsplash.com/photo-1571934811356-5cc061b6821f?w=400&h=300&fit=crop',
+            ingredients: [
+                '1 cup coconut or oat milk',
+                '½ tsp ashwagandha powder',
+                '¼ tsp turmeric powder',
+                '⅛ tsp ground cardamom',
+                'Pinch of black pepper',
+                '1 tsp coconut oil',
+                '1 tsp raw honey',
+                'Rose petals for garnish (optional)'
+            ],
+            instructions: [
+                'Gently warm milk in a small saucepan',
+                'Whisk in ashwagandha, turmeric, cardamom, and pepper',
+                'Simmer for 3-4 minutes, stirring constantly',
+                'Remove from heat, add coconut oil and honey',
+                'Pour into mug, garnish with rose petals'
+            ],
+            benefits: [
+                'Reduces stress and anxiety',
+                'Supports restful sleep',
+                'Adaptogenic properties',
+                'Anti-inflammatory effects'
+            ],
+            researchLinks: [
+                {
+                    title: 'Ashwagandha in Cancer Care',
+                    summary: 'Ashwagandha shows promise in reducing treatment-related fatigue and stress',
+                    source: 'Journal of Ayurveda Research, 2020'
+                }
+            ],
+            nutritionFacts: {
+                calories: '95',
+                protein: '2g',
+                carbs: '8g',
+                fiber: '1g',
+                fat: '6g'
+            }
+        },
+        {
+            id: 'mind_002',
+            name: 'Mindful Energy Balls',
+            description: 'No-bake energy bites with adaptogenic herbs and mindful eating focus',
+            tradition: 'Mind-Body Nutrition',
+            origin: 'Modern mindful eating practices',
+            purpose: 'Sustained energy, stress adaptation, mindful nourishment',
+            prepTime: '15 min',
+            servings: '12 balls',
+            image: 'https://images.unsplash.com/photo-1606787620819-8bdf0c44c293?w=400&h=300&fit=crop',
+            ingredients: [
+                '1 cup pitted dates',
+                '½ cup raw almonds',
+                '2 tbsp cacao powder',
+                '1 tsp maca powder',
+                '½ tsp rhodiola powder',
+                '2 tbsp coconut oil',
+                '1 tsp vanilla extract',
+                'Pinch of sea salt',
+                'Unsweetened coconut flakes for rolling'
+            ],
+            instructions: [
+                'Soak dates in warm water for 10 minutes if hard',
+                'Process almonds in food processor until fine',
+                'Add dates, cacao, maca, and rhodiola',
+                'Pulse in coconut oil, vanilla, and salt',
+                'Form into 12 small balls with mindful attention',
+                'Roll in coconut flakes, chill for 30 minutes'
+            ],
+            benefits: [
+                'Natural sustained energy',
+                'Adaptogenic stress support',
+                'Mindful eating practice',
+                'Balanced blood sugar'
+            ],
+            researchLinks: [
+                {
+                    title: 'Mindful Eating in Cancer Recovery',
+                    summary: 'Mindful eating practices may improve treatment outcomes and quality of life',
+                    source: 'Psycho-Oncology Journal, 2022'
+                }
+            ],
+            nutritionFacts: {
+                calories: '85',
+                protein: '3g',
+                carbs: '12g',
+                fiber: '2g',
+                fat: '4g'
+            }
+        },
+        {
+            id: 'mind_003',
+            name: 'Chakra-Balancing Rainbow Bowl',
+            description: 'Colorful nourishing bowl designed for energy balance and mindful eating',
+            tradition: 'Energy Medicine Nutrition',
+            origin: 'Chakra-based color therapy + Nutrition',
+            purpose: 'Energy center balance, mindful nourishment, visual meditation',
+            prepTime: '25 min',
+            servings: '2',
+            image: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&h=300&fit=crop',
+            ingredients: [
+                '1 cup cooked brown rice (root chakra)',
+                '½ cup roasted sweet potato cubes (sacral)',
+                '½ cup steamed broccoli (heart)',
+                '¼ cup shredded purple cabbage (crown)',
+                '¼ cup blueberries (third eye)',
+                '2 tbsp pumpkin seeds (solar plexus)',
+                '1 tbsp tahini (throat)',
+                '1 tsp turmeric (solar plexus)',
+                'Fresh herbs for garnish'
+            ],
+            instructions: [
+                'Arrange each colored food mindfully in sections',
+                'Begin eating with intention and gratitude',
+                'Chew slowly, focusing on each color\'s energy',
+                'Mix tahini with turmeric for golden dressing',
+                'Eat in a peaceful environment without distractions',
+                'Notice how each color makes you feel'
+            ],
+            benefits: [
+                'Complete nutritional spectrum',
+                'Mindful eating practice',
+                'Energy balance support',
+                'Meditation through food'
+            ],
+            researchLinks: [
+                {
+                    title: 'Color Psychology in Nutrition',
+                    summary: 'Colorful foods provide diverse phytonutrients with complementary healing properties',
+                    source: 'Nutrition Reviews, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '320',
+                protein: '12g',
+                carbs: '48g',
+                fiber: '8g',
+                fat: '11g'
+            }
+        },
+        {
+            id: 'mind_004',
+            name: 'Stress-Relief Lavender Lemonade',
+            description: 'Calming beverage with lavender, lemon balm, and natural electrolytes',
+            tradition: 'Aromatherapy Nutrition',
+            origin: 'European herbalism + Modern aromatherapy',
+            purpose: 'Anxiety reduction, nervous system calming, hydration support',
+            prepTime: '20 min + chilling',
+            servings: '4',
+            image: 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=400&h=300&fit=crop',
+            ingredients: [
+                '4 cups filtered water',
+                '2 tbsp dried lavender buds',
+                '2 tbsp fresh lemon balm leaves',
+                '½ cup fresh lemon juice',
+                '¼ cup raw honey',
+                '1 tbsp apple cider vinegar',
+                'Pinch of sea salt',
+                'Fresh lavender sprigs for garnish'
+            ],
+            instructions: [
+                'Boil water, pour over lavender and lemon balm',
+                'Steep for 15 minutes, strain herbs',
+                'Stir in honey while tea is warm',
+                'Add lemon juice, vinegar, and salt',
+                'Chill completely before serving',
+                'Serve over ice with lavender garnish'
+            ],
+            benefits: [
+                'Natural anxiety relief',
+                'Nervous system support',
+                'Hydration with electrolytes',
+                'Aromatherapeutic effects'
+            ],
+            researchLinks: [
+                {
+                    title: 'Lavender for Anxiety in Cancer Patients',
+                    summary: 'Lavender aromatherapy shows significant anxiety-reducing effects in oncology settings',
+                    source: 'European Journal of Oncology Nursing, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '35',
+                protein: '0g',
+                carbs: '9g',
+                fiber: '0g',
+                fat: '0g'
+            }
+        },
+        {
+            id: 'mind_005',
+            name: 'Grounding Earth Bowl',
+            description: 'Root vegetable bowl designed for grounding energy and stability',
+            tradition: 'Earth-Based Nutrition',
+            origin: 'Traditional grounding practices + Nutrition',
+            purpose: 'Energy grounding, emotional stability, root chakra nourishment',
+            prepTime: '45 min',
+            servings: '2',
+            image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop',
+            ingredients: [
+                '2 medium beets, roasted and cubed',
+                '2 large carrots, roasted',
+                '1 large sweet potato, cubed and roasted',
+                '½ cup cooked red lentils',
+                '2 tbsp tahini',
+                '1 tbsp balsamic vinegar',
+                '1 tsp ground ginger',
+                '2 tbsp pumpkin seeds',
+                'Fresh microgreens for garnish'
+            ],
+            instructions: [
+                'Preheat oven to 400°F',
+                'Toss vegetables with olive oil and roast 35 minutes',
+                'Cook lentils until tender, about 20 minutes',
+                'Whisk tahini, vinegar, and ginger for dressing',
+                'Arrange roasted vegetables and lentils in bowls',
+                'Drizzle with dressing, top with seeds and greens'
+            ],
+            benefits: [
+                'Grounding and stabilizing energy',
+                'Rich in root vegetables\' nutrients',
+                'Complete protein from lentils',
+                'Supports emotional balance'
+            ],
+            researchLinks: [
+                {
+                    title: 'Root Vegetables in Cancer Nutrition',
+                    summary: 'Root vegetables provide stable energy and essential nutrients for recovery',
+                    source: 'Journal of Nutritional Science, 2022'
+                }
+            ],
+            nutritionFacts: {
+                calories: '285',
+                protein: '11g',
+                carbs: '45g',
+                fiber: '9g',
+                fat: '8g'
+            }
+        },
+        {
+            id: 'mind_002',
+            name: 'Chakra-Balancing Rainbow Bowl',
+            description: 'Colorful nutrient bowl designed to balance energy centers and promote vitality',
+            tradition: 'Mind-Body Medicine',
+            region: 'Global',
+            origin: 'Ancient Ayurveda + Modern Adaptation (3000+ years)',
+            purpose: 'Energy center alignment, full-spectrum nutrition, emotional balance',
+            prepTime: '30 min',
+            servings: '2',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '1 cup red bell pepper (root chakra)',
+                '1 cup orange carrots (sacral chakra)',
+                '1 cup yellow corn (solar plexus)',
+                '1 cup green spinach (heart chakra)',
+                '1/2 cup blueberries (throat chakra)',
+                '1/4 cup purple cabbage (third eye)',
+                '1 tbsp violet edible flowers (crown)',
+                '2 cups cooked quinoa',
+                '2 tbsp tahini dressing'
+            ],
+            instructions: [
+                'Arrange quinoa as base in bowl',
+                'Steam or lightly sauté each colored vegetable',
+                'Arrange vegetables in rainbow pattern',
+                'Top with blueberries and purple cabbage',
+                'Garnish with violet flowers',
+                'Drizzle with tahini dressing',
+                'Eat mindfully, focusing on each color\'s energy'
+            ],
+            benefits: [
+                'Provides full spectrum of phytonutrients',
+                'Promotes mindful eating practices',
+                'Supports emotional and energetic balance',
+                'Rich in antioxidants and vitamins'
+            ],
+            researchLinks: [
+                {
+                    title: 'Color Psychology and Nutrition',
+                    summary: 'Diverse colored foods provide varied phytonutrients with complementary health benefits',
+                    source: 'Journal of Nutritional Science, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '385',
+                protein: '14g',
+                carbs: '68g',
+                fiber: '12g',
+                fat: '8g'
+            }
+        },
+        {
+            id: 'mind_003',
+            name: 'Pranayama Breathing Tea',
+            description: 'Respiratory-supporting herbal blend to enhance breathwork and lung function',
+            tradition: 'Mind-Body Medicine',
+            region: 'Global',
+            origin: 'Ancient yogic traditions (3000+ years)',
+            purpose: 'Respiratory support, breath awareness, oxygenation enhancement',
+            prepTime: '12 min',
+            servings: '2',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '1 tsp dried eucalyptus leaves',
+                '1 tsp dried peppermint',
+                '1/2 tsp dried thyme',
+                '1/2 tsp dried mullein',
+                '2 cups hot water',
+                '1 tsp raw honey',
+                '1/4 lemon, juiced'
+            ],
+            instructions: [
+                'Combine all dried herbs in teapot',
+                'Pour hot water over herbs',
+                'Cover and steep for 8 minutes',
+                'Strain herbs from liquid',
+                'Add honey and lemon juice',
+                'Drink slowly while practicing deep breathing',
+                'Inhale steam mindfully before drinking'
+            ],
+            benefits: [
+                'Supports respiratory health',
+                'Enhances oxygen utilization',
+                'Promotes mindful breathing',
+                'Clears respiratory pathways'
+            ],
+            researchLinks: [
+                {
+                    title: 'Herbal Support for Respiratory Health',
+                    summary: 'Traditional respiratory herbs show bronchodilatory and expectorant effects',
+                    source: 'Respiratory Medicine Research, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '15',
+                protein: '0g',
+                carbs: '4g',
+                fiber: '0g',
+                fat: '0g'
+            }
+        },
+        {
+            id: 'mind_004',
+            name: 'Grounding Earth Element Stew',
+            description: 'Root vegetable stew designed to promote stability and connection to earth energy',
+            tradition: 'Mind-Body Medicine',
+            region: 'Global',
+            origin: 'Earth-based wisdom traditions (1000+ years)',
+            purpose: 'Grounding energy, emotional stability, earth connection',
+            prepTime: '45 min',
+            servings: '4',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '2 cups sweet potatoes, cubed',
+                '1 cup carrots, sliced',
+                '1 cup parsnips, chopped',
+                '1 cup beets, cubed',
+                '1 onion, diced',
+                '3 cloves garlic, minced',
+                '4 cups vegetable broth',
+                '1 tsp dried rosemary',
+                '1 tsp dried sage',
+                '2 tbsp olive oil'
+            ],
+            instructions: [
+                'Heat olive oil in large pot',
+                'Sauté onion and garlic until fragrant',
+                'Add all root vegetables',
+                'Pour in broth and add herbs',
+                'Simmer 30 minutes until tender',
+                'Mash partially for texture',
+                'Serve warm while focusing on grounding'
+            ],
+            benefits: [
+                'Rich in grounding nutrients',
+                'Supports stable blood sugar',
+                'Promotes feeling of security',
+                'High in fiber and beta-carotene'
+            ],
+            researchLinks: [
+                {
+                    title: 'Root Vegetables in Metabolic Health',
+                    summary: 'Complex carbohydrates from root vegetables support stable energy and mood',
+                    source: 'Nutrition and Metabolism, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '185',
+                protein: '4g',
+                carbs: '38g',
+                fiber: '8g',
+                fat: '4g'
+            }
+        },
+        {
+            id: 'mind_005',
+            name: 'Heart-Opening Rose Petal Elixir',
+            description: 'Gentle floral tonic to support emotional healing and heart chakra opening',
+            tradition: 'Mind-Body Medicine',
+            region: 'Middle East/South Asia',
+            origin: 'Persian and Ayurvedic traditions (2000+ years)',
+            purpose: 'Emotional healing, heart chakra support, self-compassion',
+            prepTime: '15 min',
+            servings: '1',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '2 tbsp dried rose petals (food grade)',
+                '1 cup hot water',
+                '1 tsp rose water',
+                '1 tsp raw honey',
+                '1/4 tsp cardamom powder',
+                'Pinch of pink Himalayan salt',
+                'Fresh rose petals for garnish'
+            ],
+            instructions: [
+                'Place dried rose petals in teacup',
+                'Pour hot water over petals',
+                'Steep for 10 minutes',
+                'Strain petals from liquid',
+                'Stir in rose water and honey',
+                'Add cardamom and salt',
+                'Garnish with fresh petals and drink mindfully'
+            ],
+            benefits: [
+                'Supports emotional healing',
+                'Promotes self-love and compassion',
+                'Calms nervous system',
+                'Rich in vitamin C and antioxidants'
+            ],
+            researchLinks: [
+                {
+                    title: 'Rose Aromatherapy in Emotional Wellness',
+                    summary: 'Rose extracts show anxiolytic and mood-enhancing properties',
+                    source: 'Evidence-Based Complementary Medicine, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '20',
+                protein: '0g',
+                carbs: '5g',
+                fiber: '0g',
+                fat: '0g'
+            }
+        },
+        {
+            id: 'mind_006',
+            name: 'Solar Plexus Power Smoothie',
+            description: 'Yellow-colored smoothie to energize the solar plexus chakra and personal power',
+            tradition: 'Mind-Body Medicine',
+            region: 'Global',
+            origin: 'Modern chakra nutrition + Ancient wisdom (3000+ years)',
+            purpose: 'Personal empowerment, digestive support, confidence building',
+            prepTime: '8 min',
+            servings: '1',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '1 frozen banana',
+                '1/2 cup frozen mango',
+                '1/4 cup pineapple',
+                '1 tbsp turmeric powder',
+                '1 tsp fresh ginger',
+                '1 cup coconut water',
+                '1 tbsp coconut butter',
+                '1/2 tsp bee pollen'
+            ],
+            instructions: [
+                'Combine all frozen fruits in blender',
+                'Add turmeric and fresh ginger',
+                'Pour in coconut water',
+                'Add coconut butter',
+                'Blend until smooth and creamy',
+                'Top with bee pollen',
+                'Drink while visualizing golden energy'
+            ],
+            benefits: [
+                'Supports digestive fire',
+                'Anti-inflammatory properties',
+                'Boosts confidence and personal power',
+                'Rich in digestive enzymes'
+            ],
+            researchLinks: [
+                {
+                    title: 'Turmeric in Digestive Health',
+                    summary: 'Curcumin supports digestive function and reduces inflammation',
+                    source: 'Journal of Medicinal Food, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '245',
+                protein: '3g',
+                carbs: '48g',
+                fiber: '6g',
+                fat: '7g'
+            }
+        },
+        {
+            id: 'mind_007',
+            name: 'Third Eye Blueberry Lavender Tart',
+            description: 'Intuition-enhancing dessert with purple foods to support third eye chakra',
+            tradition: 'Mind-Body Medicine',
+            region: 'Global',
+            origin: 'Modern intuitive nutrition (50+ years)',
+            purpose: 'Intuition enhancement, mental clarity, spiritual connection',
+            prepTime: '40 min',
+            servings: '8',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '1 1/2 cups almond flour',
+                '1/4 cup coconut oil, melted',
+                '2 tbsp maple syrup',
+                '2 cups fresh blueberries',
+                '1 tbsp dried lavender buds',
+                '1/4 cup coconut cream',
+                '2 tbsp agar powder',
+                '1/4 cup raw honey'
+            ],
+            instructions: [
+                'Mix almond flour, coconut oil, and maple syrup',
+                'Press into tart pan and bake 15 minutes',
+                'Simmer blueberries with lavender 10 minutes',
+                'Strain and mix with coconut cream',
+                'Dissolve agar in warm mixture',
+                'Add honey and pour into crust',
+                'Refrigerate 2 hours until set'
+            ],
+            benefits: [
+                'Rich in anthocyanins for brain health',
+                'Supports cognitive function',
+                'Promotes mental clarity',
+                'Calming lavender aromatherapy'
+            ],
+            researchLinks: [
+                {
+                    title: 'Blueberries in Cognitive Health',
+                    summary: 'Blueberry anthocyanins show neuroprotective and memory-enhancing effects',
+                    source: 'Nutritional Neuroscience, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '195',
+                protein: '5g',
+                carbs: '22g',
+                fiber: '4g',
+                fat: '11g'
+            }
+        },
+        {
+            id: 'mind_008',
+            name: 'Crown Chakra Violet Chia Pudding',
+            description: 'Spiritual connection pudding with purple foods and high-vibration ingredients',
+            tradition: 'Mind-Body Medicine',
+            region: 'Global',
+            origin: 'Modern spiritual nutrition (50+ years)',
+            purpose: 'Spiritual connection, crown chakra activation, divine consciousness',
+            prepTime: '10 min (plus 4 hours setting)',
+            servings: '2',
+            image: './recipe-background.jpg',
+            ingredients: [
+                '1/4 cup chia seeds',
+                '1 cup coconut milk',
+                '2 tbsp purple cabbage juice (for color)',
+                '1 tbsp maple syrup',
+                '1/2 tsp vanilla extract',
+                '1/4 cup purple grapes',
+                '1 tbsp edible violet flowers',
+                '1 tsp coconut flakes'
+            ],
+            instructions: [
+                'Whisk chia seeds with coconut milk',
+                'Add cabbage juice for purple color',
+                'Stir in maple syrup and vanilla',
+                'Refrigerate 4 hours, stirring once',
+                'Top with grapes and violet flowers',
+                'Garnish with coconut flakes',
+                'Eat mindfully for spiritual connection'
+            ],
+            benefits: [
+                'Supports spiritual awareness',
+                'Rich in omega-3 fatty acids',
+                'Promotes mindful eating',
+                'High in antioxidants'
+            ],
+            researchLinks: [
+                {
+                    title: 'Mindful Eating and Wellbeing',
+                    summary: 'Mindful eating practices show benefits for overall health and spiritual wellness',
+                    source: 'Mindfulness Journal, 2021'
+                }
+            ],
+            nutritionFacts: {
+                calories: '165',
+                protein: '5g',
+                carbs: '18g',
+                fiber: '10g',
+                fat: '8g'
+            }
         }
     ]
 };
@@ -727,7 +3465,7 @@ const recipeData = {
 const educationalResources = {
     // National Cancer Institute (NCI)
     'nci-nutrition-cancer': {
-        title: 'Nutrition in Cancer Care (PDQ®) - 2024 Update',
+        title: 'Nutrition in Cancer Care (PDQÂ®) - 2024 Update',
         url: 'https://www.cancer.gov/about-cancer/treatment/side-effects/appetite-loss/nutrition-hp-pdq',
         description: 'Comprehensive evidence-based guidelines from NCI on nutrition during cancer treatment.',
         journalInfo: 'Updated quarterly by NCI expert panel. Referenced in over 500 peer-reviewed studies.',
@@ -958,83 +3696,254 @@ function showSection(sectionId) {
 }
 
 // Recipe functions
-function loadRecipes() {
-    filterRecipes('all');
+function loadRecipes(skipDefaultFilter = false) {
+    // Update filter buttons with counts first
+    updateFilterButtonsWithCounts(currentRecipeMode);
+    
+    // Initialize filter button event listeners
+    initializeFilterButtons();
+    
+    // Load all recipes by default unless skipDefaultFilter is true
+    if (!skipDefaultFilter) {
+        filterRecipes('all');
+    }
 }
 
-function filterRecipes(category) {
+function filterRecipes(category, skipHighlight = false, showCategoryHeader = false) {
+    console.log(`Filtering recipes for category: ${category}, showHeader: ${showCategoryHeader}`);
+    
+    // Remove any existing recommendation notice when manually filtering
+    const existingNotice = document.querySelector('.recommendation-notice');
+    if (existingNotice && category !== 'recommended') {
+        existingNotice.remove();
+    }
+    
+    // Get current recipe data based on mode
+    const currentRecipeData = currentRecipeMode === 'conventional' ? conventionalRecipeData : camRecipeData;
     let recipesToShow = [];
     
     if (category === 'all') {
         // Show all recipes from all categories
-        for (const cat in recipeData) {
-            recipesToShow = recipesToShow.concat(recipeData[cat]);
+        for (const cat in currentRecipeData) {
+            recipesToShow = recipesToShow.concat(currentRecipeData[cat]);
         }
-    } else if (recipeData[category]) {
-        recipesToShow = recipeData[category];
+        renderRecipes(recipesToShow);
+        showCategoryHeader = false; // Never show header for "all"
+    } else if (category === 'recommended') {
+        // Handle the "Recommended Recipes" filter - show all recommended recipes in grid layout
+        showRecommendedRecipesGrid();
+        return; // Early return as showRecommendedRecipesGrid handles everything
+    } else if (currentRecipeData[category]) {
+        recipesToShow = currentRecipeData[category];
+        
+        // If showing category header for specific filter, use single category rendering
+        if (showCategoryHeader && recipesToShow.length > 0) {
+            renderSingleCategoryWithHeader(category, recipesToShow);
+        } else {
+            // Use regular rendering without headers
+            renderRecipes(recipesToShow);
+        }
     }
     
-    renderRecipes(recipesToShow);
+    // Highlight the corresponding filter button unless explicitly skipped
+    if (!skipHighlight) {
+        highlightFilterButton(category);
+    }
 }
 
 function showRecommendedRecipes() {
-    // Filter recipes to show only those from recommended categories
-    let recommendedRecipes = [];
+    console.log('=== Showing Recommended Recipes (Mixed View) ===');
     
-    if (currentUserRecommendedFilters.length === 0) {
-        // Fallback to all recipes if no recommendations available
-        for (const cat in recipeData) {
-            recommendedRecipes = recommendedRecipes.concat(recipeData[cat]);
-        }
-    } else {
-        // Show recipes from recommended categories only
-        currentUserRecommendedFilters.forEach(filter => {
-            if (recipeData[filter]) {
-                recommendedRecipes = recommendedRecipes.concat(recipeData[filter]);
-            }
+    // Get user profile to determine nutrition approach
+    const userData = getUserProfile();
+    if (!userData) {
+        console.error('No user profile found');
+        alert('Please complete your personal assessment first.');
+        showSection('profileSection');
+        return;
+    }
+
+    // Make sure we're in the recipes section but don't load default recipes
+    const targetSection = document.getElementById('recipesSection');
+    if (targetSection) {
+        // Hide all sections
+        document.querySelectorAll('.content-section, .welcome-section').forEach(section => {
+            section.classList.add('hidden');
         });
+        
+        // Show recipes section
+        targetSection.classList.remove('hidden');
+        currentSection = 'recipesSection';
+        
+        // Update navigation
+        document.querySelectorAll('.nav-item').forEach(nav => {
+            nav.classList.remove('active');
+        });
+        const activeNavItem = document.querySelector(`[data-section="recipes"]`);
+        if (activeNavItem) {
+            activeNavItem.classList.add('active');
+        }
+        
+        // Initialize filter buttons but don't load default recipes
+        initializeFilterButtons();
     }
     
-    // Update filter buttons to show "recommended" state
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('active');
+    // Determine the correct recipe mode based on nutrition approach
+    let targetMode = 'conventional'; // default
+    if (userData.nutritionApproach && userData.nutritionApproach !== 'conventional') {
+        targetMode = 'cam';
+    }
+    
+    console.log(`Target recipe mode: ${targetMode}, Current mode: ${currentRecipeMode}`);
+    
+    // Switch to appropriate recipe mode if needed
+    if (currentRecipeMode !== targetMode) {
+        console.log(`Switching to ${targetMode} mode`);
+        switchRecipeMode(targetMode);
+        
+        // Update dropdown to reflect the change
+        const dropdown = document.getElementById('recipeMode');
+        if (dropdown) {
+            dropdown.value = targetMode;
+        }
+    }
+    
+    // Get recommended categories for current nutrition approach
+    const recommendedFilters = getRecommendedCategoriesArray(userData).map(cat => cat.filter);
+    console.log('Recommended filters:', recommendedFilters);
+    
+    // Get current recipe data
+    const currentRecipeData = currentRecipeMode === 'conventional' ? conventionalRecipeData : camRecipeData;
+    
+    // Collect all recommended recipes into a single array
+    let allRecommendedRecipes = [];
+    recommendedFilters.forEach(filterName => {
+        const categoryRecipes = currentRecipeData[filterName] || [];
+        console.log(`Adding ${categoryRecipes.length} recipes from ${filterName}`);
+        allRecommendedRecipes = allRecommendedRecipes.concat(categoryRecipes);
     });
     
-    // Activate the "All Recipes" button and update its text temporarily
-    const allButton = document.querySelector('.filter-btn[data-filter="all"]');
-    if (allButton) {
-        allButton.classList.add('active');
-        const originalText = allButton.textContent;
-        allButton.textContent = 'Your Recommended Recipes';
-        
-        // Restore original text after 3 seconds
-        setTimeout(() => {
-            if (allButton.classList.contains('active')) {
-                allButton.textContent = originalText;
-            }
-        }, 3000);
+    console.log(`Total recommended recipes: ${allRecommendedRecipes.length}`);
+    
+    // Update filter buttons with counts and show recommended button as active
+    updateFilterButtonsWithCounts(targetMode, true, allRecommendedRecipes.length, recommendedFilters);
+    
+    // Sort recipes by region for consistency
+    const sortedRecipes = [...allRecommendedRecipes].sort((a, b) => {
+        const regionA = a.region || 'ZZZ';
+        const regionB = b.region || 'ZZZ';
+        return regionA.localeCompare(regionB);
+    });
+    
+    // Render all recommended recipes together (mixed view)
+    renderRecipes(sortedRecipes);
+    
+    // Show notification about personalized recommendations
+    const recipesGrid = document.getElementById('recipesGrid');
+    if (recipesGrid) {
+        const existingNotice = document.querySelector('.recommendation-notice');
+        if (!existingNotice) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'recommendation-notice';
+            messageDiv.innerHTML = `
+                <i class="fas fa-star"></i>
+                <span>Showing ${allRecommendedRecipes.length} recipes personalized for your profile</span>
+                <div class="recommendation-actions">
+                    <button onclick="restoreAllRecipes()" class="btn-link">View all recipes</button>
+                    <button onclick="dismissRecommendationNotice()" class="btn-link close-notice" title="Dismiss notification">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            recipesGrid.parentNode.insertBefore(messageDiv, recipesGrid);
+        }
     }
     
-    renderRecipes(recommendedRecipes);
+    // Scroll to top of recipes section
+    const recipesSection = document.getElementById('recipesSection');
+    if (recipesSection) {
+        recipesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function showRecommendedRecipesGrouped() {
+    console.log('=== Showing Recommended Recipes (Grouped Horizontal Layout) ===');
     
-    // Show a message about the filtered results
-    const recipesGrid = document.getElementById('recipesGrid');
-    if (recipesGrid && recommendedRecipes.length > 0) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'recommendation-notice';
-        messageDiv.innerHTML = `
-            <i class="fas fa-star"></i>
-            <span>Showing ${recommendedRecipes.length} recipes personalized for your profile</span>
-            <button onclick="restoreAllRecipes()" class="btn-link">View all recipes</button>
-        `;
-        recipesGrid.parentNode.insertBefore(messageDiv, recipesGrid);
+    // Get user profile to determine nutrition approach
+    const userData = getUserProfile();
+    if (!userData) {
+        console.error('No user profile found');
+        alert('Please complete your personal assessment first.');
+        showSection('profileSection');
+        return;
+    }
+
+    // Determine the correct recipe mode based on nutrition approach
+    let targetMode = 'conventional'; // default
+    if (userData.nutritionApproach && userData.nutritionApproach !== 'conventional') {
+        targetMode = 'cam';
+    }
+    
+    console.log(`Target recipe mode: ${targetMode}, Current mode: ${currentRecipeMode}`);
+    
+    // Switch to appropriate recipe mode if needed
+    if (currentRecipeMode !== targetMode) {
+        console.log(`Switching to ${targetMode} mode`);
+        switchRecipeMode(targetMode);
         
-        // Remove message after 5 seconds
-        setTimeout(() => {
-            if (messageDiv.parentNode) {
-                messageDiv.parentNode.removeChild(messageDiv);
-            }
-        }, 5000);
+        // Update dropdown to reflect the change
+        const dropdown = document.getElementById('recipeMode');
+        if (dropdown) {
+            dropdown.value = targetMode;
+        }
+    }
+    
+    // Get recommended categories for current nutrition approach
+    const recommendedCategories = getRecommendedCategoriesArray(userData);
+    console.log('Recommended categories:', recommendedCategories);
+    
+    // Get current recipe data
+    const currentRecipeData = currentRecipeMode === 'conventional' ? conventionalRecipeData : camRecipeData;
+    
+    // Calculate total recommended recipes count and update filter buttons
+    const recommendedFilters = recommendedCategories.map(cat => cat.filter);
+    let totalRecommendedCount = 0;
+    recommendedFilters.forEach(filterName => {
+        const categoryRecipes = currentRecipeData[filterName] || [];
+        totalRecommendedCount += categoryRecipes.length;
+    });
+    
+    // Update filter buttons with counts and show recommended button as active
+    updateFilterButtonsWithCounts(targetMode, true, totalRecommendedCount, recommendedFilters);
+    
+    // Render grouped recipes with horizontal layout
+    renderRecommendedRecipesGroupedHorizontal(recommendedCategories, currentRecipeData);
+    
+    // Show notification about personalized recommendations
+    const recipesGrid = document.getElementById('recipesGrid');
+    if (recipesGrid) {
+        const existingNotice = document.querySelector('.recommendation-notice');
+        if (!existingNotice) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'recommendation-notice';
+            messageDiv.innerHTML = `
+                <i class="fas fa-star"></i>
+                <span>Showing recipes organized by your personalized recommendations</span>
+                <div class="recommendation-actions">
+                    <button onclick="restoreAllRecipes()" class="btn-link">View all recipes</button>
+                    <button onclick="dismissRecommendationNotice()" class="btn-link close-notice" title="Dismiss notification">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            recipesGrid.parentNode.insertBefore(messageDiv, recipesGrid);
+        }
+    }
+    
+    // Scroll to top of recipes section
+    const recipesSection = document.getElementById('recipesSection');
+    if (recipesSection) {
+        recipesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 }
 
@@ -1055,49 +3964,970 @@ function restoreAllRecipes() {
     filterRecipes('all');
 }
 
+function dismissRecommendationNotice() {
+    // Remove the recommendation notice
+    const existingNotice = document.querySelector('.recommendation-notice');
+    if (existingNotice && existingNotice.parentNode) {
+        existingNotice.parentNode.removeChild(existingNotice);
+    }
+}
+
 function renderRecipes(recipes) {
     const container = document.getElementById('recipesGrid');
-    if (!container) return;
+    if (!container) {
+        console.error('recipesGrid container not found');
+        return;
+    }
+    
+    console.log('Rendering recipes:', recipes.length, 'recipes in mode:', currentRecipeMode);
+    
+    // Reset container classes to ensure clean grid layout
+    container.className = 'recipes-grid cam-recipes-grid';
     
     if (recipes.length === 0) {
         container.innerHTML = '<p class="no-recipes">No recipes found for this filter.</p>';
         return;
     }
-    
-    const html = recipes.map(recipe => `
-        <div class="recipe-card" onclick="openRecipeModal(${recipe.id})" data-recipe-id="${recipe.id}">
-            <div class="recipe-image" style="background-image: url('${recipe.image || ''}')">
-                <i class="fas fa-utensils"></i>
-                ${recipe.region ? `<span class="recipe-region">${recipe.region}</span>` : ''}
-            </div>
-            <div class="recipe-content">
-                <div class="recipe-tags">
-                    ${recipe.tags.map(tag => `<span class="recipe-tag">${tag}</span>`).join('')}
+
+    // Sort recipes by region field alphabetically
+    const sortedRecipes = [...recipes].sort((a, b) => {
+        const regionA = a.region || 'ZZZ'; // Put recipes without region at the end
+        const regionB = b.region || 'ZZZ';
+        return regionA.localeCompare(regionB);
+    });
+
+    const html = sortedRecipes.map(recipe => {
+        // Handle different recipe structures (conventional vs CAM)
+        const isCAMRecipe = recipe.tradition && recipe.origin && recipe.purpose;
+        
+        if (isCAMRecipe) {
+            // CAM recipe structure
+            return `
+                <div class="recipe-card" onclick="openRecipeModal('${recipe.id}')" data-recipe-id="${recipe.id}">
+                    <div class="recipe-image recipe-icon-header" style="background: none !important; background-image: url('recipe-background-food.png') !important; background-size: cover !important; background-position: center !important; background-repeat: no-repeat !important; background-color: transparent !important; background-attachment: scroll !important;">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <div class="recipe-name-header">
+                        <h3>${recipe.name}</h3>
+                    </div>
+                    <div class="recipe-content">
+                        <div class="recipe-meta">
+                            <span class="recipe-tradition-badge">${recipe.tradition}</span>
+                        </div>
+                        <p class="recipe-description">${recipe.description}</p>
+                        <div class="recipe-origin-info">
+                            <strong>Origin:</strong> ${recipe.origin}
+                        </div>
+                        <div class="recipe-purpose">
+                            <strong>Purpose:</strong> ${recipe.purpose}
+                        </div>
+                        <div class="recipe-stats">
+                            <span><i class="fas fa-clock"></i> ${recipe.prepTime}</span>
+                            <span><i class="fas fa-users"></i> ${recipe.servings} servings</span>
+                            <span><i class="fas fa-fire"></i> ${recipe.nutritionFacts.calories} cal</span>
+                        </div>
+                    </div>
                 </div>
-                <h3>${recipe.name}</h3>
-                <p class="recipe-description">${recipe.description}</p>
-                <div class="recipe-stats">
-                    <span><i class="fas fa-clock"></i> ${recipe.prepTime}</span>
-                    <span><i class="fas fa-dumbbell"></i> ${recipe.protein}</span>
-                    <span><i class="fas fa-fire"></i> ${recipe.calories}</span>
+            `;
+        } else {
+            // Conventional recipe structure - enhanced to match CAM design
+            return `
+                <div class="recipe-card" onclick="openRecipeModal('${recipe.id}')" data-recipe-id="${recipe.id}">
+                    <div class="recipe-image-override recipe-icon-header" style="background: none !important; background-image: url('recipe-background-food.png') !important; background-size: cover !important; background-position: center !important; background-repeat: no-repeat !important; background-color: transparent !important; background-attachment: scroll !important;">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <div class="recipe-name-header">
+                        <h3>${recipe.name}</h3>
+                    </div>
+                    <div class="recipe-content">
+                        <div class="recipe-meta">
+                            <span class="recipe-tradition-badge">${recipe.region || 'Nutritional Therapy'}</span>
+                        </div>
+                        <p class="recipe-description">${recipe.description}</p>
+                        <div class="recipe-origin-info">
+                            <strong>Category:</strong> ${recipe.tags ? recipe.tags.join(', ') : 'Therapeutic'}
+                        </div>
+                        <div class="recipe-purpose">
+                            <strong>Benefits:</strong> ${recipe.cancerBenefits || recipe.nutritionTips || 'Supports overall health and nutrition'}
+                        </div>
+                        <div class="recipe-stats">
+                            <span><i class="fas fa-clock"></i> ${recipe.prepTime}</span>
+                            <span><i class="fas fa-fire"></i> ${recipe.protein}</span>
+                            <span><i class="fas fa-burn"></i> ${recipe.calories} cal</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    `).join('');
+            `;
+        }
+    }).join('');
     
     container.innerHTML = html;
 }
 
+function renderSingleCategoryWithHeader(category, recipes) {
+    console.log(`Rendering single category with header: ${category}, ${recipes.length} recipes`);
+    
+    const recipesGrid = document.getElementById('recipesGrid');
+    if (!recipesGrid) return;
+    
+    // Get category information
+    const categoryInfo = getCategoryInfo(category);
+    
+    // Create header HTML
+    const headerHTML = `
+        <div class="single-category-header" style="
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--health-green) 100%);
+            color: white;
+            padding: var(--space-6);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-6);
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.2);
+        ">
+            <div style="display: flex; align-items: center; justify-content: center; gap: var(--space-3); margin-bottom: var(--space-2);">
+                <i class="${categoryInfo.icon}" style="font-size: 2rem;"></i>
+                <h2 style="margin: 0; font-size: 1.8rem; font-weight: 600;">${categoryInfo.title}</h2>
+                <span style="
+                    background: rgba(255, 255, 255, 0.2);
+                    padding: var(--space-1) var(--space-3);
+                    border-radius: var(--radius-full);
+                    font-weight: 500;
+                    font-size: 0.9rem;
+                ">(${recipes.length} recipes)</span>
+            </div>
+            <p style="margin: 0; opacity: 0.9; font-size: 1rem; max-width: 600px; margin: 0 auto;">
+                ${categoryInfo.description}
+            </p>
+        </div>
+    `;
+    
+    // Sort recipes by region
+    const sortedRecipes = [...recipes].sort((a, b) => {
+        const regionA = a.region || 'ZZZ';
+        const regionB = b.region || 'ZZZ';
+        return regionA.localeCompare(regionB);
+    });
+    
+    // Create recipe cards
+    const recipesHTML = sortedRecipes.map(recipe => {
+        const isCAMRecipe = recipe.tradition && recipe.origin && recipe.purpose;
+        
+        if (isCAMRecipe) {
+            return `
+                <div class="recipe-card" onclick="openRecipeModal('${recipe.id}')" data-recipe-id="${recipe.id}">
+                    <div class="recipe-image recipe-icon-header">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <div class="recipe-name-header">
+                        <h3>${recipe.name}</h3>
+                    </div>
+                    <div class="recipe-content">
+                        <div class="recipe-meta">
+                            <span class="recipe-tradition-badge">${recipe.tradition}</span>
+                        </div>
+                        <p class="recipe-description">${recipe.description}</p>
+                        <div class="recipe-origin-info">
+                            <strong>Origin:</strong> ${recipe.origin}
+                        </div>
+                        <div class="recipe-purpose">
+                            <strong>Purpose:</strong> ${recipe.purpose}
+                        </div>
+                        <div class="recipe-stats">
+                            <span><i class="fas fa-clock"></i> ${recipe.prepTime}</span>
+                            <span><i class="fas fa-users"></i> ${recipe.servings} servings</span>
+                            <span><i class="fas fa-fire"></i> ${recipe.nutritionFacts.calories} cal</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            return `
+                <div class="recipe-card" onclick="openRecipeModal('${recipe.id}')" data-recipe-id="${recipe.id}">
+                    <div class="recipe-image recipe-icon-header">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <div class="recipe-name-header">
+                        <h3>${recipe.name}</h3>
+                    </div>
+                    <div class="recipe-content">
+                        <div class="recipe-meta">
+                            <span class="recipe-region-badge">${recipe.region || 'Global'}</span>
+                        </div>
+                        <p class="recipe-description">${recipe.description}</p>
+                        <div class="recipe-stats">
+                            <span><i class="fas fa-clock"></i> ${recipe.prepTime}</span>
+                            <span><i class="fas fa-dumbbell"></i> ${recipe.protein}</span>
+                            <span><i class="fas fa-fire"></i> ${recipe.calories} cal</span>
+                        </div>
+                        <div class="recipe-benefits">
+                            <i class="fas fa-info-circle"></i>
+                            <span>${recipe.cancerBenefits}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    }).join('');
+    
+    // Render header + recipes
+    recipesGrid.innerHTML = headerHTML + `
+        <div class="recipes-grid" style="
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--space-6);
+            padding: var(--space-4) 0;
+        ">
+            ${recipesHTML}
+        </div>
+    `;
+}
+
+function getCategoryInfo(category) {
+    const categoryMap = {
+        // Conventional Nutrition Categories
+        'healthy': {
+            icon: 'fas fa-leaf',
+            title: 'Healthy Recipes',
+            description: 'Nutritious, well-balanced recipes to support overall health and wellness during your cancer journey.'
+        },
+        'symptom-management': {
+            icon: 'fas fa-heart-pulse',
+            title: 'Symptom Management',
+            description: 'Recipes designed to help manage treatment side effects like nausea, appetite loss, and digestive issues.'
+        },
+        'high-protein-high-calorie': {
+            icon: 'fas fa-dumbbell',
+            title: 'High Protein/Calorie',
+            description: 'Nutrient-dense recipes to support energy, recovery, and maintaining healthy weight during treatment.'
+        },
+        'texture-modified': {
+            icon: 'fas fa-blender',
+            title: 'Texture Modified',
+            description: 'Soft, easy-to-swallow recipes perfect for managing mouth sores, swallowing difficulties, or dental issues.'
+        },
+        'therapeutic-medical': {
+            icon: 'fas fa-pills',
+            title: 'Therapeutic/Medical',
+            description: 'Evidence-based recipes with specific therapeutic benefits and medical nutrition principles for cancer patients.'
+        },
+        
+        // CAM Categories
+        'ayurveda': {
+            icon: 'fas fa-leaf',
+            title: 'Ayurvedic Nutrition',
+            description: 'Traditional Ayurvedic recipes that balance your constitution and support healing through ancient wisdom.'
+        },
+        'tcm': {
+            icon: 'fas fa-mountain',
+            title: 'Traditional Chinese Medicine',
+            description: 'Traditional Chinese Medicine recipes focused on energy balancing and organ support for optimal health.'
+        },
+        'herbal-remedies': {
+            icon: 'fas fa-seedling',
+            title: 'Herbal Remedies',
+            description: 'Global herbal traditions adapted for cancer support, combining traditional wisdom with modern safety.'
+        },
+        'functional-foods': {
+            icon: 'fas fa-microscope',
+            title: 'Functional Foods',
+            description: 'Modern functional nutrition recipes featuring superfoods and bioactive compounds for optimal health.'
+        },
+        'mind-body-energy': {
+            icon: 'fas fa-brain',
+            title: 'Mind-Body & Energy',
+            description: 'Recipes that support mental clarity, emotional balance, and energy healing during your wellness journey.'
+        }
+    };
+    
+    return categoryMap[category] || {
+        icon: 'fas fa-utensils',
+        title: category.charAt(0).toUpperCase() + category.slice(1).replace(/-/g, ' '),
+        description: `Specialized recipes in the ${category.replace(/-/g, ' ')} category.`
+    };
+}
+
+function renderRecipesWithDynamicHeaders(recipesData, options = {}) {
+    const container = document.getElementById('recipesGrid');
+    if (!container) {
+        console.error('recipesGrid container not found');
+        return;
+    }
+    
+    const { showGroupHeaders = false, groupByCategory = false, singleCategoryFilter = null } = options;
+    
+    if (groupByCategory && showGroupHeaders) {
+        // Render grouped recipes with headers (for recommendations)
+        renderGroupedRecommendedRecipes(recipesData.userData, recipesData.filters, recipesData.data);
+        return;
+    }
+    
+    if (singleCategoryFilter && singleCategoryFilter !== 'all') {
+        // Render single category with header
+        const categoryRecipes = recipesData;
+        
+        // Add single category container class
+        container.className = container.className.replace(/recipe-categories-container\s+categories-\d+/g, '').trim();
+        container.classList.add('recipe-categories-container', 'categories-1');
+        
+        // Create single category header
+        const html = `
+            <div class="recipe-category-section">
+                <div class="category-header">
+                    <div class="category-title-wrapper">
+                        <div class="category-title-content">
+                            <i class="${getCategoryIcon(singleCategoryFilter)}"></i>
+                            <h3 class="category-title">${getCategoryDisplayName(singleCategoryFilter)}</h3>
+                        </div>
+                        <span class="recipe-count">(${categoryRecipes.length} recipes)</span>
+                    </div>
+                    <p class="category-description">${getCategoryDescription(singleCategoryFilter, {})}</p>
+                </div>
+                <div class="category-recipes-grid">
+                    ${renderRecipeCards(categoryRecipes)}
+                </div>
+            </div>
+        `;
+        container.innerHTML = html;
+    } else {
+        // Render regular recipes without category headers
+        // Remove dynamic category classes for regular rendering
+        container.className = container.className.replace(/recipe-categories-container\s+categories-\d+/g, '').trim();
+        renderRecipes(recipesData);
+    }
+}
+
+function renderRecipeCards(recipes) {
+    // Sort recipes by region field alphabetically
+    const sortedRecipes = [...recipes].sort((a, b) => {
+        const regionA = a.region || 'ZZZ'; // Put recipes without region at the end
+        const regionB = b.region || 'ZZZ';
+        return regionA.localeCompare(regionB);
+    });
+
+    return sortedRecipes.map(recipe => {
+        // Handle different recipe structures (conventional vs CAM)
+        const isCAMRecipe = recipe.tradition && recipe.origin && recipe.purpose;
+        
+        if (isCAMRecipe) {
+            // CAM recipe structure
+            return `
+                <div class="recipe-card" onclick="openRecipeModal('${recipe.id}')" data-recipe-id="${recipe.id}">
+                    <div class="recipe-image-override" style="background: none !important; background-image: url('recipe-background-food.png') !important; background-size: cover !important; background-position: center !important; background-repeat: no-repeat !important; background-color: transparent !important; background-attachment: scroll !important;">
+                        <i class="fas fa-utensils" style="color: white; font-size: 3rem; z-index: 10; position: relative; text-shadow: 0 2px 4px rgba(0,0,0,0.8);"></i>
+                    </div>
+                    <div class="recipe-name-header">
+                        <h3>${recipe.name}</h3>
+                    </div>
+                    <div class="recipe-content">
+                        <div class="recipe-meta">
+                            <span class="recipe-tradition-badge">${recipe.tradition}</span>
+                        </div>
+                        <p class="recipe-description">${recipe.description}</p>
+                        <div class="recipe-origin-info">
+                            <strong>Origin:</strong> ${recipe.origin}
+                        </div>
+                        <div class="recipe-purpose">
+                            <strong>Purpose:</strong> ${recipe.purpose}
+                        </div>
+                        <div class="recipe-stats">
+                            <span><i class="fas fa-clock"></i> ${recipe.prepTime}</span>
+                            <span><i class="fas fa-users"></i> ${recipe.servings} servings</span>
+                            <span><i class="fas fa-fire"></i> ${recipe.nutritionFacts.calories} cal</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            // Conventional recipe structure
+            return `
+                <div class="recipe-card" onclick="openRecipeModal('${recipe.id}')" data-recipe-id="${recipe.id}">
+                    <div class="recipe-image-override" style="background: none !important; background-image: url('recipe-background-food.png') !important; background-size: cover !important; background-position: center !important; background-repeat: no-repeat !important; background-color: transparent !important; background-attachment: scroll !important;">
+                        <i class="fas fa-utensils" style="color: white; font-size: 3rem; z-index: 10; position: relative; text-shadow: 0 2px 4px rgba(0,0,0,0.8);"></i>
+                    </div>
+                    <div class="recipe-name-header">
+                        <h3>${recipe.name}</h3>
+                    </div>
+                    <div class="recipe-content">
+                        <div class="recipe-meta">
+                            <span class="recipe-region-badge">${recipe.region || 'Global'}</span>
+                        </div>
+                        <p class="recipe-description">${recipe.description}</p>
+                        <div class="recipe-stats">
+                            <span><i class="fas fa-clock"></i> ${recipe.prepTime}</span>
+                            <span><i class="fas fa-dumbbell"></i> ${recipe.protein}</span>
+                            <span><i class="fas fa-fire"></i> ${recipe.calories} cal</span>
+                        </div>
+                        <div class="recipe-benefits">
+                            <i class="fas fa-info-circle"></i>
+                            <span>${recipe.cancerBenefits}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    }).join('');
+}
+
+function renderGroupedRecommendedRecipes(userData, recommendedFilters, currentRecipeData) {
+    const container = document.getElementById('recipesGrid');
+    if (!container) {
+        console.error('recipesGrid container not found');
+        return;
+    }
+    
+    // Add dynamic container class based on number of categories
+    const numCategories = recommendedFilters.length;
+    
+    container.className = container.className.replace(/recipe-categories-container\s+categories-\d+/g, '').trim();
+    if (numCategories >= 3) {
+        container.classList.add('recipe-categories-container', `categories-${numCategories}`);
+    }
+    console.log('Container after class change:', container.className);
+    console.log('Filters being processed:', recommendedFilters);
+    
+    // Force a style recalculation
+    setTimeout(() => {
+        const computedStyle = window.getComputedStyle(document.querySelector('.recipe-categories-container .category-recipes-grid'));
+        console.log('Applied grid-template-columns:', computedStyle.gridTemplateColumns);
+        console.log('Applied gap:', computedStyle.gap);
+    }, 100);
+    
+    if (recommendedFilters.length === 0) {
+        console.log('No recommended filters, showing all recipes');
+        // Fallback to all recipes
+        let allRecipes = [];
+        for (const cat in currentRecipeData) {
+            allRecipes = allRecipes.concat(currentRecipeData[cat]);
+        }
+        renderRecipes(allRecipes);
+        return;
+    }
+    
+    // Helper function to get category display name
+    const getCategoryDisplayName = (filterKey) => {
+        const categoryNames = {
+            'symptom-management': 'Symptom Management',
+            'high-protein-high-calorie': 'High Protein/Calorie', 
+            'therapeutic-medical': 'Therapeutic/Medical',
+            'texture-modified': 'Texture Modified',
+            'healthy': 'General Healthy',
+            'ayurveda': 'Ayurvedic Nutrition',
+            'tcm': 'Traditional Chinese Medicine',
+            'herbal-remedies': 'Herbal Remedies',
+            'functional-foods': 'Functional Foods',
+            'mind-body-energy': 'Mind-Body Energy'
+        };
+        return categoryNames[filterKey] || filterKey.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    };
+    
+    // Helper function to get category icon
+    const getCategoryIcon = (filterKey) => {
+        const categoryIcons = {
+            'symptom-management': 'fas fa-heart-pulse',
+            'high-protein-high-calorie': 'fas fa-dumbbell',
+            'therapeutic-medical': 'fas fa-pills',
+            'texture-modified': 'fas fa-blender',
+            'healthy': 'fas fa-leaf',
+            'ayurveda': 'fas fa-leaf',
+            'tcm': 'fas fa-mountain',
+            'herbal-remedies': 'fas fa-seedling',
+            'functional-foods': 'fas fa-microscope',
+            'mind-body-energy': 'fas fa-brain'
+        };
+        return categoryIcons[filterKey] || 'fas fa-utensils';
+    };
+    
+    let totalRecipes = 0;
+    let html = '';
+    
+    // Generate grouped sections for each recommended category
+    recommendedFilters.forEach(filter => {
+        console.log(`Processing filter: ${filter}`);
+        console.log(`Checking if currentRecipeData[${filter}] exists:`, !!currentRecipeData[filter]);
+        if (currentRecipeData[filter]) {
+            console.log(`Found ${currentRecipeData[filter].length} recipes for ${filter}`);
+        }
+        
+        if (currentRecipeData[filter] && currentRecipeData[filter].length > 0) {
+            const categoryRecipes = currentRecipeData[filter];
+            totalRecipes += categoryRecipes.length;
+            
+            console.log(`Adding ${categoryRecipes.length} recipes for category: ${filter}`);
+            
+            // Sort recipes by region within each category
+            const sortedCategoryRecipes = [...categoryRecipes].sort((a, b) => {
+                const regionA = a.region || 'ZZZ';
+                const regionB = b.region || 'ZZZ';
+                return regionA.localeCompare(regionB);
+            });
+            
+            // Create category section header
+            console.log(`Creating header for category: ${getCategoryDisplayName(filter)}`);
+            html += `
+                <div class="recipe-category-section">
+                    <div class="category-header">
+                        <div class="category-title-wrapper">
+                            <div class="category-title-content">
+                                <i class="${getCategoryIcon(filter)}"></i>
+                                <h3 class="category-title">${getCategoryDisplayName(filter)}</h3>
+                            </div>
+                            <span class="recipe-count">(${categoryRecipes.length} recipes)</span>
+                        </div>
+                        <p class="category-description">${getCategoryDescription(filter, userData)}</p>
+                    </div>
+                    <div class="category-recipes-grid">
+            `;
+            
+            // Add recipes for this category
+            sortedCategoryRecipes.forEach(recipe => {
+                const isCAMRecipe = recipe.tradition && recipe.origin && recipe.purpose;
+                
+                if (isCAMRecipe) {
+                    html += `
+                        <div class="recipe-card" onclick="openRecipeModal('${recipe.id}')" data-recipe-id="${recipe.id}">
+                            <div class="recipe-image recipe-icon-header">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <div class="recipe-name-header">
+                                <h3>${recipe.name}</h3>
+                            </div>
+                            <div class="recipe-content">
+                                <div class="recipe-meta">
+                                    <span class="recipe-tradition-badge">${recipe.tradition}</span>
+                                </div>
+                                <p class="recipe-description">${recipe.description}</p>
+                                <div class="recipe-origin-info">
+                                    <strong>Origin:</strong> ${recipe.origin}
+                                </div>
+                                <div class="recipe-purpose">
+                                    <strong>Purpose:</strong> ${recipe.purpose}
+                                </div>
+                                <div class="recipe-stats">
+                                    <span><i class="fas fa-clock"></i> ${recipe.prepTime}</span>
+                                    <span><i class="fas fa-users"></i> ${recipe.servings} servings</span>
+                                    <span><i class="fas fa-fire"></i> ${recipe.nutritionFacts.calories} cal</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="recipe-card" onclick="openRecipeModal('${recipe.id}')" data-recipe-id="${recipe.id}">
+                            <div class="recipe-image recipe-icon-header" style="background: none !important; background-image: url('recipe-background-food.png') !important; background-size: cover !important; background-position: center !important; background-repeat: no-repeat !important; background-color: transparent !important; background-attachment: scroll !important;">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <div class="recipe-name-header">
+                                <h3>${recipe.name}</h3>
+                            </div>
+                            <div class="recipe-content">
+                                <div class="recipe-meta">
+                                    <span class="recipe-region-badge">${recipe.region || 'Global'}</span>
+                                </div>
+                                <p class="recipe-description">${recipe.description}</p>
+                                <div class="recipe-stats">
+                                    <span><i class="fas fa-clock"></i> ${recipe.prepTime}</span>
+                                    <span><i class="fas fa-dumbbell"></i> ${recipe.protein}</span>
+                                    <span><i class="fas fa-fire"></i> ${recipe.calories} cal</span>
+                                </div>
+                                <div class="recipe-benefits">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>${recipe.cancerBenefits}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+            
+            html += `
+                    </div>
+                </div>
+            `;
+        }
+    });
+    
+    if (totalRecipes === 0) {
+        html = '<p class="no-recipes">No recipes found for your recommendations. Please check your assessment or try viewing all recipes.</p>';
+    }
+    
+    console.log('Final HTML length:', html.length);
+    console.log('HTML preview (first 500 chars):', html.substring(0, 500));
+    
+    container.innerHTML = html;
+    console.log(`Rendered ${totalRecipes} recipes in ${recommendedFilters.length} categories`);
+    
+    // Force grid layout application for 4+ categories
+    if (recommendedFilters.length >= 4) {
+        setTimeout(() => {
+            const grids = document.querySelectorAll('.category-recipes-grid');
+            grids.forEach(grid => {
+                if (recommendedFilters.length === 4) {
+                    grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(250px, 1fr))';
+                    grid.style.gap = 'var(--space-4)';
+                } else if (recommendedFilters.length >= 5) {
+                    grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(220px, 1fr))';
+                    grid.style.gap = 'var(--space-3)';
+                }
+            });
+            console.log('Force-applied grid styles for', recommendedFilters.length, 'categories');
+        }, 50);
+    }
+}
+
+function getCategoryDescription(filter, userData) {
+    const descriptions = {
+        'symptom-management': 'Recipes designed to help manage treatment side effects like nausea and appetite loss.',
+        'high-protein-high-calorie': 'Nutrient-dense recipes to support energy and recovery during treatment.',
+        'therapeutic-medical': 'Evidence-based recipes with specific therapeutic benefits for cancer patients.',
+        'texture-modified': 'Soft, easy-to-swallow recipes perfect for managing mouth sores or swallowing difficulties.',
+        'healthy': 'General wellness recipes focusing on immune support and overall health.',
+        'ayurveda': 'Traditional Ayurvedic recipes aligned with your constitutional needs and healing principles.',
+        'tcm': 'Traditional Chinese Medicine recipes based on energy balancing and organ support.',
+        'herbal-remedies': 'Recipes incorporating therapeutic herbs and natural healing ingredients.',
+        'functional-foods': 'Science-backed functional foods with proven health benefits and bioactive compounds.',
+        'mind-body-energy': 'Recipes supporting mental clarity, stress reduction, and energy balance.'
+    };
+    return descriptions[filter] || 'Specialized recipes recommended for your health profile.';
+}
+
+function renderRecommendedRecipesGroupedHorizontal(recommendedCategories, currentRecipeData) {
+    console.log('=== Rendering Recommended Recipes with Horizontal Layout ===');
+    
+    const recipesGrid = document.getElementById('recipesGrid');
+    if (!recipesGrid) {
+        console.error('Recipe grid element not found');
+        return;
+    }
+    
+    // Create the main container with horizontal layout class
+    let html = '<div class="recipe-categories-container horizontal-layout">';
+    
+    // Process each recommended category
+    recommendedCategories.forEach(categoryInfo => {
+        const filter = categoryInfo.filter;
+        const categoryRecipes = currentRecipeData[filter] || [];
+        
+        if (categoryRecipes.length === 0) {
+            console.log(`No recipes found for category: ${filter}`);
+            return;
+        }
+        
+        // Sort recipes by region for consistency
+        const sortedRecipes = [...categoryRecipes].sort((a, b) => {
+            const regionA = a.region || 'ZZZ';
+            const regionB = b.region || 'ZZZ';
+            return regionA.localeCompare(regionB);
+        });
+        
+        // Add category section with horizontal layout
+        html += `
+            <div class="recipe-category-section">
+                <div class="category-header">
+                    <h3>
+                        <i class="${categoryInfo.icon}"></i>
+                        ${categoryInfo.name || categoryInfo.title}
+                        <span style="
+                            background: rgba(255, 255, 255, 0.2);
+                            padding: var(--space-1) var(--space-3);
+                            border-radius: var(--radius-full);
+                            font-weight: 500;
+                            font-size: 0.9rem;
+                            margin-left: var(--space-2);
+                        ">(${sortedRecipes.length} recipes)</span>
+                    </h3>
+                </div>
+                <div class="category-recipes-grid">
+        `;
+        
+        // Add recipe cards for this category
+        sortedRecipes.forEach(recipe => {
+            const isCAMRecipe = recipe.tradition && recipe.origin && recipe.purpose;
+            
+            if (isCAMRecipe) {
+                html += `
+                    <div class="recipe-card" onclick="openRecipeModal('${recipe.id}')" data-recipe-id="${recipe.id}">
+                        <div class="recipe-image recipe-icon-header">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <div class="recipe-name-header">
+                            <h3>${recipe.name}</h3>
+                        </div>
+                        <div class="recipe-content">
+                            <div class="recipe-meta">
+                                <span class="recipe-tradition-badge">${recipe.tradition}</span>
+                            </div>
+                            <p class="recipe-description">${recipe.description}</p>
+                            <div class="recipe-origin-info">
+                                <strong>Origin:</strong> ${recipe.origin}
+                            </div>
+                            <div class="recipe-purpose">
+                                <strong>Purpose:</strong> ${recipe.purpose}
+                            </div>
+                            <div class="recipe-stats">
+                                <span><i class="fas fa-clock"></i> ${recipe.prepTime}</span>
+                                <span><i class="fas fa-users"></i> ${recipe.servings} servings</span>
+                                <span><i class="fas fa-fire"></i> ${recipe.nutritionFacts.calories} cal</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="recipe-card" onclick="openRecipeModal('${recipe.id}')" data-recipe-id="${recipe.id}">
+                        <div class="recipe-image recipe-icon-header">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <div class="recipe-name-header">
+                            <h3>${recipe.name}</h3>
+                        </div>
+                        <div class="recipe-content">
+                            <div class="recipe-meta">
+                                <span class="recipe-region-badge">${recipe.region || 'Global'}</span>
+                            </div>
+                            <p class="recipe-description">${recipe.description}</p>
+                            <div class="recipe-stats">
+                                <span><i class="fas fa-clock"></i> ${recipe.prepTime}</span>
+                                <span><i class="fas fa-dumbbell"></i> ${recipe.protein}</span>
+                                <span><i class="fas fa-fire"></i> ${recipe.calories}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+        
+        html += `
+                </div>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    
+    // Update the recipes grid
+    recipesGrid.innerHTML = html;
+    
+    console.log(`Rendered ${recommendedCategories.length} categories with horizontal layout`);
+}
+
+function showRecommendedRecipesGrid() {
+    console.log('=== Showing Recommended Recipes (Simple Grid Layout) ===');
+    
+    // Get user profile to determine nutrition approach
+    const userData = getUserProfile();
+    if (!userData) {
+        console.error('No user profile found');
+        alert('Please complete your personal assessment first.');
+        showSection('profileSection');
+        return;
+    }
+
+    // Determine the correct recipe mode based on nutrition approach
+    let targetMode = 'conventional'; // default
+    if (userData.nutritionApproach && userData.nutritionApproach !== 'conventional') {
+        targetMode = 'cam';
+    }
+    
+    console.log(`Target recipe mode: ${targetMode}, Current mode: ${currentRecipeMode}`);
+    
+    // Switch to appropriate recipe mode if needed
+    if (currentRecipeMode !== targetMode) {
+        console.log(`Switching to ${targetMode} mode`);
+        switchRecipeMode(targetMode);
+        
+        // Update dropdown to reflect the change
+        const dropdown = document.getElementById('recipeMode');
+        if (dropdown) {
+            dropdown.value = targetMode;
+        }
+    }
+    
+    // Get recommended categories for current nutrition approach
+    const recommendedCategories = getRecommendedCategoriesArray(userData);
+    const recommendedFilters = recommendedCategories.map(cat => cat.filter);
+    console.log('Recommended filters:', recommendedFilters);
+    
+    // Get current recipe data
+    const currentRecipeData = currentRecipeMode === 'conventional' ? conventionalRecipeData : camRecipeData;
+    
+    // Collect all recommended recipes into a single array
+    let allRecommendedRecipes = [];
+    recommendedFilters.forEach(filterName => {
+        const categoryRecipes = currentRecipeData[filterName] || [];
+        console.log(`Adding ${categoryRecipes.length} recipes from ${filterName}`);
+        allRecommendedRecipes = allRecommendedRecipes.concat(categoryRecipes);
+    });
+    
+    console.log(`Total recommended recipes: ${allRecommendedRecipes.length}`);
+    
+    // Update filter buttons with counts and show recommended button as active
+    updateFilterButtonsWithCounts(targetMode, true, allRecommendedRecipes.length, recommendedFilters);
+    
+    // Sort recipes by region for consistency
+    const sortedRecipes = [...allRecommendedRecipes].sort((a, b) => {
+        const regionA = a.region || 'ZZZ';
+        const regionB = b.region || 'ZZZ';
+        return regionA.localeCompare(regionB);
+    });
+    
+    // Render all recommended recipes in a simple grid (no category headers)
+    renderRecipes(sortedRecipes);
+    
+    // Show notification about personalized recommendations
+    const recipesGrid = document.getElementById('recipesGrid');
+    if (recipesGrid) {
+        const existingNotice = document.querySelector('.recommendation-notice');
+        if (!existingNotice) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'recommendation-notice';
+            messageDiv.innerHTML = `
+                <i class="fas fa-star"></i>
+                <span>Showing ${allRecommendedRecipes.length} recipes personalized for your profile</span>
+                <div class="recommendation-actions">
+                    <button onclick="restoreAllRecipes()" class="btn-link">View all recipes</button>
+                    <button onclick="dismissRecommendationNotice()" class="btn-link close-notice" title="Dismiss notification">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            recipesGrid.parentNode.insertBefore(messageDiv, recipesGrid);
+        }
+    }
+    
+    // Scroll to top of recipes section
+    const recipesSection = document.getElementById('recipesSection');
+    if (recipesSection) {
+        recipesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function showRecommendedButton(show = true) {
+    const recommendedButton = document.querySelector('.filter-btn[data-filter="recommended"]');
+    if (recommendedButton) {
+        recommendedButton.style.display = show ? 'inline-flex' : 'none';
+        console.log(`Recommended button ${show ? 'shown' : 'hidden'}`);
+    }
+}
+
+function updateRecommendedButtonCount(count) {
+    const recommendedButton = document.querySelector('.filter-btn[data-filter="recommended"]');
+    if (recommendedButton) {
+        // Update button text with count
+        recommendedButton.innerHTML = `
+            <i class="fas fa-star"></i> Recommended Recipes (${count})
+        `;
+        console.log(`Updated recommended button count to ${count}`);
+    }
+}
+
+function updateFilterButtonsWithCounts(mode, showRecommendedAsActive = false, recommendedCount = 0, recommendedFilters = []) {
+    const filterContainer = document.querySelector('.recipe-filters');
+    if (!filterContainer) return;
+    
+    // Get current recipe data
+    const currentRecipeData = mode === 'conventional' ? conventionalRecipeData : camRecipeData;
+    
+    // Calculate counts based on whether we're showing recommended recipes or all recipes
+    let counts;
+    let totalRecipes = 0;
+    
+    // Always calculate total recipes for "All Recipes" button
+    for (const category in currentRecipeData) {
+        totalRecipes += currentRecipeData[category].length;
+    }
+    
+    if (showRecommendedAsActive && recommendedFilters.length > 0) {
+        // Calculate counts only for recommended categories
+        counts = {};
+        let recommendedRecipesTotal = 0;
+        
+        for (const category in currentRecipeData) {
+            if (recommendedFilters.includes(category)) {
+                counts[category] = currentRecipeData[category].length;
+                recommendedRecipesTotal += currentRecipeData[category].length;
+            } else {
+                counts[category] = 0; // Show 0 for non-recommended categories
+            }
+        }
+        counts.all = totalRecipes; // Show total recipes for "All Recipes" button
+        counts.recommended = recommendedRecipesTotal; // Show recommended count for "Recommended Recipes" button
+    } else {
+        // Calculate counts for all categories
+        counts = getRecipeCounts(currentRecipeData);
+    }
+    
+    if (mode === 'conventional') {
+        filterContainer.innerHTML = `
+            <button class="filter-btn ${!showRecommendedAsActive ? 'active' : ''}" data-filter="all">
+                <i class="fas fa-list"></i> All Recipes (${counts.all})
+            </button>
+            <button class="filter-btn ${showRecommendedAsActive ? 'active' : ''}" data-filter="recommended" style="display: ${showRecommendedAsActive ? 'inline-flex' : 'none'};">
+                <i class="fas fa-star"></i> Recommended Recipes (${counts.recommended || 0})
+            </button>
+            <button class="filter-btn" data-filter="healthy">
+                <i class="fas fa-leaf"></i> Healthy (${counts.healthy || 0})
+            </button>
+            <button class="filter-btn" data-filter="symptom-management">
+                <i class="fas fa-first-aid"></i> Symptom Management (${counts['symptom-management'] || 0})
+            </button>
+            <button class="filter-btn" data-filter="high-protein-high-calorie">
+                <i class="fas fa-dumbbell"></i> High Protein/Calorie (${counts['high-protein-high-calorie'] || 0})
+            </button>
+            <button class="filter-btn" data-filter="texture-modified">
+                <i class="fas fa-baby"></i> Texture Modified (${counts['texture-modified'] || 0})
+            </button>
+            <button class="filter-btn" data-filter="therapeutic-medical">
+                <i class="fas fa-pills"></i> Therapeutic (${counts['therapeutic-medical'] || 0})
+            </button>
+        `;
+    } else {
+        filterContainer.innerHTML = `
+            <button class="filter-btn ${!showRecommendedAsActive ? 'active' : ''}" data-filter="all">
+                <i class="fas fa-list"></i> All CAM Recipes (${counts.all})
+            </button>
+            <button class="filter-btn ${showRecommendedAsActive ? 'active' : ''}" data-filter="recommended" style="display: ${showRecommendedAsActive ? 'inline-flex' : 'none'};">
+                <i class="fas fa-star"></i> Recommended Recipes (${counts.recommended || 0})
+            </button>
+            <button class="filter-btn" data-filter="ayurveda">
+                <i class="fas fa-leaf"></i> Ayurveda (${counts.ayurveda || 0})
+            </button>
+            <button class="filter-btn" data-filter="tcm">
+                <i class="fas fa-yin-yang"></i> Traditional Chinese Medicine (${counts.tcm || 0})
+            </button>
+            <button class="filter-btn" data-filter="herbal-remedies">
+                <i class="fas fa-seedling"></i> Herbal Remedies (${counts['herbal-remedies'] || 0})
+            </button>
+            <button class="filter-btn" data-filter="functional-foods">
+                <i class="fas fa-microscope"></i> Functional Foods (${counts['functional-foods'] || 0})
+            </button>
+            <button class="filter-btn" data-filter="mind-body-energy">
+                <i class="fas fa-spa"></i> Mind-Body & Energy (${counts['mind-body-energy'] || 0})
+            </button>
+        `;
+    }
+    
+    // Re-initialize filter button event listeners
+    initializeFilterButtons();
+}
+
 // Recipe Modal Functions
 function openRecipeModal(recipeId) {
-    // Find the recipe across all categories
+    console.log('Opening recipe modal for ID:', recipeId);
+    
+    // Get current recipe data based on mode
+    const currentRecipeData = currentRecipeMode === 'conventional' ? conventionalRecipeData : camRecipeData;
+    
+    // Find the recipe across all categories - convert IDs to strings for comparison
     let recipe = null;
-    for (const category in recipeData) {
-        recipe = recipeData[category].find(r => r.id === recipeId);
+    for (const category in currentRecipeData) {
+        recipe = currentRecipeData[category].find(r => String(r.id) === String(recipeId));
         if (recipe) break;
     }
     
-    if (!recipe) return;
+    if (!recipe) {
+        console.error('Recipe not found:', recipeId, 'in mode:', currentRecipeMode);
+        return;
+    }
     
     // Populate modal content
     const modal = document.getElementById('recipeModal');
@@ -1111,47 +4941,154 @@ function openRecipeModal(recipeId) {
     const modalInstructions = document.getElementById('modalInstructions');
     const modalNutritionTips = document.getElementById('modalNutritionTips');
     const modalCancerBenefits = document.getElementById('modalCancerBenefits');
+    const modalRecipeName = document.getElementById('modalRecipeName');
     
-    // Set background image
-    if (recipe.image) {
-        modalImage.style.backgroundImage = `url('${recipe.image}')`;
+    // Set icon with background image
+    modalImage.innerHTML = '<i class="fas fa-utensils"></i>';
+    modalImage.classList.add('modal-icon-header');
+    
+    // Apply the same background image as recipe cards
+    if (modalImage) {
+        modalImage.style.background = 'none';
+        modalImage.style.backgroundImage = 'url("recipe-background-food.png")';
+        modalImage.style.backgroundSize = 'cover';
+        modalImage.style.backgroundPosition = 'center';
+        modalImage.style.backgroundRepeat = 'no-repeat';
+        modalImage.style.backgroundAttachment = 'scroll';
+        modalImage.style.backgroundColor = 'transparent';
+        modalImage.style.setProperty('background-image', 'url("recipe-background-food.png")', 'important');
+        modalImage.style.setProperty('background-size', 'cover', 'important');
+        modalImage.style.setProperty('background-position', 'center', 'important');
+        modalImage.style.setProperty('background-repeat', 'no-repeat', 'important');
+        modalImage.style.setProperty('background-color', 'transparent', 'important');
     }
     
-    // Populate content
-    modalTitle.textContent = recipe.name;
-    modalRegion.textContent = recipe.region || 'International';
-    modalPrepTime.textContent = recipe.prepTime;
-    modalProtein.textContent = recipe.protein;
-    modalCalories.textContent = recipe.calories;
+    // Check if it's a CAM recipe or conventional recipe
+    const isCAMRecipe = recipe.tradition && recipe.origin && recipe.purpose;
+    
+    // Use white spoon and fork icon for all recipes
+    if (modalImage) {
+        modalImage.innerHTML = '<i class="fas fa-utensils"></i>';
+    }
+    
+    // Populate content based on recipe type with null checks
+    if (modalTitle) {
+        modalTitle.textContent = recipe.name;
+    }
+    
+    // Populate the recipe name section above ingredients
+    if (modalRecipeName) {
+        modalRecipeName.innerHTML = `<i class="fas fa-utensils"></i> ${recipe.name}`;
+    }
+    
+    // Add console log to verify recipe name consistency
+    console.log('Recipe card title:', recipe.name);
+    console.log('Modal title set to:', recipe.name);
+    if (modalRegion) {
+        modalRegion.textContent = recipe.region || 'Global';
+    }
+    if (modalPrepTime) {
+        modalPrepTime.textContent = recipe.prepTime;
+    }
+    
+    if (isCAMRecipe) {
+        // CAM recipe structure
+        if (modalProtein) {
+            modalProtein.textContent = recipe.nutritionFacts?.protein || 'N/A';
+        }
+        if (modalCalories) {
+            modalCalories.textContent = recipe.nutritionFacts?.calories || 'N/A';
+        }
+    } else {
+        // Conventional recipe structure  
+        if (modalProtein) {
+            modalProtein.textContent = recipe.protein || 'N/A';
+        }
+        if (modalCalories) {
+            modalCalories.textContent = recipe.calories || 'N/A';
+        }
+    }
     
     // Populate ingredients
-    modalIngredients.innerHTML = recipe.ingredients 
-        ? recipe.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')
-        : '<li>Ingredients not available</li>';
+    if (modalIngredients) {
+        modalIngredients.innerHTML = recipe.ingredients 
+            ? recipe.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')
+            : '<li>Ingredients not available</li>';
+    }
     
     // Populate instructions
-    modalInstructions.innerHTML = recipe.instructions 
-        ? recipe.instructions.map(instruction => `<li>${instruction}</li>`).join('')
-        : '<li>Instructions not available</li>';
+    if (modalInstructions) {
+        if (recipe.instructions && recipe.instructions.length > 0) {
+            const instructionsHTML = recipe.instructions.map(instruction => `<li>${instruction}</li>`).join('');
+            modalInstructions.innerHTML = instructionsHTML;
+        } else {
+            modalInstructions.innerHTML = '<li>Instructions not available</li>';
+        }
+    }
     
-    // Populate benefits
-    modalNutritionTips.textContent = recipe.nutritionTips || 'Nutrition information not available.';
-    modalCancerBenefits.textContent = recipe.cancerBenefits || 'Cancer-specific benefits not available.';
+    // Populate benefits based on recipe type
+    if (isCAMRecipe) {
+        // CAM recipe structure with purpose and benefits
+        const nutritionText = `${recipe.purpose || ''}\n\nBenefits:\n${recipe.benefits ? recipe.benefits.join('\n• ') : 'Benefits not available.'}`;
+        if (modalNutritionTips) {
+            modalNutritionTips.textContent = nutritionText;
+        }
+        if (modalCancerBenefits) {
+            modalCancerBenefits.textContent = recipe.evidence?.summary || 'Evidence summary not available.';
+        }
+    } else {
+        // Conventional recipe structure
+        if (modalNutritionTips) {
+            modalNutritionTips.textContent = recipe.nutritionTips || 'Nutrition tips not available.';
+        }
+        if (modalCancerBenefits) {
+            modalCancerBenefits.textContent = recipe.cancerBenefits || 'Cancer benefits not available.';
+        }
+    }
+    
+    // Show research links if available
+    if (modalCancerBenefits) {
+        const researchInfo = recipe.researchLinks && recipe.researchLinks.length > 0 
+            ? `Research Support:\n${recipe.researchLinks.map(link => `• ${link.title}: ${link.summary} (${link.source})`).join('\n')}`
+            : 'Research information not available.';
+        modalCancerBenefits.textContent = researchInfo;
+    }
     
     // Show modal
-    modal.classList.remove('hidden');
-    // Prevent body scroll
-    document.body.style.overflow = 'hidden';
+    if (modal) {
+        modal.classList.remove('hidden');
+        // Prevent body scroll
+        document.body.style.overflow = 'hidden';
+    }
+    
+    console.log('Modal opened successfully');
 }
 
 function closeRecipeModal() {
+    console.log('Closing recipe modal');
     const modal = document.getElementById('recipeModal');
-    modal.classList.add('hidden');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
     
     // Restore body scroll
     document.body.style.overflow = '';
+    
+    // Force re-enable clicks by clearing any potential interference
+    setTimeout(() => {
+        const allRecipeCards = document.querySelectorAll('.recipe-card');
+        allRecipeCards.forEach(card => {
+            card.style.pointerEvents = 'auto';
+            card.style.cursor = 'pointer';
+        });
+    }, 100);
 }
 
+// Make functions globally accessible
+window.openRecipeModal = openRecipeModal;
+window.closeRecipeModal = closeRecipeModal;
+
+// Debug function to test clicks
 // Other placeholder functions
 function loadRecommendations() {
     const userData = getUserProfile();
@@ -1185,6 +5122,9 @@ function generatePersonalizedRecommendations(userData) {
     
     // Generate cancer type specific recommendations
     const cancerTypeRecommendations = getCancerTypeRecommendations(userData.cancerType);
+    
+    // Generate holistic recommendations
+    const holisticRecommendations = getHolisticRecommendations(userData);
 
     // Helper function to format text
     const formatText = (text) => {
@@ -1206,6 +5146,7 @@ function generatePersonalizedRecommendations(userData) {
             </div>
 
             ${cancerTypeRecommendations}
+            ${holisticRecommendations}
             ${treatmentRecommendations}
             ${symptomRecommendations}
             ${locationRecommendations}
@@ -1220,7 +5161,7 @@ function generatePersonalizedRecommendations(userData) {
             <div class="recommendation-card">
                 <h3><i class="fas fa-chart-line"></i> Next Steps</h3>
                 <div class="next-steps">
-                    <button class="btn btn-primary" onclick="showSection('recipesSection'); setTimeout(() => showRecommendedRecipes(), 100);">
+                    <button class="btn btn-primary" onclick="showRecommendedRecipes(); setTimeout(() => { window.scrollTo({top: 0, behavior: 'smooth'}); }, 100);">
                         <i class="fas fa-utensils"></i> Explore Recommended Recipes
                     </button>
                     <button class="btn btn-secondary" onclick="showSection('trackingSection')">
@@ -1629,29 +5570,220 @@ function getCancerTypeRecommendations(cancerType) {
     `;
 }
 
-function getRecommendedRecipeCategories(userData) {
+function getHolisticRecommendations(userData) {
+    // Return early if user prefers conventional approach only
+    if (userData.nutritionApproach === 'conventional') {
+        return '';
+    }
+    
+    const traditions = userData.traditionalMedicine || [];
+    const mindBodyPractices = userData.mindBodyPractices || [];
+    const constitution = userData.constitutionalType;
+    
+    let holisticContent = '';
+    
+    // Build holistic recommendations based on selected traditions
+    if (traditions.length > 0 || mindBodyPractices.length > 0 || constitution) {
+        holisticContent += `
+            <div class="recommendation-card holistic-recommendations">
+                <h3><i class="fas fa-yin-yang"></i> Holistic & Integrative Approaches</h3>
+                <div class="holistic-content">
+        `;
+        
+        // Traditional Medicine Recommendations
+        if (traditions.includes('ayurveda')) {
+            holisticContent += `
+                <div class="tradition-section">
+                    <h4><i class="fas fa-leaf"></i> Ayurvedic Approach</h4>
+                    <p>Focus on balancing your doshas through warming spices, proper food combining, and mindful eating practices.</p>
+                    <div class="tradition-foods">
+                        <strong>Recommended:</strong> Turmeric, ginger, cumin, cooked vegetables, warm foods
+                    </div>
+                </div>
+            `;
+        }
+        
+        if (traditions.includes('tcm')) {
+            holisticContent += `
+                <div class="tradition-section">
+                    <h4><i class="fas fa-mountain"></i> Traditional Chinese Medicine</h4>
+                    <p>Balance Qi through foods that nourish blood and strengthen the immune system according to TCM principles.</p>
+                    <div class="tradition-foods">
+                        <strong>Recommended:</strong> Congee, bone broth, goji berries, green vegetables, moderate portions
+                    </div>
+                </div>
+            `;
+        }
+        
+        if (traditions.includes('mediterranean')) {
+            holisticContent += `
+                <div class="tradition-section">
+                    <h4><i class="fas fa-olive-branch"></i> Mediterranean Wisdom</h4>
+                    <p>Emphasize whole foods, healthy fats, and the social aspects of eating for overall well-being.</p>
+                    <div class="tradition-foods">
+                        <strong>Recommended:</strong> Olive oil, fish, vegetables, herbs, communal meals
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Mind-Body Practice Recommendations
+        if (mindBodyPractices.length > 0) {
+            holisticContent += `
+                <div class="tradition-section">
+                    <h4><i class="fas fa-brain"></i> Mind-Body Nutrition</h4>
+                    <p>Your selected practices complement nutritional healing:</p>
+                    <ul class="mind-body-list">
+            `;
+            
+            if (mindBodyPractices.includes('meditation')) {
+                holisticContent += `<li><strong>Meditation:</strong> Practice mindful eating, chew slowly, appreciate food</li>`;
+            }
+            if (mindBodyPractices.includes('yoga')) {
+                holisticContent += `<li><strong>Yoga:</strong> Gentle movement aids digestion, practice before/after meals</li>`;
+            }
+            if (mindBodyPractices.includes('breathwork')) {
+                holisticContent += `<li><strong>Breathwork:</strong> Deep breathing before meals activates parasympathetic nervous system</li>`;
+            }
+            if (mindBodyPractices.includes('tai-chi')) {
+                holisticContent += `<li><strong>Tai Chi:</strong> Gentle movement supports Qi flow and digestive health</li>`;
+            }
+            if (mindBodyPractices.includes('energy-healing')) {
+                holisticContent += `<li><strong>Energy Healing:</strong> Balance energy centers, consider foods that support chakras</li>`;
+            }
+            
+            holisticContent += `</ul></div>`;
+        }
+        
+        // Constitutional Recommendations
+        if (constitution) {
+            holisticContent += `
+                <div class="tradition-section">
+                    <h4><i class="fas fa-user-circle"></i> Constitutional Guidance</h4>
+            `;
+            
+            switch(constitution) {
+                case 'vata':
+                    holisticContent += `<p><strong>Vata Constitution:</strong> Favor warm, moist, grounding foods. Regular meal times, avoid cold/raw foods during treatment.</p>`;
+                    break;
+                case 'pitta':
+                    holisticContent += `<p><strong>Pitta Constitution:</strong> Cooling, calming foods. Avoid spicy, acidic foods. Favor sweet, bitter, astringent tastes.</p>`;
+                    break;
+                case 'kapha':
+                    holisticContent += `<p><strong>Kapha Constitution:</strong> Light, warming, spicy foods. Avoid heavy, oily foods. Favor pungent, bitter, astringent tastes.</p>`;
+                    break;
+                case 'yang-deficiency':
+                    holisticContent += `<p><strong>Yang Deficiency:</strong> Warming foods, cooked vegetables, avoid cold/raw foods. Gentle warming spices.</p>`;
+                    break;
+                case 'yin-deficiency':
+                    holisticContent += `<p><strong>Yin Deficiency:</strong> Nourishing, moistening foods. Avoid excessive spicy/heating foods. Focus on building fluids.</p>`;
+                    break;
+                case 'qi-stagnation':
+                    holisticContent += `<p><strong>Qi Stagnation:</strong> Moving foods like citrus peel, light movement after meals. Avoid heavy, greasy foods.</p>`;
+                    break;
+            }
+            
+            holisticContent += `</div>`;
+        }
+        
+        holisticContent += `
+                </div>
+                <div class="holistic-note">
+                    <i class="fas fa-info-circle"></i>
+                    <small>Holistic approaches complement conventional treatment. Always discuss with your healthcare team before making significant dietary changes.</small>
+                </div>
+            </div>
+        `;
+    }
+    
+    return holisticContent;
+}
+
+function getRecommendedCategoriesArray(userData) {
+    console.log('=== getRecommendedCategoriesArray called ===');
+    console.log('userData:', userData);
+    
     let categories = [];
     
-    // Based on symptoms
-    if (userData.symptoms.includes('nausea') || userData.symptoms.includes('appetite-loss')) {
-        categories.push({name: 'Symptom Management', filter: 'symptom-management', icon: 'fas fa-heart-pulse'});
+    // Check if user prefers conventional approach
+    if (userData.nutritionApproach === 'conventional') {
+        // Based on symptoms
+        if (userData.symptoms.includes('nausea') || userData.symptoms.includes('appetite-loss')) {
+            categories.push({name: 'Symptom Management', filter: 'symptom-management', icon: 'fas fa-heart-pulse'});
+            console.log('Added: Symptom Management');
+        }
+        
+        if (userData.symptoms.includes('mouth-sores') || userData.symptoms.includes('digestive')) {
+            categories.push({name: 'Texture Modified', filter: 'texture-modified', icon: 'fas fa-blender'});
+            console.log('Added: Texture Modified');
+        }
+        
+        // Based on treatment stage
+        if (userData.treatmentStage === 'active-treatment' || userData.treatmentStage === 'post-treatment') {
+            categories.push({name: 'High Protein/Calorie', filter: 'high-protein-high-calorie', icon: 'fas fa-dumbbell'});
+            categories.push({name: 'Therapeutic/Medical', filter: 'therapeutic-medical', icon: 'fas fa-pills'});
+            console.log('Added: High Protein/Calorie and Therapeutic/Medical');
+        }
+        
+        // Always include general healthy for conventional
+        categories.push({name: 'General Healthy', filter: 'healthy', icon: 'fas fa-leaf'});
+        console.log('Added: General Healthy (healthy)');
+    } else {
+        // For Alternative and Integrated approaches, use CAM categories
+        console.log('Using CAM categories for nutrition approach:', userData.nutritionApproach);
+        
+        // Add holistic categories based on user preferences
+        if (userData.traditionalMedicine) {
+            if (userData.traditionalMedicine.includes('ayurveda')) {
+                categories.push({name: 'Ayurvedic', filter: 'ayurveda', icon: 'fas fa-leaf'});
+                console.log('Added: Ayurveda');
+            }
+            if (userData.traditionalMedicine.includes('tcm')) {
+                categories.push({name: 'Traditional Chinese Medicine', filter: 'tcm', icon: 'fas fa-mountain'});
+                console.log('Added: TCM');
+            }
+            if (userData.traditionalMedicine.includes('mediterranean') || userData.traditionalMedicine.includes('ayurveda') || userData.traditionalMedicine.includes('tcm')) {
+                categories.push({name: 'Herbal Remedies', filter: 'herbal-remedies', icon: 'fas fa-seedling'});
+                console.log('Added: Herbal Remedies');
+            }
+        }
+        
+        // Add functional medicine and mind-body categories for alternative/integrated approaches
+        categories.push({name: 'Functional Foods', filter: 'functional-foods', icon: 'fas fa-microscope'});
+        console.log('Added: Functional Foods');
+        
+        // Add herbal remedies for all CAM approaches if not already added
+        if (!categories.some(cat => cat.filter === 'herbal-remedies')) {
+            categories.push({name: 'Herbal Remedies', filter: 'herbal-remedies', icon: 'fas fa-seedling'});
+            console.log('Added: Herbal Remedies (default for CAM)');
+        }
+        
+        if (userData.mindBodyPractices && userData.mindBodyPractices.length > 0) {
+            categories.push({name: 'Mind-Body Energy', filter: 'mind-body-energy', icon: 'fas fa-brain'});
+            console.log('Added: Mind-Body Energy');
+        }
+        
+        // Always add core CAM categories for alternative/integrated approaches
+        if (!categories.some(cat => cat.filter === 'ayurveda')) {
+            categories.push({name: 'Ayurvedic', filter: 'ayurveda', icon: 'fas fa-leaf'});
+            console.log('Added: Ayurveda (default for CAM)');
+        }
+        if (!categories.some(cat => cat.filter === 'tcm')) {
+            categories.push({name: 'Traditional Chinese Medicine', filter: 'tcm', icon: 'fas fa-mountain'});
+            console.log('Added: TCM (default for CAM)');
+        }
     }
     
-    if (userData.symptoms.includes('mouth-sores') || userData.symptoms.includes('digestive')) {
-        categories.push({name: 'Texture Modified', filter: 'texture-modified', icon: 'fas fa-blender'});
-    }
-    
-    // Based on treatment stage
-    if (userData.treatmentStage === 'active-treatment' || userData.treatmentStage === 'post-treatment') {
-        categories.push({name: 'High Protein/Calorie', filter: 'high-protein-high-calorie', icon: 'fas fa-dumbbell'});
-        categories.push({name: 'Therapeutic/Medical', filter: 'therapeutic-medical', icon: 'fas fa-pills'});
-    }
-    
-    // Always include general healthy
-    categories.push({name: 'General Healthy', filter: 'general-healthy', icon: 'fas fa-leaf'});
+    console.log('Final categories array:', categories);
+    return categories;
+}
+
+function getRecommendedRecipeCategories(userData) {
+    const categories = getRecommendedCategoriesArray(userData);
     
     // Store the recommended filters globally for use by "Explore Recommended Recipes" button
     currentUserRecommendedFilters = categories.map(cat => cat.filter);
+    console.log('Updated currentUserRecommendedFilters:', currentUserRecommendedFilters);
     
     return categories.map(cat => `
         <button class="recipe-category-btn" onclick="showSection('recipesSection'); setTimeout(() => filterRecipes('${cat.filter}'), 100);">
@@ -1669,6 +5801,9 @@ function initializeTracking() {
     
     // Load today's nutrition data
     loadNutritionData(formatDateForStorage(currentTrackingDate));
+    
+    // Sync existing daily nutrition data to weekly history
+    syncExistingDataToWeeklyHistory();
     
     // Add event listeners for date navigation
     const prevDayBtn = document.getElementById('prevDay');
@@ -1787,7 +5922,7 @@ function updateFoodLog(foods) {
                                     <span class="calories">${food.calories || 0} cal</span>
                                     <span class="protein">${food.protein || 0}g protein</span>
                                 </div>
-                                <button class="remove-food-btn" onclick="removeFoodItem('${food.id}')">
+                                <button class="remove-food-btn" onclick="removeFoodItem('${food.id}')" aria-label="Remove ${food.name}" title="Remove this food item">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -1814,7 +5949,7 @@ function updateFoodLog(foods) {
                                 <span class="calories">${fluid.calories || 0} cal</span>
                                 <span class="fluids">${fluid.fluids || 0}ml</span>
                             </div>
-                            <button class="remove-food-btn" onclick="removeFoodItem('${fluid.id}')">
+                            <button class="remove-food-btn" onclick="removeFoodItem('${fluid.id}')" aria-label="Remove ${fluid.name}" title="Remove this fluid item">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -1910,12 +6045,30 @@ function addFoodItem() {
     // Save updated data
     localStorage.setItem(`nutrition_${dateString}`, JSON.stringify(nutritionData));
     
+    // Automatically save to weekly history
+    autoSaveToWeeklyHistory(dateString, nutritionData);
+    
     // Refresh displays
     updateNutritionSummary(nutritionData.totals);
     updateFoodLog(nutritionData.foods);
     
+    // Clear form fields
+    document.getElementById('foodName').value = '';
+    document.getElementById('portion').value = '';
+    document.getElementById('mealType').value = 'breakfast';
+    
     // Close modal
     closeFoodModal();
+    
+    // Show success message with option to view weekly history
+    const successMsg = `✅ ${foodName} added successfully!\n\n📊 Your nutrition data has been automatically saved to weekly history.\n\nWould you like to view your weekly history now?`;
+    
+    if (confirm(successMsg)) {
+        // Small delay to ensure data is saved
+        setTimeout(() => {
+            viewWeeklyHistory();
+        }, 100);
+    }
 }
 
 // Fluid Tracking Functions
@@ -2016,12 +6169,24 @@ function addFluidItem() {
     // Save updated data
     localStorage.setItem(`nutrition_${dateString}`, JSON.stringify(nutritionData));
     
+    // Automatically save to weekly history
+    autoSaveToWeeklyHistory(dateString, nutritionData);
+    
     // Refresh displays
     updateNutritionSummary(nutritionData.totals);
     updateFoodLog(nutritionData.foods);
     
+    // Clear form fields
+    document.getElementById('fluidType').value = 'water';
+    document.getElementById('customFluid').value = '';
+    document.getElementById('fluidAmount').value = '';
+    document.getElementById('fluidTime').value = '';
+    document.getElementById('customFluidGroup').style.display = 'none';
+    
     // Close modal
     closeFluidModal();
+    
+    console.log(`✅ ${fluidItem.name} (${fluidAmount}ml) added and saved to weekly history`);
 }
 
 function getFluidDisplayName(fluidType) {
@@ -2082,6 +6247,9 @@ function removeFoodItem(foodId) {
     
     // Save updated data
     localStorage.setItem(`nutrition_${dateString}`, JSON.stringify(nutritionData));
+    
+    // Automatically save to weekly history
+    autoSaveToWeeklyHistory(dateString, nutritionData);
     
     // Refresh displays
     updateNutritionSummary(nutritionData.totals);
@@ -2177,17 +6345,232 @@ function initializeLearnSection() {
     const learningTabs = document.querySelectorAll('.learning-tab');
     const learningPanels = document.querySelectorAll('.learning-panel');
     
+    // Remove existing event listeners to prevent duplicates
     learningTabs.forEach(tab => {
-        tab.addEventListener('click', function() {
+        // Clone node to remove all event listeners
+        const newTab = tab.cloneNode(true);
+        tab.parentNode.replaceChild(newTab, tab);
+    });
+    
+    // Re-query the tabs after cloning
+    const newLearningTabs = document.querySelectorAll('.learning-tab');
+    
+    newLearningTabs.forEach(tab => {
+        tab.addEventListener('click', function(e) {
+            e.preventDefault();
             const tabName = this.getAttribute('data-tab');
             
+            console.log('Learning tab clicked:', tabName); // Debug log
+            
             // Remove active class from all tabs and panels
-            learningTabs.forEach(t => t.classList.remove('active'));
-            learningPanels.forEach(p => p.classList.remove('active'));
+            newLearningTabs.forEach(t => t.classList.remove('active'));
+            learningPanels.forEach(p => {
+                p.classList.remove('active');
+                p.style.display = 'none';
+            });
             
             // Add active class to clicked tab and corresponding panel
             this.classList.add('active');
-            document.getElementById(`${tabName}-panel`).classList.add('active');
+            const targetPanel = document.getElementById(`${tabName}-panel`);
+            if (targetPanel) {
+                targetPanel.classList.add('active');
+                targetPanel.style.display = 'block';
+                console.log('Activated panel:', `${tabName}-panel`); // Debug log
+            } else {
+                console.error('Panel not found:', `${tabName}-panel`); // Debug log
+            }
+        });
+    });
+    
+    // Ensure the first tab is active by default
+    const firstTab = newLearningTabs[0];
+    const firstPanel = document.getElementById('basics-panel');
+    if (firstTab && firstPanel) {
+        firstTab.classList.add('active');
+        firstPanel.classList.add('active');
+        firstPanel.style.display = 'block';
+        
+        // Hide other panels
+        learningPanels.forEach(panel => {
+            if (panel.id !== 'basics-panel') {
+                panel.style.display = 'none';
+            }
+        });
+    }
+    
+    // Initialize clickable evidence notes
+    initializeEvidenceNotes();
+}
+
+// Debug function to test learning tabs
+window.testLearningTabs = function() {
+    const tabs = document.querySelectorAll('.learning-tab');
+    const panels = document.querySelectorAll('.learning-panel');
+    console.log('Learning tabs found:', tabs.length);
+    console.log('Learning panels found:', panels.length);
+    
+    tabs.forEach((tab, index) => {
+        console.log(`Tab ${index}:`, tab.getAttribute('data-tab'), 'Active:', tab.classList.contains('active'));
+    });
+    
+    panels.forEach((panel, index) => {
+        console.log(`Panel ${index}:`, panel.id, 'Active:', panel.classList.contains('active'), 'Display:', panel.style.display);
+    });
+};
+
+// Debug function to test evidence notes
+window.testEvidenceNotes = function() {
+    const evidenceNotes = document.querySelectorAll('.evidence-note');
+    console.log('Evidence notes found:', evidenceNotes.length);
+    
+    evidenceNotes.forEach((note, index) => {
+        const noteText = note.textContent.trim();
+        let sourceName = noteText.replace(/^.*?Based on\s+/, '').trim();
+        if (sourceName === noteText) {
+            sourceName = noteText.replace(/^\s*.*?\s+/, '').trim();
+        }
+        console.log(`Evidence Note ${index}:`, noteText, '-> Extracted:', sourceName);
+        
+        // Check if we have a URL for this source
+        for (const [key, url] of Object.entries(evidenceSourceUrls)) {
+            if (sourceName.includes(key) || key.includes(sourceName.replace(/\s+/g, ' '))) {
+                console.log(`  -> Matches:`, key, url);
+                break;
+            }
+        }
+    });
+};
+
+// Debug function to test recommended recipes functionality
+window.testRecommendedRecipes = function() {
+    console.log('=== Recommended Recipes Debug ===');
+    console.log('Current user recommended filters:', currentUserRecommendedFilters);
+    console.log('Current recipe mode:', currentRecipeMode);
+    
+    const userData = getUserProfile();
+    console.log('User profile data:', userData);
+    
+    if (userData) {
+        console.log('User nutrition approach:', userData.nutritionApproach);
+        console.log('Appropriate recipe mode:', userData.nutritionApproach === 'conventional' ? 'conventional' : 'cam');
+        
+        console.log('Generating recommended categories...');
+        const categories = getRecommendedRecipeCategories(userData);
+        console.log('Recommended categories HTML:', categories);
+        console.log('Updated currentUserRecommendedFilters:', currentUserRecommendedFilters);
+    } else {
+        console.log('No user profile found');
+    }
+    
+    // Test the showRecommendedRecipes function
+    console.log('Testing showRecommendedRecipes...');
+    const currentRecipeData = currentRecipeMode === 'conventional' ? conventionalRecipeData : camRecipeData;
+    console.log('Available recipe categories in current mode:', Object.keys(currentRecipeData));
+    
+    let recommendedRecipes = [];
+    if (currentUserRecommendedFilters.length === 0) {
+        console.log('No recommended filters, would show all recipes');
+    } else {
+        currentUserRecommendedFilters.forEach(filter => {
+            if (currentRecipeData[filter]) {
+                const recipesInCategory = currentRecipeData[filter];
+                console.log(`Filter '${filter}' has ${recipesInCategory.length} recipes`);
+                recommendedRecipes = recommendedRecipes.concat(recipesInCategory);
+            } else {
+                console.log(`Filter '${filter}' not found in recipe data`);
+            }
+        });
+    }
+    console.log('Total recommended recipes:', recommendedRecipes.length);
+    
+    // Test conventional vs CAM data structures
+    console.log('=== Recipe Data Structure Check ===');
+    console.log('Conventional categories:', Object.keys(conventionalRecipeData));
+    console.log('CAM categories:', Object.keys(camRecipeData));
+};
+
+// Source URL mappings for evidence notes
+const evidenceSourceUrls = {
+    'NCI Protein Requirements Guidelines 2024': 'https://www.cancer.gov/about-cancer/treatment/side-effects/appetite-loss/nutrition-pdq',
+    'ACS Nutrition Guidelines for Cancer Survivors': 'https://www.cancer.org/treatment/survivorship-during-and-after-treatment/staying-active/nutrition.html',
+    'WHO Hydration Guidelines for Cancer Patients': 'https://www.who.int/news-room/fact-sheets/detail/cancer',
+    'WHO Micronutrient Requirements for Cancer Care': 'https://www.who.int/nutrition/topics/micronutrients/en/',
+    'Journal of Clinical Oncology 2024': 'https://ascopubs.org/journal/jco',
+    'Nutrition and Cancer Journal 2024': 'https://www.tandfonline.com/journals/hnuc20',
+    'NCI Managing Nausea Clinical Guidelines': 'https://www.cancer.gov/about-cancer/treatment/side-effects/nausea',
+    'Supportive Care in Cancer Journal': 'https://link.springer.com/journal/520',
+    'Oncology Nutrition Connection': 'https://www.oncologynutrition.org/',
+    'NCI Eating Hints Guidelines': 'https://www.cancer.gov/publications/patient-education/eating-hints',
+    'WHO Food Safety Guidelines': 'https://www.who.int/news-room/fact-sheets/detail/food-safety',
+    'American Institute for Cancer Research': 'https://www.aicr.org/cancer-prevention/',
+    'Harvard T.H. Chan School of Public Health': 'https://www.hsph.harvard.edu/nutritionsource/',
+    'Mayo Clinic Cancer Prevention Guidelines': 'https://www.mayoclinic.org/healthy-lifestyle/adult-health/in-depth/cancer-prevention/art-20044816',
+    'World Cancer Research Fund': 'https://www.wcrf.org/diet-activity-and-cancer/',
+    'Academy of Nutrition and Dietetics': 'https://www.eatright.org/health/diseases-and-conditions/cancer',
+    'Cancer Treatment Centers of America': 'https://www.cancercenter.com/cancer-types',
+    'National Comprehensive Cancer Network': 'https://www.nccn.org/patients',
+    'Livestrong Foundation': 'https://www.livestrong.org/what-we-do/program/nutrition',
+    'Susan G. Komen Foundation': 'https://www.komen.org/breast-cancer/treatment/managing-side-effects/nutrition/',
+    'International Agency for Research on Cancer': 'https://www.iarc.who.int/'
+};
+
+// Initialize clickable evidence notes
+function initializeEvidenceNotes() {
+    const evidenceNotes = document.querySelectorAll('.evidence-note');
+    
+    evidenceNotes.forEach(note => {
+        // Make the evidence note clickable
+        note.style.cursor = 'pointer';
+        note.setAttribute('title', 'Click to view source');
+        
+        // Add click event listener
+        note.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Extract the source name from the text content
+            const noteText = this.textContent.trim();
+            // Remove "Based on " prefix and any leading/trailing whitespace
+            let sourceName = noteText.replace(/^.*?Based on\s+/, '').trim();
+            
+            // If no "Based on" found, use the whole text (removing icon)
+            if (sourceName === noteText) {
+                sourceName = noteText.replace(/^\s*.*?\s+/, '').trim(); // Remove first word (likely icon)
+            }
+            
+            console.log('Extracted source name:', sourceName); // Debug log
+            
+            // Find matching URL
+            let sourceUrl = null;
+            for (const [key, url] of Object.entries(evidenceSourceUrls)) {
+                if (sourceName.includes(key) || key.includes(sourceName.replace(/\s+/g, ' '))) {
+                    sourceUrl = url;
+                    console.log('Matched source:', key, 'URL:', url); // Debug log
+                    break;
+                }
+            }
+            
+            if (sourceUrl) {
+                // Open the source URL in a new tab
+                window.open(sourceUrl, '_blank', 'noopener,noreferrer');
+            } else {
+                // Fallback: show an alert with the source name and available sources
+                console.log('Available sources:', Object.keys(evidenceSourceUrls));
+                alert(`Source: ${sourceName}\n\nThis would typically link to the official publication or guideline. Click OK to search for this source online.`);
+                
+                // Optional: Search for the source on Google
+                const searchQuery = encodeURIComponent(sourceName + ' cancer nutrition guidelines');
+                window.open(`https://www.google.com/search?q=${searchQuery}`, '_blank', 'noopener,noreferrer');
+            }
+        });
+        
+        // Add hover effect - these are now handled by CSS, but we can add additional JS effects
+        note.addEventListener('mouseenter', function() {
+            // Additional hover effects can be added here if needed
+        });
+        
+        note.addEventListener('mouseleave', function() {
+            // Additional hover cleanup can be added here if needed
         });
     });
 }
@@ -2292,6 +6675,179 @@ function closeResourceModal() {
     }
 }
 
+// Recipe Mode Management
+function initializeRecipeModeSelector() {
+    const modeSelector = document.getElementById('recipeMode');
+    if (modeSelector) {
+        // Remove any existing listeners
+        modeSelector.removeEventListener('change', handleModeChange);
+        // Add new listener
+        modeSelector.addEventListener('change', handleModeChange);
+    }
+}
+
+function handleModeChange(event) {
+    const newMode = event.target.value;
+    switchRecipeMode(newMode);
+}
+
+function switchRecipeMode(mode) {
+    currentRecipeMode = mode;
+    
+    // Update the section header and filters based on mode
+    updateRecipeSectionForMode(mode);
+    
+    // Re-render recipes with current filter
+    const activeFilter = document.querySelector('.filter-btn.active');
+    const currentFilter = activeFilter ? activeFilter.dataset.filter : 'all';
+    filterRecipes(currentFilter);
+}
+
+function updateRecipeSectionForMode(mode) {
+    const sectionHeader = document.querySelector('#recipesSection .section-header');
+    const camOverview = document.querySelector('.cam-overview');
+    const filterContainer = document.querySelector('.recipe-filters');
+    
+    if (mode === 'conventional') {
+        // Update header for conventional recipes
+        sectionHeader.innerHTML = `
+            <div class="healthcare-image" style="width: 80px; height: 80px; margin: 0 auto var(--space-4); background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);">
+                <i class="fas fa-apple-alt"></i>
+            </div>
+            <h2><i class="fas fa-apple-alt"></i> Nutritional Recipes</h2>
+            <p>Evidence-based recipes designed for cancer patients' nutritional needs</p>
+            
+            <!-- Recipe Mode Selector -->
+            <div class="recipe-mode-selector">
+                <label for="recipeMode" class="mode-label">
+                    <i class="fas fa-exchange-alt"></i> Recipe Collection:
+                </label>
+                <select id="recipeMode" class="mode-dropdown">
+                    <option value="cam">Holistic & CAM</option>
+                    <option value="conventional" selected>Conventional Nutrition</option>
+                </select>
+            </div>
+        `;
+        
+        // Hide CAM overview
+        if (camOverview) {
+            camOverview.style.display = 'none';
+        }
+        
+        // Add or update conventional overview
+        let conventionalOverview = document.querySelector('.conventional-overview');
+        if (!conventionalOverview) {
+            conventionalOverview = document.createElement('div');
+            conventionalOverview.className = 'conventional-overview';
+            camOverview.parentNode.insertBefore(conventionalOverview, camOverview.nextSibling);
+        }
+        
+        conventionalOverview.innerHTML = `
+            <div class="conventional-intro">
+                <h3>Evidence-Based Nutritional Medicine Approaches</h3>
+                <p>These recipes are developed using clinical research and established nutritional science to provide optimal support for cancer patients during treatment and recovery.</p>
+            </div>
+        `;
+        conventionalOverview.style.display = 'block';
+        
+        // Update filters for conventional recipes
+        if (filterContainer) {
+            // Use the centralized filter update function instead of duplicating logic
+            updateFilterButtonsWithCounts('conventional');
+        }
+    } else {
+        // Update header for CAM recipes
+        sectionHeader.innerHTML = `
+            <div class="healthcare-image cam-icon" style="width: 80px; height: 80px; margin: 0 auto var(--space-4);">
+                <i class="fas fa-seedling"></i>
+            </div>
+            <h2><i class="fas fa-seedling"></i> Holistic & CAM Nutrition</h2>
+            <p>Integrative recipes combining traditional wisdom with modern nutritional science</p>
+            
+            <!-- Recipe Mode Selector -->
+            <div class="recipe-mode-selector">
+                <label for="recipeMode" class="mode-label">
+                    <i class="fas fa-exchange-alt"></i> Recipe Collection:
+                </label>
+                <select id="recipeMode" class="mode-dropdown">
+                    <option value="cam" selected>Holistic & CAM</option>
+                    <option value="conventional">Conventional Nutrition</option>
+                </select>
+            </div>
+            
+            <div class="cam-subtitle">
+                <span class="global-note">
+                    <i class="fas fa-globe"></i> 
+                    Global traditions adapted for cancer support
+                </span>
+            </div>
+        `;
+        
+        // Show CAM overview
+        if (camOverview) {
+            camOverview.style.display = 'block';
+        }
+        
+        // Hide conventional overview
+        const conventionalOverview = document.querySelector('.conventional-overview');
+        if (conventionalOverview) {
+            conventionalOverview.style.display = 'none';
+        }
+        
+        // Update filters for CAM recipes
+        if (filterContainer) {
+            // Use the centralized filter update function instead of duplicating logic
+            updateFilterButtonsWithCounts('cam');
+        }
+    }
+    
+    // Re-initialize the mode selector event listener
+    initializeRecipeModeSelector();
+    
+    // Re-initialize filter button event listeners
+    initializeFilterButtons();
+}
+
+function initializeFilterButtons() {
+    // Add event listeners to filter buttons
+    document.querySelectorAll('.filter-btn').forEach(button => {
+        // Remove any existing listeners to avoid duplicates
+        button.removeEventListener('click', handleFilterClick);
+        // Add new listener
+        button.addEventListener('click', handleFilterClick);
+    });
+}
+
+function handleFilterClick(event) {
+    const button = event.target.closest('.filter-btn');
+    if (!button) return;
+    
+    // Remove active class from all buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    
+    // Add active class to clicked button
+    button.classList.add('active');
+    
+    const filter = button.getAttribute('data-filter');
+    
+    // Always use simple grid layout for filter buttons (no category headers)
+    filterRecipes(filter, true, false);
+}
+
+function highlightFilterButton(filterCategory) {
+    // Remove active class from all filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    
+    // Find and highlight the button with the matching data-filter attribute
+    const targetButton = document.querySelector(`.filter-btn[data-filter="${filterCategory}"]`);
+    if (targetButton) {
+        targetButton.classList.add('active');
+        console.log(`Highlighted filter button: ${filterCategory}`);
+    } else {
+        console.warn(`Filter button not found for category: ${filterCategory}`);
+    }
+}
+
 // Accessibility Functions
 function initializeAccessibilityToggle() {
     const toggleBtn = document.getElementById('toggleHighContrast');
@@ -2343,6 +6899,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize high contrast toggle
     initializeAccessibilityToggle();
     
+    // Initialize recipe mode selector
+    initializeRecipeModeSelector();
+    
+    // Initialize filter buttons for recipes
+    initializeFilterButtons();
+    
+    // Initialize learning section tabs
+    initializeLearnSection();
+    
+    // Initialize nutrition tracking system
+    initializeTracking();
+    
+    // Check if form is empty and clear My Plan if needed
+    checkFormAndClearPlan();
+    
+    // Add form change listeners to monitor form state
+    addFormChangeListeners();
+    
     // Add form submission handler
     const assessmentForm = document.getElementById('assessmentForm');
     if (assessmentForm) {
@@ -2355,6 +6929,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 symptoms.push(checkbox.value);
             });
             
+            // Get holistic preferences
+            const traditionMedicine = [];
+            document.querySelectorAll('input[name="traditions"]:checked').forEach(checkbox => {
+                traditionMedicine.push(checkbox.value);
+            });
+            
+            const mindBodyPractices = [];
+            document.querySelectorAll('input[name="mindBody"]:checked').forEach(checkbox => {
+                mindBodyPractices.push(checkbox.value);
+            });
+            
             const profileData = {
                 cancerType: document.getElementById('cancerType').value,
                 treatmentStage: document.getElementById('treatmentStage').value,
@@ -2362,7 +6947,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 specificLocation: document.getElementById('specificLocation').value,
                 symptoms: symptoms,
                 allergies: document.getElementById('allergies').value,
+                nutritionApproach: document.getElementById('nutritionApproach').value,
+                traditionalMedicine: traditionMedicine,
+                mindBodyPractices: mindBodyPractices,
+                constitutionalType: document.getElementById('constitution').value,
                 timestamp: new Date().toISOString()
+            };
+            
+            // Update global holistic preferences
+            userHolisticPreferences = {
+                approach: profileData.nutritionApproach,
+                traditions: profileData.traditionalMedicine,
+                mindBody: profileData.mindBodyPractices,
+                constitution: profileData.constitutionalType
             };
             
             // Validate required fields
@@ -2417,8 +7014,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Close modal on backdrop click
+    // Close modal on backdrop click only
     document.addEventListener('click', (e) => {
+        // Check for modal backdrop clicks only
         const recipeModal = document.getElementById('recipeModal');
         const resourceModal = document.getElementById('resourceModal');
         const foodModal = document.getElementById('foodModal');
@@ -2455,15 +7053,53 @@ function clearProfileForm() {
         document.getElementById('location').value = '';
         document.getElementById('specificLocation').value = '';
         document.getElementById('allergies').value = '';
+        document.getElementById('nutritionApproach').value = '';
+        document.getElementById('constitution').value = '';
         
-        // Clear all checkboxes by selecting all checkboxes with name="symptoms"
+        // Clear all checkboxes
         const symptomCheckboxes = document.querySelectorAll('input[name="symptoms"]');
         symptomCheckboxes.forEach(checkbox => {
             checkbox.checked = false;
         });
         
+        const traditionalMedicineCheckboxes = document.querySelectorAll('input[name="traditions"]');
+        traditionalMedicineCheckboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        
+        const mindBodyCheckboxes = document.querySelectorAll('input[name="mindBody"]');
+        mindBodyCheckboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        
+        // Clear global holistic preferences
+        userHolisticPreferences = {
+            approach: '',
+            traditions: [],
+            mindBody: [],
+            constitution: ''
+        };
+        
         // Clear any saved profile data from localStorage
         localStorage.removeItem('userProfile');
+        localStorage.removeItem('userProfile');
+        
+        // Clear the My Plan section (personalizedContent)
+        const personalizedContent = document.getElementById('personalizedContent');
+        if (personalizedContent) {
+            personalizedContent.innerHTML = `
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Please complete your personal assessment first to get customized recommendations.</p>
+                    <button class="btn btn-primary" onclick="showSection('profileSection')">
+                        <i class="fas fa-user-circle"></i> Complete Assessment
+                    </button>
+                </div>
+            `;
+        }
+        
+        // Clear any stored recommendations
+        localStorage.removeItem('userRecommendations');
         
         // Show success message
         alert('Profile form cleared successfully!');
@@ -2494,3 +7130,1032 @@ function clearTodayTracking() {
         alert('Today\'s tracking data cleared successfully!');
     }
 }
+
+// Check if form is empty and clear My Plan accordingly
+function checkFormAndClearPlan() {
+    const formElements = [
+        'cancerType',
+        'treatmentStage', 
+        'location'
+    ];
+    
+    // Check if required form fields are empty
+    let formIsEmpty = true;
+    for (const elementId of formElements) {
+        const element = document.getElementById(elementId);
+        if (element && element.value.trim() !== '') {
+            formIsEmpty = false;
+            break;
+        }
+    }
+    
+    // If form is empty, clear localStorage and My Plan
+    if (formIsEmpty) {
+        // Clear profile and recommendations from localStorage
+        localStorage.removeItem('userProfile');
+        localStorage.removeItem('userRecommendations');
+        
+        // Clear the My Plan section
+        const personalizedContent = document.getElementById('personalizedContent');
+        if (personalizedContent) {
+            personalizedContent.innerHTML = `
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Please complete your personal assessment first to get customized recommendations.</p>
+                    <button class="btn btn-primary" onclick="showSection('profileSection')">
+                        <i class="fas fa-user-circle"></i> Complete Assessment
+                    </button>
+                </div>
+            `;
+        }
+    }
+}
+
+// Add form change listeners to monitor form state
+function addFormChangeListeners() {
+    const formElements = [
+        'cancerType',
+        'treatmentStage',
+        'location',
+        'specificLocation',
+        'allergies',
+        'nutritionApproach',
+        'constitution'
+    ];
+    
+    // Add change listeners to form elements
+    formElements.forEach(elementId => {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.addEventListener('change', checkFormAndClearPlan);
+            element.addEventListener('input', checkFormAndClearPlan);
+        }
+    });
+    
+    // Add change listeners to checkboxes
+    const checkboxGroups = ['symptoms', 'traditions', 'mindBody'];
+    checkboxGroups.forEach(groupName => {
+        const checkboxes = document.querySelectorAll(`input[name="${groupName}"]`);
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', checkFormAndClearPlan);
+        });
+    });
+}
+
+// Test function to debug recommended recipes filtering
+function debugRecommendedFiltering() {
+    console.log('=== Debug Recommended Filtering ===');
+    
+    const userData = getUserProfile();
+    if (!userData) {
+        console.log('No user profile found');
+        return;
+    }
+    
+    console.log('User data:', userData);
+    
+    // Generate categories for the user
+    const categories = getRecommendedRecipeCategories(userData);
+    console.log('Generated recommended categories HTML:', categories);
+    console.log('Current recommended filters:', currentUserRecommendedFilters);
+    
+    // Check current recipe mode
+    console.log('Current recipe mode:', currentRecipeMode);
+    const currentRecipeData = currentRecipeMode === 'conventional' ? conventionalRecipeData : camRecipeData;
+    console.log('Available recipe categories:', Object.keys(currentRecipeData));
+    
+    // Test filtering
+    console.log('Testing filter mapping:');
+    currentUserRecommendedFilters.forEach(filter => {
+        if (currentRecipeData[filter]) {
+            console.log(`✓ Filter '${filter}' maps to ${currentRecipeData[filter].length} recipes`);
+        } else {
+            console.log(`✗ Filter '${filter}' NOT FOUND in recipe data`);
+        }
+    });
+}
+
+// Make debug function available globally for browser console testing
+window.debugRecommendedFiltering = debugRecommendedFiltering;
+
+// Test function to add sample nutrition data for testing weekly tracking
+function addSampleNutritionData() {
+    console.log('Adding sample nutrition data for testing...');
+    
+    // Add data for the last few days
+    for (let i = 0; i < 5; i++) {
+        const testDate = new Date();
+        testDate.setDate(testDate.getDate() - i);
+        const dateString = testDate.toISOString().split('T')[0];
+        
+        const sampleData = {
+            foods: [
+                {
+                    id: `test_${i}_1`,
+                    name: `Sample Food ${i + 1}`,
+                    portion: "1 cup",
+                    meal: "breakfast",
+                    calories: 200 + (i * 50),
+                    protein: 15 + (i * 3),
+                    fluids: 100 + (i * 25),
+                    timestamp: testDate.toISOString()
+                },
+                {
+                    id: `test_${i}_2`,
+                    name: `Sample Meal ${i + 1}`,
+                    portion: "1 serving",
+                    meal: "lunch",
+                    calories: 350 + (i * 40),
+                    protein: 25 + (i * 5),
+                    fluids: 200 + (i * 30),
+                    timestamp: testDate.toISOString()
+                }
+            ],
+            totals: {
+                calories: 550 + (i * 90),
+                protein: 40 + (i * 8),
+                fluids: 300 + (i * 55)
+            }
+        };
+        
+        localStorage.setItem(`nutrition_${dateString}`, JSON.stringify(sampleData));
+    }
+    
+    console.log('Sample nutrition data added for testing');
+    alert('Sample nutrition data added! You can now test the Save Daily Log and Weekly History features.');
+}
+
+// Make test function available globally
+window.addSampleNutritionData = addSampleNutritionData;
+
+// Debug function to check localStorage data
+function debugNutritionStorage() {
+    console.log('=== Debugging Nutrition Storage ===');
+    
+    // Check daily nutrition data
+    const today = new Date();
+    const dateString = today.toISOString().split('T')[0];
+    const todayData = localStorage.getItem(`nutrition_${dateString}`);
+    console.log(`Today's data (${dateString}):`, todayData ? JSON.parse(todayData) : 'No data');
+    
+    // Check weekly logs
+    const weeklyLogs = localStorage.getItem('weeklyNutritionLogs');
+    console.log('Weekly logs:', weeklyLogs ? JSON.parse(weeklyLogs) : 'No weekly logs');
+    
+    // Check all nutrition keys in localStorage
+    const nutritionKeys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('nutrition_')) {
+            nutritionKeys.push(key);
+        }
+    }
+    console.log('All nutrition keys:', nutritionKeys);
+    
+    // Show detailed data for each key
+    nutritionKeys.forEach(key => {
+        const data = localStorage.getItem(key);
+        console.log(`${key}:`, data ? JSON.parse(data) : 'Empty');
+    });
+    
+    console.log('=== End Debug ===');
+}
+
+// Make debug function available globally
+window.debugNutritionStorage = debugNutritionStorage;
+
+// Test function to check if weekly history is updating
+function testWeeklyHistoryUpdate() {
+    console.log('=== Testing Weekly History Update ===');
+    
+    const today = new Date();
+    const dateString = today.toISOString().split('T')[0];
+    
+    // Check today's nutrition data
+    const todayData = localStorage.getItem(`nutrition_${dateString}`);
+    console.log(`Today's nutrition data (${dateString}):`, todayData ? JSON.parse(todayData) : 'No data found');
+    
+    // Check weekly logs
+    const weeklyLogs = localStorage.getItem('weeklyNutritionLogs');
+    console.log('Weekly nutrition logs:', weeklyLogs ? JSON.parse(weeklyLogs) : 'No weekly logs found');
+    
+    // If today has data but weekly doesn't, manually sync
+    if (todayData && (!weeklyLogs || JSON.parse(weeklyLogs).length === 0)) {
+        console.log('Found daily data but no weekly logs. Manually syncing...');
+        const nutritionData = JSON.parse(todayData);
+        autoSaveToWeeklyHistory(dateString, nutritionData);
+        
+        console.log('After manual sync:');
+        const updatedWeeklyLogs = localStorage.getItem('weeklyNutritionLogs');
+        console.log('Updated weekly logs:', updatedWeeklyLogs ? JSON.parse(updatedWeeklyLogs) : 'Still no weekly logs');
+    }
+    
+    console.log('=== End Test ===');
+}
+
+// Make test function available globally
+window.testWeeklyHistoryUpdate = testWeeklyHistoryUpdate;
+
+// Complete test function for the entire nutrition tracking flow
+function testCompletNutritionFlow() {
+    console.log('=== Testing Complete Nutrition Flow ===');
+    
+    const today = new Date();
+    const dateString = today.toISOString().split('T')[0];
+    
+    console.log('Step 1: Adding test food item...');
+    
+    // Simulate adding a food item
+    const testFoodItem = {
+        id: Date.now().toString(),
+        name: 'Test Apple',
+        portion: '1 medium',
+        meal: 'breakfast',
+        calories: 80,
+        protein: 0,
+        fluids: 50,
+        timestamp: new Date().toISOString()
+    };
+    
+    // Get existing nutrition data
+    const nutritionData = JSON.parse(localStorage.getItem(`nutrition_${dateString}`) || '{"foods": [], "totals": {"calories": 0, "protein": 0, "fluids": 0}}');
+    
+    // Add test food item
+    nutritionData.foods.push(testFoodItem);
+    nutritionData.totals.calories += testFoodItem.calories;
+    nutritionData.totals.protein += testFoodItem.protein;
+    nutritionData.totals.fluids += testFoodItem.fluids;
+    
+    // Save to daily log
+    localStorage.setItem(`nutrition_${dateString}`, JSON.stringify(nutritionData));
+    console.log('Step 2: Food item saved to daily log');
+    
+    // Auto-save to weekly history
+    autoSaveToWeeklyHistory(dateString, nutritionData);
+    console.log('Step 3: Auto-saved to weekly history');
+    
+    // Check weekly history
+    const weeklyLogs = JSON.parse(localStorage.getItem('weeklyNutritionLogs') || '[]');
+    const todayLog = weeklyLogs.find(log => log.date === dateString);
+    
+    if (todayLog) {
+        console.log('✅ SUCCESS: Today\'s data found in weekly history:', todayLog);
+        console.log('   - Foods count:', todayLog.foods.length);
+        console.log('   - Total calories:', todayLog.totals.calories);
+        console.log('   - Auto-saved flag:', todayLog.autoSaved);
+    } else {
+        console.log('❌ ERROR: Today\'s data NOT found in weekly history');
+    }
+    
+    console.log('Step 4: Testing Save Daily Log function...');
+    saveDailyLog();
+    
+    console.log('Step 5: Testing Weekly History View...');
+    setTimeout(() => {
+        viewWeeklyHistory();
+        console.log('=== Test Complete ===');
+    }, 1000);
+}
+
+// Make complete test function available globally
+window.testCompletNutritionFlow = testCompletNutritionFlow;
+
+// Function to manually force sync of today's data to weekly history
+function forceSyncTodayToWeeklyHistory() {
+    console.log('=== Forcing sync of today\'s data to weekly history ===');
+    
+    const today = new Date();
+    const dateString = today.toISOString().split('T')[0];
+    
+    // Get today's nutrition data
+    const todayData = localStorage.getItem(`nutrition_${dateString}`);
+    console.log('Today\'s raw data:', todayData);
+    
+    if (todayData) {
+        const nutritionData = JSON.parse(todayData);
+        console.log('Today\'s parsed data:', nutritionData);
+        
+        if (nutritionData.foods && nutritionData.foods.length > 0) {
+            console.log('Found', nutritionData.foods.length, 'food items. Forcing sync...');
+            autoSaveToWeeklyHistory(dateString, nutritionData);
+            
+            // Check if it was saved
+            const weeklyLogs = JSON.parse(localStorage.getItem('weeklyNutritionLogs') || '[]');
+            const todayLog = weeklyLogs.find(log => log.date === dateString);
+            
+            if (todayLog) {
+                console.log('✅ SUCCESS: Data synced to weekly history!');
+                console.log('Today\'s log in weekly history:', todayLog);
+                
+                // Refresh weekly history view if it's open
+                const historySection = document.getElementById('weeklyHistorySection');
+                if (historySection && !historySection.classList.contains('hidden')) {
+                    loadWeeklyHistory();
+                }
+                
+                alert('✅ Today\'s nutrition data has been successfully synced to weekly history!');
+            } else {
+                console.log('❌ ERROR: Data was not saved to weekly history');
+                alert('❌ Error: Could not sync data to weekly history');
+            }
+        } else {
+            console.log('No food data found for today');
+            alert('No food data found for today. Please add some food items first.');
+        }
+    } else {
+        console.log('No nutrition data found for today');
+        alert('No nutrition data found for today. Please add some food items first.');
+    }
+}
+
+// Make force sync function available globally
+window.forceSyncTodayToWeeklyHistory = forceSyncTodayToWeeklyHistory;
+
+// Debug function to check weekly history filtering
+function debugWeeklyHistoryFiltering() {
+    console.log('=== Debug Weekly History Filtering ===');
+    
+    const weeklyLogs = JSON.parse(localStorage.getItem('weeklyNutritionLogs') || '[]');
+    console.log('Total weekly logs:', weeklyLogs.length);
+    
+    weeklyLogs.forEach((log, index) => {
+        console.log(`Log ${index}:`, {
+            date: log.date,
+            displayDate: log.displayDate,
+            foods: log.foods.length,
+            calories: log.totals.calories
+        });
+    });
+    
+    // Check current week calculation (updated logic)
+    const today = new Date();
+    
+    // Create start of week (Sunday) in local time
+    const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const dayOffset = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
+    startOfWeek.setDate(today.getDate() - dayOffset + (currentWeekOffset * 7));
+    startOfWeek.setHours(0, 0, 0, 0);
+    
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
+    
+    console.log('Current week range:');
+    console.log('  Start:', startOfWeek.toISOString(), '(' + startOfWeek.toLocaleDateString() + ')');
+    console.log('  End:', endOfWeek.toISOString(), '(' + endOfWeek.toLocaleDateString() + ')');
+    console.log('  Today:', today.toISOString(), '(' + today.toLocaleDateString() + ')');
+    console.log('  Week offset:', currentWeekOffset);
+    console.log('  Day offset:', dayOffset);
+    
+    // Test filtering with new logic
+    const weekLogs = weeklyLogs.filter(log => {
+        // Parse log date as local date (YYYY-MM-DD format)
+        const logDateParts = log.date.split('-');
+        const logDate = new Date(parseInt(logDateParts[0]), parseInt(logDateParts[1]) - 1, parseInt(logDateParts[2]));
+        logDate.setHours(12, 0, 0, 0); // Set to noon to avoid timezone issues
+        
+        const isInRange = (logDate >= startOfWeek && logDate <= endOfWeek);
+        console.log(`Log ${log.date}: ${logDate.toLocaleDateString()} -> In range: ${isInRange}`);
+        return isInRange;
+    });
+    
+    console.log('Filtered logs for current week:', weekLogs.length);
+    console.log('=== End Debug ===');
+}
+
+// Make debug function available globally
+window.debugWeeklyHistoryFiltering = debugWeeklyHistoryFiltering;
+
+// Debug function to test fluid inclusion in weekly history
+function debugFluidInclusion() {
+    console.log('=== DEBUGGING FLUID INCLUSION IN WEEKLY HISTORY ===');
+    
+    // Get today's nutrition data
+    const today = new Date();
+    const dateString = today.toISOString().split('T')[0];
+    const nutritionData = JSON.parse(localStorage.getItem(`nutrition_${dateString}`) || '{"foods": [], "totals": {"calories": 0, "protein": 0, "fluids": 0}}');
+    
+    console.log('Today\'s nutrition data:', nutritionData);
+    
+    // Separate foods and fluids
+    const foods = nutritionData.foods.filter(item => item.type !== 'fluid');
+    const fluids = nutritionData.foods.filter(item => item.type === 'fluid');
+    
+    console.log('Foods found:', foods.length, foods.map(f => f.name));
+    console.log('Fluids found:', fluids.length, fluids.map(f => `${f.name} (${f.amount})`));
+    
+    // Check weekly history
+    const weeklyLogs = JSON.parse(localStorage.getItem('weeklyNutritionLogs') || '[]');
+    const todayLog = weeklyLogs.find(log => log.date === dateString);
+    
+    if (todayLog) {
+        console.log('Today\'s weekly log:', todayLog);
+        const weeklyFoods = todayLog.foods.filter(item => item.type !== 'fluid');
+        const weeklyFluids = todayLog.foods.filter(item => item.type === 'fluid');
+        console.log('Weekly history - Foods:', weeklyFoods.length, weeklyFoods.map(f => f.name));
+        console.log('Weekly history - Fluids:', weeklyFluids.length, weeklyFluids.map(f => `${f.name} (${f.amount})`));
+    } else {
+        console.log('No weekly log found for today');
+    }
+    
+    console.log('=== END DEBUG ===');
+}
+
+// Expose debug function globally
+window.debugFluidInclusion = debugFluidInclusion;
+
+// Weekly Nutrition Tracking Functions
+let currentWeekOffset = 0; // 0 = current week, -1 = previous week, +1 = next week
+
+// Auto-save function to update weekly history whenever food is added/removed
+function autoSaveToWeeklyHistory(dateString, nutritionData) {
+    console.log('Auto-saving to weekly history for date:', dateString); // Debug log
+    try {
+        // Only save if there's actual food data
+        if (nutritionData.foods.length === 0) {
+            // If no food data, remove from weekly history if it exists
+            removeFromWeeklyHistory(dateString);
+            return;
+        }
+        
+        // Create daily summary
+        const date = new Date(dateString);
+        const dailySummary = {
+            date: dateString,
+            displayDate: date.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            }),
+            foods: nutritionData.foods,
+            totals: nutritionData.totals,
+            savedAt: new Date().toISOString(),
+            autoSaved: true // Flag to indicate this was auto-saved
+        };
+        
+        // Get existing weekly logs
+        const weeklyLogs = JSON.parse(localStorage.getItem('weeklyNutritionLogs') || '[]');
+        
+        // Check if this date already exists
+        const existingIndex = weeklyLogs.findIndex(log => log.date === dateString);
+        
+        if (existingIndex !== -1) {
+            // Update existing log
+            weeklyLogs[existingIndex] = dailySummary;
+        } else {
+            // Add new log
+            weeklyLogs.push(dailySummary);
+        }
+        
+        // Sort logs by date (newest first)
+        weeklyLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        // Keep only last 30 days to manage storage
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        const filteredLogs = weeklyLogs.filter(log => new Date(log.date) >= thirtyDaysAgo);
+        
+        // Save back to localStorage
+        localStorage.setItem('weeklyNutritionLogs', JSON.stringify(filteredLogs));
+        console.log('Auto-saved to weekly history, total logs:', filteredLogs.length); // Debug log
+        
+        // If weekly history is currently visible, refresh it
+        const historySection = document.getElementById('weeklyHistorySection');
+        if (historySection && !historySection.classList.contains('hidden')) {
+            console.log('Refreshing weekly history view...'); // Debug log
+            loadWeeklyHistory();
+        }
+        
+    } catch (error) {
+        console.error('Error auto-saving to weekly history:', error);
+    }
+}
+
+// Function to remove a date from weekly history when no food data exists
+function removeFromWeeklyHistory(dateString) {
+    try {
+        const weeklyLogs = JSON.parse(localStorage.getItem('weeklyNutritionLogs') || '[]');
+        const filteredLogs = weeklyLogs.filter(log => log.date !== dateString);
+        
+        if (filteredLogs.length !== weeklyLogs.length) {
+            localStorage.setItem('weeklyNutritionLogs', JSON.stringify(filteredLogs));
+            console.log('Removed empty day from weekly history:', dateString);
+            
+            // Refresh weekly history if visible
+            const historySection = document.getElementById('weeklyHistorySection');
+            if (historySection && !historySection.classList.contains('hidden')) {
+                loadWeeklyHistory();
+            }
+        }
+    } catch (error) {
+        console.error('Error removing from weekly history:', error);
+    }
+}
+
+// Function to sync existing daily nutrition data to weekly history
+function syncExistingDataToWeeklyHistory() {
+    console.log('Syncing existing daily nutrition data to weekly history...');
+    try {
+        // Find all nutrition keys in localStorage
+        const nutritionKeys = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith('nutrition_')) {
+                nutritionKeys.push(key);
+            }
+        }
+        
+        console.log('Found existing nutrition keys:', nutritionKeys);
+        
+        // Process each daily nutrition entry
+        nutritionKeys.forEach(key => {
+            const dateString = key.replace('nutrition_', '');
+            const nutritionData = JSON.parse(localStorage.getItem(key) || '{"foods": [], "totals": {"calories": 0, "protein": 0, "fluids": 0}}');
+            
+            // Only sync if there's actual food data
+            if (nutritionData.foods && nutritionData.foods.length > 0) {
+                console.log(`Syncing data for ${dateString}:`, nutritionData);
+                autoSaveToWeeklyHistory(dateString, nutritionData);
+            }
+        });
+        
+        console.log('Sync completed');
+    } catch (error) {
+        console.error('Error syncing existing data to weekly history:', error);
+    }
+}
+
+function saveDailyLog() {
+    console.log('saveDailyLog function called'); // Debug log
+    try {
+        const today = new Date();
+        const dateString = today.toISOString().split('T')[0];
+        console.log('Saving log for date:', dateString); // Debug log
+        
+        // Get current nutrition data
+        const nutritionData = JSON.parse(localStorage.getItem(`nutrition_${dateString}`) || '{"foods": [], "totals": {"calories": 0, "protein": 0, "fluids": 0}}');
+        console.log('Nutrition data found:', nutritionData); // Debug log
+        
+        if (nutritionData.foods.length === 0) {
+            alert('No food entries to save for today. Please add some foods first.');
+            return;
+        }
+        
+        // Force immediate save to weekly history using the autoSaveToWeeklyHistory function
+        console.log('Forcing immediate save to weekly history...');
+        autoSaveToWeeklyHistory(dateString, nutritionData);
+        
+        // Verify it was saved
+        const weeklyLogs = JSON.parse(localStorage.getItem('weeklyNutritionLogs') || '[]');
+        const todayLog = weeklyLogs.find(log => log.date === dateString);
+        
+        if (todayLog) {
+            console.log('✅ Successfully saved to weekly history');
+            alert(`✅ Daily log saved successfully!\n\nFood items: ${nutritionData.foods.length}\nTotal calories: ${nutritionData.totals.calories}\nTotal protein: ${nutritionData.totals.protein}g\nTotal fluids: ${nutritionData.totals.fluids}ml`);
+        } else {
+            console.log('❌ Failed to save to weekly history');
+            alert('❌ Error saving to weekly history. Please try again.');
+            return;
+        }
+        
+        // Always refresh weekly history immediately after saving
+        console.log('Refreshing weekly history view...'); // Debug log
+        
+        // If weekly history is currently visible, refresh it
+        const historySection = document.getElementById('weeklyHistorySection');
+        if (historySection && !historySection.classList.contains('hidden')) {
+            loadWeeklyHistory();
+        }
+        
+        // Also auto-open weekly history after saving to show the updated data
+        setTimeout(() => {
+            viewWeeklyHistory();
+        }, 500);
+        
+    } catch (error) {
+        console.error('Error saving daily log:', error);
+        alert('Error saving daily log. Please try again.');
+    }
+}
+
+function viewWeeklyHistory() {
+    console.log('viewWeeklyHistory function called'); // Debug log
+    try {
+        currentWeekOffset = 0; // Reset to current week
+        const historySection = document.getElementById('weeklyHistorySection');
+        const foodLogSection = document.querySelector('.food-log');
+        
+        console.log('History section found:', !!historySection); // Debug log
+        console.log('Food log section found:', !!foodLogSection); // Debug log
+        
+        if (historySection && foodLogSection) {
+            historySection.classList.remove('hidden');
+            loadWeeklyHistory();
+            
+            // Scroll to history section
+            historySection.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+        } else {
+            console.error('Required elements not found for weekly history');
+            alert('Unable to load weekly history. Please try refreshing the page.');
+        }
+    } catch (error) {
+        console.error('Error viewing weekly history:', error);
+        alert('Error loading weekly history. Please try again.');
+    }
+}
+
+function hideWeeklyHistory() {
+    const historySection = document.getElementById('weeklyHistorySection');
+    if (historySection) {
+        historySection.classList.add('hidden');
+    }
+}
+
+function clearWeeklyHistory() {
+    console.log('clearWeeklyHistory function called'); // Debug log
+    
+    // Confirm with user before clearing
+    const confirmClear = confirm(
+        'Are you sure you want to clear all weekly nutrition history?\n\n' +
+        'This action cannot be undone and will permanently delete all saved daily logs.\n\n' +
+        'Click OK to proceed or Cancel to keep your data.'
+    );
+    
+    if (!confirmClear) {
+        return;
+    }
+    
+    try {
+        // Clear weekly logs from localStorage
+        localStorage.removeItem('weeklyNutritionLogs');
+        
+        // Also clear any daily nutrition data that might exist
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith('nutrition_')) {
+                keysToRemove.push(key);
+            }
+        }
+        
+        keysToRemove.forEach(key => {
+            localStorage.removeItem(key);
+        });
+        
+        console.log('Cleared weekly history and daily nutrition data'); // Debug log
+        
+        // Refresh the weekly history view to show empty state
+        if (document.getElementById('weeklyHistorySection') && !document.getElementById('weeklyHistorySection').classList.contains('hidden')) {
+            loadWeeklyHistory();
+        }
+        
+        // Also refresh today's tracking display
+        const today = new Date();
+        const dateString = today.toISOString().split('T')[0];
+        loadNutritionData(dateString);
+        
+        alert('Weekly nutrition history cleared successfully!');
+        
+    } catch (error) {
+        console.error('Error clearing weekly history:', error);
+        alert('Error clearing history. Please try again.');
+    }
+}
+
+function changeWeek(direction) {
+    currentWeekOffset += direction;
+    loadWeeklyHistory();
+}
+
+function loadWeeklyHistory() {
+    console.log('loadWeeklyHistory function called with offset:', currentWeekOffset); // Debug log
+    try {
+        const weeklyLogs = JSON.parse(localStorage.getItem('weeklyNutritionLogs') || '[]');
+        const historyContent = document.getElementById('weeklyHistoryContent');
+        const weekDisplay = document.getElementById('currentWeekDisplay');
+        
+        console.log('Weekly logs found:', weeklyLogs.length); // Debug log
+        console.log('History content element:', !!historyContent); // Debug log
+        console.log('Week display element:', !!weekDisplay); // Debug log
+        
+        if (!historyContent || !weekDisplay) {
+            console.error('Required elements not found for weekly history loading');
+            return;
+        }
+        
+        // Calculate week range using local dates to avoid timezone issues
+        const today = new Date();
+        
+        // For the current week (offset 0), show a more user-friendly range
+        // that includes recent data (last 7 days from today)
+        let startOfWeek, endOfWeek;
+        
+        if (currentWeekOffset === 0) {
+            // Current week: show last 7 days ending today (more inclusive)
+            endOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            endOfWeek.setHours(23, 59, 59, 999);
+            
+            startOfWeek = new Date(endOfWeek);
+            startOfWeek.setDate(endOfWeek.getDate() - 6); // 7 days including today
+            startOfWeek.setHours(0, 0, 0, 0);
+        } else {
+            // For other weeks, use standard Sunday-Saturday logic
+            const referenceDate = new Date(today);
+            referenceDate.setDate(today.getDate() + (currentWeekOffset * 7));
+            
+            startOfWeek = new Date(referenceDate.getFullYear(), referenceDate.getMonth(), referenceDate.getDate());
+            const dayOffset = referenceDate.getDay(); // 0 = Sunday, 1 = Monday, etc.
+            startOfWeek.setDate(referenceDate.getDate() - dayOffset);
+            startOfWeek.setHours(0, 0, 0, 0);
+            
+            endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(startOfWeek.getDate() + 6);
+            endOfWeek.setHours(23, 59, 59, 999);
+        }
+        
+        console.log('Week range:', startOfWeek.toISOString(), 'to', endOfWeek.toISOString()); // Debug log
+        console.log('Today info:', {
+            date: today.toLocaleDateString(),
+            dayOfWeek: today.getDay(),
+            weekOffset: currentWeekOffset,
+            weekStartDate: startOfWeek.toLocaleDateString(),
+            weekEndDate: endOfWeek.toLocaleDateString(),
+            isCurrentWeekMode: currentWeekOffset === 0
+        }); // Debug log
+        
+        // Update week display
+        const weekText = currentWeekOffset === 0 ? 'Recent 7 Days' :
+                        currentWeekOffset === -1 ? 'Previous Week' :
+                        currentWeekOffset < -1 ? `${Math.abs(currentWeekOffset)} Weeks Ago` :
+                        currentWeekOffset === 1 ? 'Next Week' :
+                        `${currentWeekOffset} Weeks Ahead`;
+        
+        weekDisplay.textContent = `${weekText} (${startOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })})`;
+        
+        // Filter logs for this week
+        const weekLogs = weeklyLogs.filter(log => {
+            // Parse log date as local date (YYYY-MM-DD format)
+            const logDateParts = log.date.split('-');
+            const logDate = new Date(parseInt(logDateParts[0]), parseInt(logDateParts[1]) - 1, parseInt(logDateParts[2]));
+            logDate.setHours(12, 0, 0, 0); // Set to noon to avoid timezone issues
+            
+            console.log('Checking log date:', log.date, '(', logDate.toISOString(), ') against week range'); // Debug log
+            console.log('Log date info:', {
+                originalDate: log.date,
+                parsedDate: logDate.toLocaleDateString(),
+                logTime: logDate.getTime(),
+                startTime: startOfWeek.getTime(),
+                endTime: endOfWeek.getTime(),
+                logDayOfWeek: logDate.getDay(),
+                logMonth: logDate.getMonth() + 1,
+                logDay: logDate.getDate()
+            }); // Debug log
+            
+            // Check if the log date is within the week range
+            // Use >= and <= for inclusive comparison
+            const isInRange = (logDate.getTime() >= startOfWeek.getTime() && logDate.getTime() <= endOfWeek.getTime());
+            console.log('Is in range:', isInRange, '(logTime >= startTime && logTime <= endTime)'); // Debug log
+            return isInRange;
+        });
+        
+        console.log('Logs for current week:', weekLogs.length); // Debug log
+        
+        if (weekLogs.length === 0) {
+            historyContent.innerHTML = `
+                <div class="empty-log">
+                    <i class="fas fa-calendar-times" style="font-size: 2rem; margin-bottom: 1rem; color: var(--gray-400);"></i>
+                    <p>No saved nutrition logs for this week.</p>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem; color: var(--gray-500);">Start tracking your daily nutrition and save logs to build your weekly history!</p>
+                </div>
+            `;
+            return;
+        }
+        
+        // Calculate weekly averages
+        const weeklyTotals = {
+            calories: 0,
+            protein: 0,
+            fluids: 0,
+            days: weekLogs.length
+        };
+        
+        weekLogs.forEach(log => {
+            weeklyTotals.calories += log.totals.calories;
+            weeklyTotals.protein += log.totals.protein;
+            weeklyTotals.fluids += log.totals.fluids;
+        });
+        
+        const weeklyAverages = {
+            calories: Math.round(weeklyTotals.calories / weeklyTotals.days),
+            protein: Math.round(weeklyTotals.protein / weeklyTotals.days),
+            fluids: Math.round(weeklyTotals.fluids / weeklyTotals.days)
+        };
+        
+        // Generate HTML
+        let historyHTML = `
+            <div class="weekly-summary">
+                <h4><i class="fas fa-chart-line"></i> Weekly Averages (${weeklyTotals.days} days logged)</h4>
+                <div class="weekly-averages">
+                    <div class="weekly-average">
+                        <div class="weekly-average-value">${weeklyAverages.calories}</div>
+                        <div class="weekly-average-label">Avg Calories/day</div>
+                    </div>
+                    <div class="weekly-average">
+                        <div class="weekly-average-value">${weeklyAverages.protein}g</div>
+                        <div class="weekly-average-label">Avg Protein/day</div>
+                    </div>
+                    <div class="weekly-average">
+                        <div class="weekly-average-value">${weeklyAverages.fluids}ml</div>
+                        <div class="weekly-average-label">Avg Fluids/day</div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Sort logs by date (newest first)
+        weekLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        // Generate daily summaries
+        weekLogs.forEach(log => {
+            historyHTML += `
+                <div class="daily-summary">
+                    <div class="daily-summary-header">
+                        <div class="daily-summary-date">
+                            <i class="fas fa-calendar-day"></i> ${log.displayDate}
+                        </div>
+                        <div class="daily-summary-stats">
+                            <div class="daily-stat">
+                                <div class="daily-stat-value">${log.totals.calories}</div>
+                                <div class="daily-stat-label">Calories</div>
+                            </div>
+                            <div class="daily-stat">
+                                <div class="daily-stat-value">${log.totals.protein}g</div>
+                                <div class="daily-stat-label">Protein</div>
+                            </div>
+                            <div class="daily-stat">
+                                <div class="daily-stat-value">${log.totals.fluids}ml</div>
+                                <div class="daily-stat-label">Fluids</div>
+                            </div>
+                            <div class="daily-stat">
+                                <div class="daily-stat-value">${log.foods.length}</div>
+                                <div class="daily-stat-label">Items</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="daily-items-summary">
+                        ${(() => {
+                            const foods = log.foods.filter(item => item.type !== 'fluid');
+                            const fluids = log.foods.filter(item => item.type === 'fluid' || (item.fluids && item.fluids > 0));
+                            let itemsHTML = '';
+                            
+                            if (foods.length > 0) {
+                                itemsHTML += `<div class="daily-foods-summary">
+                                    <strong><i class="fas fa-utensils"></i> Foods logged:</strong> ${foods.map(food => food.name).join(', ')}
+                                </div>`;
+                            }
+                            
+                            if (fluids.length > 0) {
+                                itemsHTML += `<div class="daily-fluids-summary">
+                                    <strong><i class="fas fa-tint"></i> Fluids logged:</strong> ${fluids.map(fluid => `${fluid.name} (${fluid.amount})`).join(', ')}
+                                </div>`;
+                            }
+                            
+                            return itemsHTML;
+                        })()}
+                    </div>
+                </div>
+            `;
+        });
+        
+        historyContent.innerHTML = historyHTML;
+        console.log('Weekly history loaded successfully'); // Debug log
+        
+    } catch (error) {
+        console.error('Error loading weekly history:', error);
+        alert('Error loading weekly history. Please try again.');
+    }
+}
+
+function exportWeeklyData() {
+    const weeklyLogs = JSON.parse(localStorage.getItem('weeklyNutritionLogs') || '[]');
+    
+    if (weeklyLogs.length === 0) {
+        alert('No nutrition logs to export. Please save some daily logs first.');
+        return;
+    }
+    
+    // Calculate week range
+    const today = new Date();
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay() + (currentWeekOffset * 7));
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    
+    // Filter logs for current displayed week
+    const weekLogs = weeklyLogs.filter(log => {
+        const logDate = new Date(log.date);
+        return logDate >= startOfWeek && logDate <= endOfWeek;
+    });
+    
+    if (weekLogs.length === 0) {
+        alert('No nutrition logs for this week to export.');
+        return;
+    }
+    
+    // Generate CSV content
+    let csvContent = 'Date,Day,Calories,Protein(g),Fluids(ml),Food Items,Foods\n';
+    
+    weekLogs.sort((a, b) => new Date(a.date) - new Date(b.date));
+    
+    weekLogs.forEach(log => {
+        const foodsList = log.foods.map(food => `"${food.name} (${food.portion})"`).join('; ');
+        csvContent += `"${log.date}","${log.displayDate}",${log.totals.calories},${log.totals.protein},${log.totals.fluids},${log.foods.length},"${foodsList}"\n`;
+    });
+    
+    // Calculate and add weekly summary
+    const weeklyTotals = {
+        calories: weekLogs.reduce((sum, log) => sum + log.totals.calories, 0),
+        protein: weekLogs.reduce((sum, log) => sum + log.totals.protein, 0),
+        fluids: weekLogs.reduce((sum, log) => sum + log.totals.fluids, 0)
+    };
+    
+    const weeklyAverages = {
+        calories: Math.round(weeklyTotals.calories / weekLogs.length),
+        protein: Math.round(weeklyTotals.protein / weekLogs.length),
+        fluids: Math.round(weeklyTotals.fluids / weekLogs.length)
+    };
+    
+    csvContent += '\n"WEEKLY SUMMARY",,,,,,\n';
+    csvContent += `"Average per day","",${weeklyAverages.calories},${weeklyAverages.protein},${weeklyAverages.fluids},${Math.round(weekLogs.reduce((sum, log) => sum + log.foods.length, 0) / weekLogs.length)},""\n`;
+    csvContent += `"Total for week","",${weeklyTotals.calories},${weeklyTotals.protein},${weeklyTotals.fluids},${weekLogs.reduce((sum, log) => sum + log.foods.length, 0)},""\n`;
+    
+    // Create and download file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `nutrition-summary-week-${startOfWeek.toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    alert('Weekly nutrition summary exported successfully!');
+}
+
+// Fallback: Force recipe card background images at runtime
+document.addEventListener('DOMContentLoaded', () => {
+    const imageUrl = 'recipe-background-food.png';
+    
+    function applyRecipeBackgrounds() {
+        const recipeImages = document.querySelectorAll('.recipe-image, .recipe-image-override, .recipe-icon-header');
+        console.log(`Found ${recipeImages.length} recipe image elements`);
+        
+        recipeImages.forEach(el => {
+            if (el && el.tagName && el.tagName.toLowerCase() !== 'img') {
+                // Reset all background properties first
+                el.style.background = 'none';
+                el.style.backgroundImage = `url("${imageUrl}")`;
+                el.style.backgroundSize = 'cover';
+                el.style.backgroundPosition = 'center';
+                el.style.backgroundRepeat = 'no-repeat';
+                el.style.backgroundAttachment = 'scroll';
+                el.style.backgroundColor = 'transparent';
+                el.style.opacity = '1';
+                el.style.display = 'flex';
+                el.style.alignItems = 'center';
+                el.style.justifyContent = 'center';
+                el.style.height = '180px';
+                el.style.width = '100%';
+                el.style.borderRadius = '10px 10px 0 0';
+                
+                // Force override with setProperty
+                el.style.setProperty('background-image', `url("${imageUrl}")`, 'important');
+                el.style.setProperty('background-size', 'cover', 'important');
+                el.style.setProperty('background-position', 'center', 'important');
+                el.style.setProperty('background-repeat', 'no-repeat', 'important');
+                el.style.setProperty('background-color', 'transparent', 'important');
+                
+                console.log('Applied background to recipe image element:', el.className);
+            }
+        });
+    }
+    
+    // Apply immediately and after any DOM changes
+    applyRecipeBackgrounds();
+    
+    // Watch for recipe cards being added dynamically
+    const observer = new MutationObserver(() => {
+        applyRecipeBackgrounds();
+    });
+    
+    observer.observe(document.body, { 
+        childList: true, 
+        subtree: true 
+    });
+});
+

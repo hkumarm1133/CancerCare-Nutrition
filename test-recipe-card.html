@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Card Background Test</title>
+    <style>
+        .test-recipe-card {
+            width: 300px;
+            height: 200px;
+            background-image: url('recipe-background-food.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border: 2px solid #333;
+            margin: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+        
+        .test-inline {
+            width: 300px;
+            height: 200px;
+            border: 2px solid #333;
+            margin: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+    </style>
+</head>
+<body>
+    <h1>Recipe Card Background Test</h1>
+    
+    <h2>CSS Background Test:</h2>
+    <div class="test-recipe-card">
+        CSS Background
+    </div>
+    
+    <h2>Inline Style Test:</h2>
+    <div class="test-inline" style="background: url('recipe-background-food.png') center/cover no-repeat;">
+        Inline Background
+    </div>
+    
+    <h2>Direct Image Test:</h2>
+    <img src="recipe-background-food.png" alt="Recipe Background" style="width: 300px; height: 200px; object-fit: cover; border: 2px solid #333; margin: 20px;">
+    
+    <script>
+        console.log('Testing image load...');
+        const img = new Image();
+        img.onload = () => console.log('✅ Image loaded successfully!');
+        img.onerror = () => console.log('❌ Image failed to load!');
+        img.src = 'recipe-background-food.png';
+    </script>
+</body>
+</html>

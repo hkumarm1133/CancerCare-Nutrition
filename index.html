@@ -57,52 +57,44 @@
                     <label for="cancerType">Cancer Type *</label>
                     <select id="cancerType" required>
                         <option value="">Select your cancer type</option>
-                        <!-- Most Common Cancers -->
-                        <option value="breast">Breast Cancer</option>
-                        <option value="lung">Lung Cancer</option>
-                        <option value="colorectal">Colorectal Cancer</option>
-                        <option value="prostate">Prostate Cancer</option>
-                        <option value="skin">Skin Cancer (Melanoma)</option>
+                        <!-- Alphabetically sorted cancer types -->
+                        <option value="adrenal">Adrenal Cancer</option>
+                        <option value="bile-duct">Bile Duct Cancer</option>
                         <option value="bladder">Bladder Cancer</option>
-                        <option value="kidney">Kidney Cancer</option>
-                        <option value="thyroid">Thyroid Cancer</option>
-                        <option value="pancreatic">Pancreatic Cancer</option>
-                        <option value="liver">Liver Cancer</option>
-                        <!-- Blood Cancers -->
-                        <option value="leukemia">Leukemia</option>
-                        <option value="lymphoma">Lymphoma (Hodgkin's & Non-Hodgkin's)</option>
-                        <option value="myeloma">Multiple Myeloma</option>
-                        <!-- Head & Neck Cancers -->
-                        <option value="head-neck">Head & Neck Cancer</option>
+                        <option value="bone">Bone Cancer</option>
                         <option value="brain">Brain Cancer</option>
-                        <option value="oral">Oral Cancer</option>
-                        <option value="throat">Throat Cancer</option>
-                        <!-- Digestive System Cancers -->
-                        <option value="stomach">Stomach Cancer</option>
+                        <option value="breast">Breast Cancer</option>
+                        <option value="carcinoid">Carcinoid Tumor</option>
+                        <option value="cervical">Cervical Cancer</option>
+                        <option value="colorectal">Colorectal Cancer</option>
                         <option value="esophageal">Esophageal Cancer</option>
                         <option value="gallbladder">Gallbladder Cancer</option>
-                        <option value="bile-duct">Bile Duct Cancer</option>
-                        <option value="small-intestine">Small Intestine Cancer</option>
-                        <!-- Gynecologic Cancers -->
-                        <option value="ovarian">Ovarian Cancer</option>
-                        <option value="cervical">Cervical Cancer</option>
-                        <option value="uterine">Uterine Cancer</option>
-                        <option value="vulvar">Vulvar Cancer</option>
-                        <option value="vaginal">Vaginal Cancer</option>
-                        <!-- Urologic Cancers -->
-                        <option value="testicular">Testicular Cancer</option>
-                        <option value="penile">Penile Cancer</option>
-                        <!-- Bone & Soft Tissue -->
-                        <option value="bone">Bone Cancer</option>
-                        <option value="soft-tissue">Soft Tissue Sarcoma</option>
-                        <!-- Endocrine Cancers -->
-                        <option value="adrenal">Adrenal Cancer</option>
-                        <option value="parathyroid">Parathyroid Cancer</option>
-                        <!-- Rare Cancers -->
-                        <option value="mesothelioma">Mesothelioma</option>
-                        <option value="neuroendocrine">Neuroendocrine Tumors</option>
-                        <option value="carcinoid">Carcinoid Tumor</option>
                         <option value="gastrointestinal-stromal">GIST (Gastrointestinal Stromal Tumor)</option>
+                        <option value="head-neck">Head & Neck Cancer</option>
+                        <option value="kidney">Kidney Cancer</option>
+                        <option value="leukemia">Leukemia</option>
+                        <option value="liver">Liver Cancer</option>
+                        <option value="lung">Lung Cancer</option>
+                        <option value="lymphoma">Lymphoma (Hodgkin's & Non-Hodgkin's)</option>
+                        <option value="mesothelioma">Mesothelioma</option>
+                        <option value="myeloma">Multiple Myeloma</option>
+                        <option value="neuroendocrine">Neuroendocrine Tumors</option>
+                        <option value="oral">Oral Cancer</option>
+                        <option value="ovarian">Ovarian Cancer</option>
+                        <option value="pancreatic">Pancreatic Cancer</option>
+                        <option value="parathyroid">Parathyroid Cancer</option>
+                        <option value="penile">Penile Cancer</option>
+                        <option value="prostate">Prostate Cancer</option>
+                        <option value="skin">Skin Cancer (Melanoma)</option>
+                        <option value="small-intestine">Small Intestine Cancer</option>
+                        <option value="soft-tissue">Soft Tissue Sarcoma</option>
+                        <option value="stomach">Stomach Cancer</option>
+                        <option value="testicular">Testicular Cancer</option>
+                        <option value="throat">Throat Cancer</option>
+                        <option value="thyroid">Thyroid Cancer</option>
+                        <option value="uterine">Uterine Cancer</option>
+                        <option value="vaginal">Vaginal Cancer</option>
+                        <option value="vulvar">Vulvar Cancer</option>
                         <option value="other">Other</option>
                     </select>
                 </div>
@@ -122,13 +114,13 @@
                     <label for="location">Current Location *</label>
                     <select id="location" required>
                         <option value="">Select your location</option>
-                        <option value="north-america">North America (US/Canada)</option>
-                        <option value="europe">Europe</option>
-                        <option value="asia-pacific">Asia-Pacific</option>
-                        <option value="middle-east">Middle East</option>
                         <option value="africa">Africa</option>
-                        <option value="south-america">South America</option>
+                        <option value="asia-pacific">Asia-Pacific</option>
                         <option value="australia">Australia/Oceania</option>
+                        <option value="europe">Europe</option>
+                        <option value="middle-east">Middle East</option>
+                        <option value="north-america">North America (US/Canada)</option>
+                        <option value="south-america">South America</option>
                     </select>
                 </div>
 
@@ -138,27 +130,98 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Current Symptoms (check all that apply)</label>
-                    <div class="checkbox-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="symptoms" value="nausea"> Nausea/Vomiting
+                    <fieldset>
+                        <legend>Current Symptoms (check all that apply)</legend>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="symptoms" value="nausea"> Nausea/Vomiting
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="symptoms" value="appetite-loss"> Loss of Appetite
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="symptoms" value="mouth-sores"> Mouth Sores
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="symptoms" value="fatigue"> Severe Fatigue
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="symptoms" value="taste-changes"> Taste Changes
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="symptoms" value="digestive"> Digestive Issues
+                            </label>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="form-group">
+                    <label for="nutritionApproach">Preferred Nutrition Approach *</label>
+                    <select id="nutritionApproach" required>
+                        <option value="">Select your preferred approach</option>
+                        <option value="conventional">Conventional (Evidence-based medical nutrition)</option>
+                        <option value="holistic">Alternative & Complementary (Traditional medicine focus)</option>
+                        <option value="integrated">Integrated (Combination of both approaches)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="traditionPreferences" style="display: none;">
+                    <fieldset>
+                        <legend>Traditional Medicine Systems (check all that interest you)</legend>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="traditions" value="ayurveda"> Ayurveda (Indian traditional medicine)
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="traditions" value="tcm"> Traditional Chinese Medicine (TCM)
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="traditions" value="naturopathy"> Naturopathy
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="traditions" value="mediterranean"> Mediterranean Traditional Diet
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="traditions" value="functional"> Functional Medicine
+                            </label>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="form-group" id="mindBodyPractices" style="display: none;">
+                    <fieldset>
+                        <legend>Mind-Body Practices (check all that apply)</legend>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="mindBody" value="meditation"> Meditation
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="mindBody" value="yoga"> Yoga
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="mindBody" value="mindful-eating"> Mindful Eating
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="mindBody" value="energy-work"> Energy Work/Reiki
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" name="symptoms" value="appetite-loss"> Loss of Appetite
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="symptoms" value="mouth-sores"> Mouth Sores
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="symptoms" value="fatigue"> Severe Fatigue
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="symptoms" value="taste-changes"> Taste Changes
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="symptoms" value="digestive"> Digestive Issues
+                            <input type="checkbox" name="mindBody" value="aromatherapy"> Aromatherapy
                         </label>
                     </div>
+                </div>
+
+                <div class="form-group" id="constitutionalType" style="display: none;">
+                    <label for="constitution">Constitutional Type (if known)</label>
+                    <select id="constitution">
+                        <option value="">Not sure / Not applicable</option>
+                        <option value="cold">Cold Constitution (TCM)</option>
+                        <option value="damp">Damp Constitution (TCM)</option>
+                        <option value="dry">Dry Constitution (TCM)</option>
+                        <option value="heat">Heat Constitution (TCM)</option>
+                        <option value="kapha">Kapha (Ayurveda - Earth/Water type)</option>
+                        <option value="pitta">Pitta (Ayurveda - Fire type)</option>
+                        <option value="vata">Vata (Ayurveda - Air/Wind type)</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -255,27 +318,82 @@
             </div>
         </section>
 
-        <!-- Recipe Suggestions Section -->
+        <!-- Holistic & CAM Recipe Section -->
         <section class="content-section hidden" id="recipesSection">
-            <div class="section-header">
-                <div class="healthcare-image" style="width: 80px; height: 80px; margin: 0 auto var(--space-4);">
-                    <i class="fas fa-utensils"></i>
+            <div class="section-header cam-header">
+                <div class="healthcare-image cam-icon" style="width: 80px; height: 80px; margin: 0 auto var(--space-4);">
+                    <i class="fas fa-seedling"></i>
                 </div>
-                <h2><i class="fas fa-utensils"></i> Therapeutic Recipes</h2>
-                <p>Nutritious, cancer-friendly recipes designed by nutrition experts</p>
+                <h2><i class="fas fa-seedling"></i> Holistic & CAM Nutrition</h2>
+                <p>Integrative recipes combining traditional wisdom with modern nutritional science</p>
+                
+                <!-- Recipe Mode Selector -->
+                <div class="recipe-mode-selector">
+                    <label for="recipeMode" class="mode-label">
+                        <i class="fas fa-exchange-alt"></i> Recipe Collection:
+                    </label>
+                    <select id="recipeMode" class="mode-dropdown">
+                        <option value="holistic">Holistic & CAM</option>
+                        <option value="conventional">Conventional Nutrition</option>
+                    </select>
+                </div>
+                
+                <div class="cam-subtitle">
+                    <span class="global-note">
+                        <i class="fas fa-globe"></i> 
+                        Global traditions adapted for cancer support
+                    </span>
+                </div>
             </div>
 
-            <div class="recipe-filters">
-                <button class="filter-btn active" data-filter="all">All Recipes</button>
-                <button class="filter-btn" data-filter="general-healthy">General Healthy</button>
-                <button class="filter-btn" data-filter="symptom-management">Symptom Management</button>
-                <button class="filter-btn" data-filter="high-protein-high-calorie">High Protein/Calorie</button>
-                <button class="filter-btn" data-filter="texture-modified">Texture Modified</button>
-                <button class="filter-btn" data-filter="therapeutic-medical">Therapeutic/Medical</button>
+            <!-- CAM Category Overview -->
+            <div class="cam-overview">
+                <div class="cam-intro">
+                    <h3>Complementary & Alternative Medicine Approaches</h3>
+                    <p>These recipes integrate time-tested healing traditions with evidence-based nutrition principles to support your cancer journey.</p>
+                </div>
             </div>
 
-            <div class="recipes-grid" id="recipesGrid">
+            <div class="recipe-filters cam-filters">
+                <button class="filter-btn active" data-filter="all">
+                    <i class="fas fa-list"></i> All CAM Recipes
+                </button>
+                <button class="filter-btn" data-filter="recommended" style="display: none;">
+                    <i class="fas fa-star"></i> Recommended Recipes
+                </button>
+                <button class="filter-btn" data-filter="ayurveda">
+                    <i class="fas fa-leaf"></i> Ayurveda
+                </button>
+                <button class="filter-btn" data-filter="tcm">
+                    <i class="fas fa-yin-yang"></i> Traditional Chinese Medicine
+                </button>
+                <button class="filter-btn" data-filter="herbal-remedies">
+                    <i class="fas fa-seedling"></i> Herbal Remedies
+                </button>
+                <button class="filter-btn" data-filter="functional-foods">
+                    <i class="fas fa-dna"></i> Functional Foods
+                </button>
+                <button class="filter-btn" data-filter="mind-body-energy">
+                    <i class="fas fa-om"></i> Mind-Body & Energy Healing
+                </button>
+            </div>
+
+            <!-- Recipe Grid with Enhanced Info -->
+            <div class="recipes-grid cam-recipes-grid" id="recipesGrid">
                 <!-- Recipes will be dynamically loaded -->
+            </div>
+
+            <!-- Research Reference Modal -->
+            <div id="researchModal" class="modal" style="display: none;">
+                <div class="modal-content research-modal">
+                    <div class="modal-header">
+                        <h3 id="researchTitle">Research & Evidence</h3>
+                        <span class="close" onclick="closeResearchModal()">&times;</span>
+                    </div>
+                    <div class="modal-body" id="researchContent">
+                        <!-- Research content will be loaded here -->
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -292,9 +410,9 @@
             <div class="tracking-container">
                 <div class="tracking-header">
                     <div class="date-selector">
-                        <button class="btn btn-sm" id="prevDay"><i class="fas fa-chevron-left"></i></button>
+                        <button class="btn btn-sm" id="prevDay" aria-label="Previous day" title="Previous day"><i class="fas fa-chevron-left"></i></button>
                         <span id="currentDate"></span>
-                        <button class="btn btn-sm" id="nextDay"><i class="fas fa-chevron-right"></i></button>
+                        <button class="btn btn-sm" id="nextDay" aria-label="Next day" title="Next day"><i class="fas fa-chevron-right"></i></button>
                     </div>
                     <div class="tracking-buttons">
                         <button class="btn btn-primary" onclick="openFoodModal()">
@@ -330,12 +448,53 @@
                 <div class="food-log">
                     <div class="food-log-header">
                         <h3>Today's Food Log</h3>
-                        <button class="btn btn-secondary btn-sm" onclick="clearTodayTracking()">
-                            <i class="fas fa-trash"></i> Clear Today
-                        </button>
+                        <div class="log-actions">
+                            <button class="btn btn-success btn-sm" onclick="saveDailyLog()">
+                                <i class="fas fa-save"></i> Save Daily Log
+                            </button>
+                            <button class="btn btn-info btn-sm" onclick="viewWeeklyHistory()">
+                                <i class="fas fa-history"></i> Weekly History
+                            </button>
+                            <button class="btn btn-secondary btn-sm" onclick="clearTodayTracking()">
+                                <i class="fas fa-trash"></i> Clear Today
+                            </button>
+                        </div>
                     </div>
                     <div id="foodLogEntries">
                         <p class="empty-log">No foods logged today. Start by adding your first meal!</p>
+                    </div>
+                </div>
+
+                <!-- Weekly History Section (initially hidden) -->
+                <div class="weekly-history hidden" id="weeklyHistorySection">
+                    <div class="weekly-history-header">
+                        <h3><i class="fas fa-calendar-week"></i> Weekly Nutrition History</h3>
+                        <div class="history-controls">
+                            <button class="btn btn-success btn-sm" onclick="loadWeeklyHistory()">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="clearWeeklyHistory()">
+                                <i class="fas fa-trash-alt"></i> Clear History
+                            </button>
+                            <button class="btn btn-secondary btn-sm" onclick="hideWeeklyHistory()">
+                                <i class="fas fa-times"></i> Close
+                            </button>
+                            <button class="btn btn-info btn-sm" onclick="exportWeeklyData()">
+                                <i class="fas fa-download"></i> Export Summary
+                            </button>
+                        </div>
+                    </div>
+                    <div class="week-selector">
+                        <button class="btn btn-sm" onclick="changeWeek(-1)">
+                            <i class="fas fa-chevron-left"></i> Previous Week
+                        </button>
+                        <span id="currentWeekDisplay">Current Week</span>
+                        <button class="btn btn-sm" onclick="changeWeek(1)">
+                            <i class="fas fa-chevron-right"></i> Next Week
+                        </button>
+                    </div>
+                    <div id="weeklyHistoryContent">
+                        <!-- Weekly history content will be populated here -->
                     </div>
                 </div>
             </div>
@@ -1038,7 +1197,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Add Food Item</h3>
-                <button class="close-modal" onclick="closeFoodModal()">
+                <button class="close-modal" onclick="closeFoodModal()" aria-label="Close add food modal" title="Close">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -1073,7 +1232,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Add Fluid Intake</h3>
-                <button class="close-modal" onclick="closeFluidModal()">
+                <button class="close-modal" onclick="closeFluidModal()" aria-label="Close add fluid modal" title="Close">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -1119,7 +1278,7 @@
     <!-- Recipe Detail Modal -->
     <div id="recipeModal" class="modal recipe-modal hidden">
         <div class="modal-content">
-            <div class="recipe-modal-image" id="recipeModalImage">
+            <div class="recipe-modal-image" id="recipeModalImage" style="background: none !important; background-image: url('recipe-background-food.png') !important; background-size: cover !important; background-position: center !important; background-repeat: no-repeat !important; background-color: transparent !important; background-attachment: scroll !important;">
                 <div class="recipe-modal-overlay">
                     <div class="recipe-modal-region" id="recipeModalRegion">Mediterranean</div>
                     <h3 class="recipe-modal-title" id="recipeModalTitle">Recipe Name</h3>
@@ -1145,6 +1304,12 @@
                         <span class="recipe-stat-value" id="modalCalories">280</span>
                         <div class="recipe-stat-label">Calories</div>
                     </div>
+                </div>
+
+                <div class="recipe-modal-section recipe-name-section">
+                    <h3 class="recipe-name-heading" id="modalRecipeName">
+                        <i class="fas fa-utensils"></i> Recipe Name
+                    </h3>
                 </div>
 
                 <div class="recipe-modal-section">
