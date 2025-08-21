@@ -1,6 +1,22 @@
 # CancerCare Nutrition Hub - Complete Dietary Guidance & Tracking for Cancer Patients
 
-A comprehensive, accessible web application providing personalized dietary guidance, nutrition tracking, and educational resources for cancer patients throughout their treatment journey. Features both conventional evidence-based nutrition and holistic/complementary alternative medicine (CAM) approaches.
+A comprehensive, accessible web application providing perso#### 4. *#### 5. **General Dietary Guidance**
+- Evidence-based nutrition principles for cancer patients
+- Food safety recommendations for immunocompromised patients
+- Hydration guidelines and monitoring
+- Protein intake optimization
+- Interactive guidance cards with visual icons
+
+#### 6. **Cancer-Specific Recommendations**ion & Food Interaction Tracker**
+- Comprehensive medication management with dosage, frequency, and timing tracking
+- Real-time food interaction alerts for common cancer medications
+- Nutrient support recommendations to minimize medication side effects
+- Safe recipe modifications based on current medication profile
+- Trusted medical resource links for drug interaction verification
+- Duplicate prevention and bulk medication management tools
+- Integration with recipe recommendations for medication-safe meal planning
+
+#### 5. **General Dietary Guidance**alized dietary guidance, nutrition tracking, and educational resources for cancer patients throughout their treatment journey. Features both conventional evidence-based nutrition and holistic/complementary alternative medicine (CAM) approaches.
 
 ## Version 3.0 - Comprehensive Feature Set
 
@@ -53,6 +69,7 @@ A comprehensive, accessible web application providing personalized dietary guida
 - **Dual Nutrition Philosophy**: Seamless switching between Conventional and Holistic/CAM approaches
 - **70+ Recipe Database**: Comprehensive collection with accurate filter counts and detailed nutritional information
 - **Advanced Tracking System**: Daily food logging, weekly history, fluid monitoring, and export capabilities
+- **Medication & Food Interaction Management**: Comprehensive drug tracking with food interaction alerts and nutrient support
 - **Intelligent Personalization**: Dynamic recommendations based on cancer type, treatment stage, and symptoms
 - **Accessibility Compliance**: WCAG 2.1 AA standards with high contrast mode, keyboard navigation, and screen reader optimization
 - **Educational Hub**: Interactive learning tabs with evidence-based resources from trusted medical institutions
@@ -116,7 +133,17 @@ A comprehensive, accessible web application providing personalized dietary guida
 - **Cultural Competency**: Traditional medicine practices with scientific validation
 - **Caregiver Support**: Resources for family members and healthcare partners
 
-### 6. Accessibility & Universal Design
+### 6. Medication & Food Interaction Management
+- **Medication Tracking**: Add, view, and manage current medications with dosage and timing information
+- **Food Interaction Alerts**: Real-time warnings about potential drug-food interactions
+- **Nutrient Support Recommendations**: Guidance on nutrients that may help reduce medication side effects
+- **Safe Recipe Adjustments**: Modifications to recipes based on medication interactions
+- **Trusted Resources**: Curated links to reliable drug interaction databases and medical resources
+- **Clear Data Management**: Easy removal of individual medications or complete medication list reset
+- **Duplicate Prevention**: Intelligent validation to prevent duplicate medication entries
+- **Comprehensive Coverage**: Support for common cancer medications, chemotherapy drugs, and supportive care medications
+
+### 7. Accessibility & Universal Design
 - **WCAG 2.1 AA Compliance**: Full accessibility for users with visual, motor, and cognitive challenges
 - **High Contrast Mode**: Enhanced visual accessibility with toggle functionality
 - **Keyboard Navigation**: Complete functionality without mouse interaction
@@ -136,7 +163,7 @@ A comprehensive, accessible web application providing personalized dietary guida
 - Dietary restrictions and allergy management
 - Persistent profile storage using localStorage
 
-#### 2. **General Dietary Guidance**
+#### 3. **General Dietary Guidance**
 - Evidence-based nutrition principles for cancer patients
 - Food safety recommendations for immunocompromised patients
 - Hydration guidelines and monitoring
@@ -150,7 +177,7 @@ A comprehensive, accessible web application providing personalized dietary guida
 - Side effect management through targeted nutrition
 - Integration with user profile for personalized content
 
-#### 4. **Comprehensive Recipe System**
+#### 2. **Comprehensive Recipe System**
 ##### Conventional Nutrition Recipes
 - **High-Protein Recipes**: For muscle maintenance and recovery
 - **Anti-Nausea Options**: Gentle foods to manage treatment side effects
@@ -177,7 +204,7 @@ A comprehensive, accessible web application providing personalized dietary guida
 - Evidence-based research links for holistic approaches
 - Visual recipe cards with consistent nature-inspired imagery
 
-#### 5. **Food Tracking System**
+#### 7. **Food Tracking System**
 - Daily nutrition monitoring and logging
 - Calorie, protein, and fluid intake tracking
 - Visual progress indicators
@@ -186,14 +213,14 @@ A comprehensive, accessible web application providing personalized dietary guida
 - Smart alerts for recommended/restricted foods based on profile
 - Data persistence using localStorage
 
-#### 6. **Personalized Suggestions**
+#### 8. **Personalized Suggestions**
 - Dynamic recommendations based on user assessment
 - Symptom-specific dietary advice
 - Treatment stage-appropriate guidance
 - Real-time food alerts and suggestions
 - Adaptive content that evolves with user input
 
-#### 7. **Educational Resources**
+#### 9. **Educational Resources**
 - Curated links to WHO cancer nutrition guidelines
 - NIH research articles and studies
 - Peer-reviewed journal references for conventional nutrition
@@ -204,7 +231,7 @@ A comprehensive, accessible web application providing personalized dietary guida
 - Integrative nutrition approach studies
 - Trusted source verification and categorization
 
-#### 8. **Accessibility Features**
+#### 10. **Accessibility Features**
 - High contrast mode toggle for visual accessibility
 - Large, clear fonts optimized for readability
 - Keyboard navigation support with Alt+number shortcuts
@@ -246,10 +273,11 @@ A comprehensive, accessible web application providing personalized dietary guida
 ### Quick Start Guide
 1. **Complete Assessment**: Create your personalized health profile
 2. **Choose Nutrition Approach**: Select conventional, holistic/CAM, or integrated approach
-3. **Explore Recommendations**: Review personalized dietary guidance
-4. **Browse Recipes**: Filter by your specific needs and preferences
-5. **Start Tracking**: Log meals and monitor nutritional progress
-6. **Access Learning**: Explore educational resources and evidence-based information
+3. **Add Medications**: Input current medications for food interaction monitoring
+4. **Explore Recommendations**: Review personalized dietary guidance
+5. **Browse Recipes**: Filter by your specific needs and preferences
+6. **Start Tracking**: Log meals and monitor nutritional progress
+7. **Access Learning**: Explore educational resources and evidence-based information
 
 ## Medical Disclaimer & Legal Information
 

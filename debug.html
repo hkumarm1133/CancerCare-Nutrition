@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Test</title>
+</head>
+<body>
+    <div id="result"></div>
+    <script src="script.js"></script>
+    <script>
+        // Wait for script to load, then test
+        setTimeout(() => {
+            const result = document.getElementById('result');
+            result.innerHTML = `
+                <h3>Debug Results:</h3>
+                <p>camRecipeData exists: ${typeof camRecipeData !== 'undefined'}</p>
+                <p>herbal-remedies exists: ${camRecipeData && camRecipeData['herbal-remedies'] ? 'YES' : 'NO'}</p>
+                <p>herbal-remedies count: ${camRecipeData && camRecipeData['herbal-remedies'] ? camRecipeData['herbal-remedies'].length : 'undefined'}</p>
+                <p>First recipe: ${camRecipeData && camRecipeData['herbal-remedies'] && camRecipeData['herbal-remedies'][0] ? camRecipeData['herbal-remedies'][0].name : 'none'}</p>
+            `;
+        }, 1000);
+    </script>
+</body>
+</html>

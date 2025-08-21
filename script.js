@@ -3669,6 +3669,7 @@ function showSection(sectionId) {
             'learnSection': 'learn',
             'recipesSection': 'recipes',
             'trackingSection': 'tracking',
+            'medicationsSection': 'medications',
             'resourcesSection': 'resources'
         };
         
@@ -3689,6 +3690,8 @@ function showSection(sectionId) {
             initializeLearnSection();
         } else if (sectionId === 'trackingSection') {
             initializeTracking();
+        } else if (sectionId === 'medicationsSection') {
+            initializeMedications();
         } else if (sectionId === 'resourcesSection') {
             loadResources();
         }
@@ -5786,10 +5789,10 @@ function getRecommendedRecipeCategories(userData) {
     console.log('Updated currentUserRecommendedFilters:', currentUserRecommendedFilters);
     
     return categories.map(cat => `
-        <button class="recipe-category-btn" onclick="showSection('recipesSection'); setTimeout(() => filterRecipes('${cat.filter}'), 100);">
+        <div class="recipe-category-display">
             <i class="${cat.icon}"></i>
             <span>${cat.name}</span>
-        </button>
+        </div>
     `).join('');
 }
 
@@ -7021,6 +7024,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const resourceModal = document.getElementById('resourceModal');
         const foodModal = document.getElementById('foodModal');
         const fluidModal = document.getElementById('fluidModal');
+        const medicationModal = document.getElementById('medicationModal');
         
         if (e.target === recipeModal) {
             closeRecipeModal();
@@ -7030,6 +7034,8 @@ document.addEventListener('DOMContentLoaded', function() {
             closeFoodModal();
         } else if (e.target === fluidModal) {
             closeFluidModal();
+        } else if (e.target === medicationModal) {
+            closeMedicationModal();
         }
     });
     
@@ -7040,6 +7046,7 @@ document.addEventListener('DOMContentLoaded', function() {
             closeResourceModal();
             closeFoodModal();
             closeFluidModal();
+            closeMedicationModal();
         }
     });
 });
@@ -8157,5 +8164,685 @@ document.addEventListener('DOMContentLoaded', () => {
         childList: true, 
         subtree: true 
     });
+});
+
+// ================================
+// MEDICATION & FOOD INTERACTIONS
+// ================================
+
+// Medication data storage
+let medicationData = [];
+let isSubmittingMedication = false; // Flag to prevent duplicate submissions
+
+// Known drug-food interactions database
+const drugFoodInteractions = {
+    // Chemotherapy drugs
+    'methotrexate': {
+        avoid: ['alcohol', 'grapefruit', 'folate supplements'],
+        nutrients: ['folate depletion'],
+        description: 'May interact with folate metabolism. Avoid alcohol and grapefruit.',
+        risk: 'high'
+    },
+    'doxorubicin': {
+        avoid: ['grapefruit', 'high-fat meals'],
+        nutrients: ['coenzyme Q10 depletion'],
+        description: 'High-fat meals may affect absorption. Grapefruit can interfere.',
+        risk: 'medium'
+    },
+    'cisplatin': {
+        avoid: ['high-sodium foods'],
+        nutrients: ['magnesium depletion', 'potassium depletion'],
+        description: 'Can cause kidney damage. Monitor sodium and electrolyte intake.',
+        risk: 'high'
+    },
+    'tamoxifen': {
+        avoid: ['grapefruit', 'soy supplements'],
+        nutrients: ['vitamin D support'],
+        description: 'Grapefruit may interfere with metabolism. Soy supplements may conflict.',
+        risk: 'medium'
+    },
+    'cyclophosphamide': {
+        avoid: ['grapefruit', 'alcohol'],
+        nutrients: ['antioxidant support'],
+        description: 'Avoid grapefruit and alcohol. Increase antioxidant-rich foods.',
+        risk: 'medium'
+    },
+    'xeloda': {
+        avoid: ['antacids', 'warfarin interactions', 'alcohol'],
+        nutrients: ['folate depletion', 'vitamin B12 support'],
+        description: 'Take without antacids. Monitor for drug interactions. Avoid alcohol.',
+        risk: 'medium'
+    },
+    'capecitabine': {
+        avoid: ['antacids', 'warfarin interactions', 'alcohol'],
+        nutrients: ['folate depletion', 'vitamin B12 support'],
+        description: 'Take without antacids. Monitor for drug interactions. Avoid alcohol.',
+        risk: 'medium'
+    },
+    'gleevec': {
+        avoid: ['grapefruit', 'st john\'s wort', 'high-fat meals'],
+        nutrients: ['iron absorption', 'calcium support'],
+        description: 'Grapefruit affects metabolism. Take with food but avoid high-fat meals.',
+        risk: 'medium'
+    },
+    'imatinib': {
+        avoid: ['grapefruit', 'st john\'s wort', 'high-fat meals'],
+        nutrients: ['iron absorption', 'calcium support'],
+        description: 'Grapefruit affects metabolism. Take with food but avoid high-fat meals.',
+        risk: 'medium'
+    },
+    
+    // Anti-nausea medications
+    'ondansetron': {
+        avoid: ['high-fiber foods during treatment'],
+        nutrients: [],
+        description: 'High-fiber foods may affect absorption timing.',
+        risk: 'low'
+    },
+    'prochlorperazine': {
+        avoid: ['alcohol', 'caffeine'],
+        nutrients: [],
+        description: 'Alcohol and caffeine may worsen side effects.',
+        risk: 'medium'
+    },
+    
+    // Pain medications
+    'morphine': {
+        avoid: ['alcohol', 'grapefruit'],
+        nutrients: [],
+        description: 'Alcohol increases sedation risk. Grapefruit may affect metabolism.',
+        risk: 'high'
+    },
+    'tramadol': {
+        avoid: ['alcohol'],
+        nutrients: [],
+        description: 'Alcohol increases risk of seizures and breathing problems.',
+        risk: 'high'
+    },
+    
+    // Steroids
+    'prednisone': {
+        avoid: ['high-sodium foods', 'simple sugars'],
+        nutrients: ['calcium depletion', 'vitamin D depletion', 'potassium depletion'],
+        description: 'Can cause bone loss and blood sugar changes. Limit sodium and sugar.',
+        risk: 'medium'
+    },
+    'dexamethasone': {
+        avoid: ['high-sodium foods', 'simple sugars'],
+        nutrients: ['calcium support', 'vitamin D support'],
+        description: 'Monitor blood sugar and bone health. Limit sodium intake.',
+        risk: 'medium'
+    }
+};
+
+// Nutrient depletion recommendations
+const nutrientSupport = {
+    'folate depletion': {
+        foods: ['leafy greens', 'legumes', 'fortified cereals', 'asparagus'],
+        description: 'Methotrexate can deplete folate. Include folate-rich foods.'
+    },
+    'coenzyme Q10 depletion': {
+        foods: ['fatty fish', 'organ meats', 'whole grains', 'nuts'],
+        description: 'Some chemotherapy drugs may deplete CoQ10. Consider food sources.'
+    },
+    'magnesium depletion': {
+        foods: ['dark chocolate', 'nuts', 'seeds', 'whole grains', 'leafy greens'],
+        description: 'Certain drugs can cause magnesium loss. Include magnesium-rich foods.'
+    },
+    'potassium depletion': {
+        foods: ['bananas', 'potatoes', 'tomatoes', 'oranges', 'spinach'],
+        description: 'Some medications can lower potassium. Include potassium-rich foods.'
+    },
+    'calcium depletion': {
+        foods: ['dairy products', 'fortified plant milks', 'sardines', 'kale'],
+        description: 'Steroids can affect bone health. Include calcium-rich foods.'
+    },
+    'vitamin D depletion': {
+        foods: ['fatty fish', 'fortified foods', 'egg yolks'],
+        description: 'Some medications affect vitamin D. Include food sources and consider sunlight.'
+    },
+    'antioxidant support': {
+        foods: ['berries', 'colorful vegetables', 'green tea', 'dark chocolate'],
+        description: 'Chemotherapy may increase oxidative stress. Include antioxidant-rich foods.'
+    },
+    'vitamin D support': {
+        foods: ['salmon', 'mackerel', 'fortified milk', 'mushrooms'],
+        description: 'Support bone health with vitamin D-rich foods.'
+    },
+    'vitamin B12 support': {
+        foods: ['fish', 'meat', 'eggs', 'dairy products', 'fortified cereals'],
+        description: 'Some medications may affect B12 absorption. Include B12-rich foods.'
+    },
+    'iron absorption': {
+        foods: ['lean meats', 'spinach', 'lentils', 'fortified cereals'],
+        description: 'Support iron levels with iron-rich foods and vitamin C for absorption.'
+    },
+    'calcium support': {
+        foods: ['dairy products', 'leafy greens', 'almonds', 'fortified plant milks'],
+        description: 'Maintain bone health with calcium-rich foods.'
+    }
+};
+
+// Initialize medications from localStorage
+function initializeMedications() {
+    try {
+        const savedMedications = localStorage.getItem('medications');
+        if (savedMedications) {
+            medicationData = JSON.parse(savedMedications);
+            
+            // Fix any medications with old numeric IDs
+            let needsUpdate = false;
+            medicationData.forEach(med => {
+                if (typeof med.id !== 'string' || !med.id.startsWith('med_')) {
+                    med.id = 'med_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+                    needsUpdate = true;
+                }
+            });
+            
+            if (needsUpdate) {
+                console.log('Updated medication IDs to string format');
+                saveMedications();
+            }
+            
+            console.log('Loaded medications from storage:', medicationData);
+        } else {
+            medicationData = [];
+            console.log('No saved medications found, starting with empty array');
+        }
+        
+        displayMedications();
+        updateInteractionAlerts();
+        updateNutrientRecommendations();
+    } catch (error) {
+        console.error('Error initializing medications:', error);
+        medicationData = [];
+        displayMedications();
+        updateInteractionAlerts();
+        updateNutrientRecommendations();
+    }
+}
+
+// Save medications to localStorage
+function saveMedications() {
+    localStorage.setItem('medications', JSON.stringify(medicationData));
+}
+
+// Open add medication modal
+function openAddMedicationModal() {
+    const modal = document.getElementById('medicationModal');
+    
+    // Clear form first
+    const form = modal.querySelector('.modal-body');
+    const nameField = document.getElementById('medicationName');
+    const dosageField = document.getElementById('medicationDosage');
+    const frequencyField = document.getElementById('medicationFrequency');
+    const timeField = document.getElementById('medicationTime');
+    const notesField = document.getElementById('medicationNotes');
+    
+    if (nameField) nameField.value = '';
+    if (dosageField) dosageField.value = '';
+    if (frequencyField) frequencyField.value = 'once-daily';
+    if (timeField) timeField.value = 'with-food';
+    if (notesField) notesField.value = '';
+    
+    // Log current medications for user reference
+    if (medicationData.length > 0) {
+        console.log('Current medications (to avoid duplicates):', medicationData.map(med => med.name).join(', '));
+    }
+    
+    // Show modal
+    modal.classList.remove('hidden');
+    
+    // Focus on name field after a brief delay
+    setTimeout(() => {
+        if (nameField) {
+            nameField.focus();
+        }
+    }, 150);
+}
+
+// Close medication modal
+function closeMedicationModal() {
+    const modal = document.getElementById('medicationModal');
+    modal.classList.add('hidden');
+}
+
+// Add medication
+function addMedication() {
+    // Prevent duplicate submissions
+    if (isSubmittingMedication) {
+        console.log('Already submitting medication, preventing duplicate');
+        return;
+    }
+    
+    isSubmittingMedication = true;
+    
+    try {
+        const nameField = document.getElementById('medicationName');
+        const dosageField = document.getElementById('medicationDosage');
+        const frequencyField = document.getElementById('medicationFrequency');
+        const timeField = document.getElementById('medicationTime');
+        const notesField = document.getElementById('medicationNotes');
+        
+        if (!nameField) {
+            console.error('Medication name field not found');
+            alert('Error: Could not find form fields. Please try again.');
+            isSubmittingMedication = false;
+            return;
+        }
+        
+        const name = nameField.value.trim();
+        const dosage = dosageField ? dosageField.value.trim() : '';
+        const frequency = frequencyField ? frequencyField.value : 'once-daily';
+        const time = timeField ? timeField.value : 'with-food';
+        const notes = notesField ? notesField.value.trim() : '';
+        
+        if (!name) {
+            alert('Please enter a medication name.');
+            nameField.focus();
+            isSubmittingMedication = false;
+            return;
+        }
+        
+        // Check for duplicate medication names
+        const existingMedication = medicationData.find(med => 
+            med.name.toLowerCase() === name.toLowerCase()
+        );
+        
+        if (existingMedication) {
+            const message = `A medication named "${name}" already exists.\n\n` +
+                          `Current entry: ${existingMedication.dosage || 'No dosage'}, ${formatFrequency(existingMedication.frequency)}\n\n` +
+                          `Do you want to add another entry for the same medication?\n\n` +
+                          `• Click OK to add anyway (e.g., different dosage)\n` +
+                          `• Click Cancel to change the medication name`;
+            
+            const userChoice = confirm(message);
+            if (!userChoice) {
+                console.log('User cancelled adding duplicate medication');
+                isSubmittingMedication = false; // Reset flag immediately
+                // Clear the medication name field so user can enter a different name
+                if (nameField) {
+                    nameField.value = '';
+                    nameField.focus();
+                }
+                return; // Exit early if user cancels
+            }
+        }
+        
+        const medication = {
+            id: 'med_' + Date.now() + '_' + Math.floor(Math.random() * 1000), // String ID to avoid parsing issues
+            name: name,
+            dosage: dosage,
+            frequency: frequency,
+            time: time,
+            notes: notes,
+            dateAdded: new Date().toISOString()
+        };
+        
+        console.log('Adding medication:', medication);
+        
+        medicationData.push(medication);
+        saveMedications();
+        
+        // Update display without changing sections
+        displayMedications();
+        updateInteractionAlerts();
+        updateNutrientRecommendations();
+        closeMedicationModal();
+        
+        console.log('Total medications after adding:', medicationData.length);
+        console.log('Medication added successfully and display updated');
+        
+    } catch (error) {
+        console.error('Error adding medication:', error);
+        alert('Error adding medication. Please try again.');
+    } finally {
+        // Reset submission flag
+        isSubmittingMedication = false;
+    }
+}
+
+// Remove medication
+function removeMedication(medicationId) {
+    try {
+        console.log('Removing medication with ID:', medicationId);
+        
+        // Find the medication first
+        const foundMedication = medicationData.find(med => 
+            med.id === medicationId || 
+            med.id.toString() === medicationId.toString() || 
+            String(med.id) === String(medicationId)
+        );
+        
+        if (!foundMedication) {
+            console.error('No medication found with ID:', medicationId);
+            alert('Error: Could not find medication to remove.');
+            return;
+        }
+        
+        console.log('Found medication to remove:', foundMedication.name);
+        
+        if (confirm('Are you sure you want to remove this medication?')) {
+            const originalLength = medicationData.length;
+            
+            // Remove the medication
+            medicationData = medicationData.filter(med => {
+                const keep = !(med.id === medicationId || 
+                              med.id.toString() === medicationId.toString() || 
+                              String(med.id) === String(medicationId));
+                return keep;
+            });
+            
+            if (medicationData.length === originalLength) {
+                console.warn('Filter failed to remove medication');
+                alert('Error: Could not remove medication. Please try again.');
+                return;
+            }
+            
+            console.log('Medication removed successfully. New count:', medicationData.length);
+            
+            saveMedications();
+            
+            // Update display without changing sections
+            displayMedications();
+            updateInteractionAlerts();
+            updateNutrientRecommendations();
+            
+            console.log('Medication removal completed and display updated');
+        } else {
+            console.log('User cancelled removal');
+        }
+    } catch (error) {
+        console.error('Error removing medication:', error);
+        alert('Error removing medication. Please try again.');
+    }
+}
+
+// Display medications
+function displayMedications() {
+    console.log('Displaying medications, count:', medicationData.length);
+    
+    const container = document.getElementById('medicationList');
+    const emptyState = document.getElementById('emptyMedicationState');
+    const clearAllBtn = document.getElementById('clearAllBtn');
+    
+    if (!container) {
+        console.error('medicationList container not found!');
+        return;
+    }
+    
+    if (medicationData.length === 0) {
+        console.log('No medications to display');
+        if (emptyState) emptyState.style.display = 'block';
+        container.innerHTML = '';
+        if (clearAllBtn) clearAllBtn.style.display = 'none';
+        return;
+    }
+    
+    console.log('Rendering', medicationData.length, 'medications');
+    if (emptyState) emptyState.style.display = 'none';
+    if (clearAllBtn) clearAllBtn.style.display = 'inline-block';
+    
+    const medicationsHTML = medicationData.map(med => `
+        <div class="medication-item">
+            <div class="medication-header">
+                <h3 class="medication-name">${escapeHtml(med.name)}</h3>
+                <button class="medication-remove" onclick="removeMedication('${med.id}')" 
+                        aria-label="Remove ${escapeHtml(med.name)}" title="Remove medication">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="medication-content">
+                <div class="medication-details">
+                    ${med.dosage ? `
+                        <div class="medication-detail">
+                            <div class="medication-detail-label">Dosage</div>
+                            <div class="medication-detail-value">${escapeHtml(med.dosage)}</div>
+                        </div>
+                    ` : ''}
+                    <div class="medication-detail">
+                        <div class="medication-detail-label">Frequency</div>
+                        <div class="medication-detail-value">${formatFrequency(med.frequency)}</div>
+                    </div>
+                    <div class="medication-detail">
+                        <div class="medication-detail-label">Timing</div>
+                        <div class="medication-detail-value">${formatTiming(med.time)}</div>
+                    </div>
+                </div>
+                ${med.notes ? `
+                    <div class="medication-notes">
+                        ${escapeHtml(med.notes)}
+                    </div>
+                ` : ''}
+            </div>
+        </div>
+    `).join('');
+    
+    container.innerHTML = medicationsHTML;
+    console.log('Medications displayed successfully');
+}
+
+// Clear all medications
+function clearAllMedications() {
+    console.log('clearAllMedications function called');
+    console.log('Current medication count:', medicationData.length);
+    
+    // Show confirmation
+    if (confirm('Are you sure you want to clear all medications? This action cannot be undone.')) {
+        console.log('User confirmed clearing all medications');
+        
+        // Clear the medications array
+        medicationData = [];
+        
+        // Save to localStorage
+        localStorage.setItem('medications', JSON.stringify(medicationData));
+        
+        // Update display without changing sections
+        displayMedications();
+        updateInteractionAlerts();
+        updateNutrientRecommendations();
+        
+        console.log('All medications cleared successfully and display updated');
+    } else {
+        console.log('User cancelled clearing medications');
+    }
+}
+
+// DEBUG: Function to reset medication storage (for troubleshooting)
+function resetMedicationStorage() {
+    console.log('Resetting medication storage...');
+    localStorage.removeItem('medications');
+    medicationData = [];
+    displayMedications();
+    updateInteractionAlerts();
+    updateNutrientRecommendations();
+    console.log('Medication storage reset complete');
+}
+
+// Make it available globally for debugging
+window.resetMedicationStorage = resetMedicationStorage;
+
+// DEBUG: Function to force refresh medication display
+function refreshMedicationDisplay() {
+    console.log('Force refreshing medication display...');
+    displayMedications();
+    updateInteractionAlerts();
+    updateNutrientRecommendations();
+    console.log('Medication display refresh complete');
+}
+
+// Make it available globally for debugging
+window.refreshMedicationDisplay = refreshMedicationDisplay;
+
+// Update interaction alerts
+function updateInteractionAlerts() {
+    const container = document.getElementById('interactionAlerts');
+    const alertCount = document.getElementById('alertCount');
+    
+    const interactions = [];
+    
+    console.log('Checking interactions for medications:', medicationData.map(m => m.name));
+    
+    medicationData.forEach(med => {
+        const drugName = med.name.toLowerCase();
+        console.log('Looking for interactions for:', drugName);
+        const interaction = drugFoodInteractions[drugName];
+        
+        if (interaction) {
+            console.log('Found interaction for:', drugName, interaction);
+            interactions.push({
+                medication: med.name,
+                ...interaction
+            });
+        } else {
+            console.log('No interaction found for:', drugName);
+        }
+    });
+    
+    console.log('Total interactions found:', interactions.length);
+    alertCount.textContent = `${interactions.length} alert${interactions.length !== 1 ? 's' : ''}`;
+    
+    if (interactions.length === 0) {
+        container.innerHTML = `
+            <div class="empty-medication-state">
+                <i class="fas fa-shield-alt"></i>
+                <h3>No Food Interactions</h3>
+                <p>No food interactions detected. Add medications to see potential conflicts.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const interactionsHTML = interactions.map(interaction => `
+        <div class="medication-item">
+            <div class="medication-header ${interaction.risk === 'high' ? 'high-risk' : ''}">
+                <h3 class="medication-name">${escapeHtml(interaction.medication)}</h3>
+                <div class="alert-badge">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+            </div>
+            <div class="medication-content">
+                <div class="medication-details">
+                    <div class="medication-detail">
+                        <div class="medication-detail-label">Warning</div>
+                        <div class="medication-detail-value">${interaction.description}</div>
+                    </div>
+                </div>
+                <div class="interaction-foods-box">
+                    <div class="interaction-foods-title">Food/Drug Interactions to Avoid</div>
+                    <div class="interaction-foods-list">
+                        ${interaction.avoid.map((food, idx) => `<span class="food-tag">${escapeHtml(food)}</span>${idx < interaction.avoid.length - 1 ? ', ' : ''}`).join('')}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+    
+    container.innerHTML = interactionsHTML;
+}
+
+// Update nutrient recommendations
+function updateNutrientRecommendations() {
+    const container = document.getElementById('nutrientRecommendations');
+    const nutrientCount = document.getElementById('nutrientCount');
+    
+    const nutrients = new Set();
+    
+    medicationData.forEach(med => {
+        const drugName = med.name.toLowerCase();
+        const interaction = drugFoodInteractions[drugName];
+        
+        if (interaction && interaction.nutrients) {
+            interaction.nutrients.forEach(nutrient => nutrients.add(nutrient));
+        }
+    });
+    
+    const nutrientArray = Array.from(nutrients);
+    nutrientCount.textContent = `${nutrientArray.length} recommendation${nutrientArray.length !== 1 ? 's' : ''}`;
+    
+    if (nutrientArray.length === 0) {
+        container.innerHTML = `
+            <div class="empty-medication-state">
+                <i class="fas fa-apple-alt"></i>
+                <h3>No Nutrient Recommendations</h3>
+                <p>Add medications to see nutrient recommendations and dietary support.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const nutrientsHTML = nutrientArray.map(nutrient => {
+        const support = nutrientSupport[nutrient];
+        if (!support) return '';
+        
+        return `
+            <div class="medication-item">
+                <div class="medication-header">
+                    <h3 class="medication-name">${formatNutrientName(nutrient)}</h3>
+                    <div class="nutrient-badge">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                </div>
+                <div class="medication-content">
+                    <div class="medication-details">
+                        <div class="medication-detail">
+                            <div class="medication-detail-label">Support</div>
+                            <div class="medication-detail-value">${support.description}</div>
+                        </div>
+                    </div>
+                    <div class="recommended-foods-box">
+                        <div class="recommended-foods-title">Recommended Foods</div>
+                        <div class="recommended-foods-list">
+                            ${support.foods.map((food, index) => `<span class="food-recommendation">${escapeHtml(food)}</span>${index < support.foods.length - 1 ? ', ' : ''}`).join('')}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    container.innerHTML = nutrientsHTML;
+}
+
+// Helper functions
+function formatFrequency(frequency) {
+    const frequencies = {
+        'once-daily': 'Once daily',
+        'twice-daily': 'Twice daily',
+        'three-times-daily': 'Three times daily',
+        'weekly': 'Weekly',
+        'monthly': 'Monthly',
+        'as-needed': 'As needed',
+        'other': 'Other'
+    };
+    return frequencies[frequency] || frequency;
+}
+
+function formatTiming(timing) {
+    const timings = {
+        'with-food': 'With food',
+        'before-food': 'Before food',
+        'after-food': 'After food',
+        'empty-stomach': 'Empty stomach',
+        'anytime': 'Anytime'
+    };
+    return timings[timing] || timing;
+}
+
+function formatNutrientName(nutrient) {
+    return nutrient.split(' ').map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Initialize medications when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    initializeMedications();
 });
 

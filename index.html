@@ -1158,6 +1158,109 @@
                 </div>
             </div>
         </section>
+
+        <!-- Medication & Food Interaction Section -->
+        <section class="content-section hidden" id="medicationsSection">
+            <div class="section-header">
+                <div class="healthcare-image" style="width: 80px; height: 80px; margin: 0 auto var(--space-4);">
+                    <i class="fas fa-pills"></i>
+                </div>
+                <h2>Medication & Food Interactions</h2>
+                <p>Manage your medications and understand how they interact with foods and nutrients.</p>
+            </div>
+
+            <div class="medications-container">
+                <!-- Medication Management Card -->
+                <div class="medication-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-pills"></i> Medication Management</h3>
+                        <div class="medication-actions">
+                            <button class="btn btn-secondary" onclick="clearAllMedications()" id="clearAllBtn" style="display: none;">
+                                <i class="fas fa-trash-alt"></i> Clear All
+                            </button>
+                            <button class="btn btn-primary" onclick="openAddMedicationModal()">
+                                <i class="fas fa-plus"></i> Add Medication
+                            </button>
+                        </div>
+                    </div>
+                    <div class="medication-resources">
+                        <!-- My Medications Section -->
+                        <div class="resource-category">
+                            <h4><i class="fas fa-prescription-bottle-alt"></i> My Medications</h4>
+                            <div class="medication-list" id="medicationList">
+                                <div class="empty-medication-state" id="emptyMedicationState">
+                                    <i class="fas fa-pills"></i>
+                                    <h3>No Medications Added</h3>
+                                    <p>Start by adding your medications to receive personalized food interaction alerts and nutrient support recommendations.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Food to Avoid Section -->
+                        <div class="resource-category">
+                            <h4><i class="fas fa-exclamation-triangle"></i> Food to Avoid <span class="alert-count" id="alertCount">0 alerts</span></h4>
+                            <div class="medication-list" id="interactionAlerts">
+                                <div class="empty-medication-state">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <h3>No Food Interactions</h3>
+                                    <p>No food interactions detected. Add medications to see potential conflicts.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Nutrient Support Section -->
+                        <div class="resource-category">
+                            <h4><i class="fas fa-leaf"></i> Nutrient Support <span class="nutrient-count" id="nutrientCount">0 recommendations</span></h4>
+                            <div class="medication-list" id="nutrientRecommendations">
+                                <div class="empty-medication-state">
+                                    <i class="fas fa-apple-alt"></i>
+                                    <h3>No Nutrient Recommendations</h3>
+                                    <p>Add medications to see nutrient recommendations and dietary support.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trusted Resources -->
+                <div class="medication-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-book-medical"></i> Trusted Resources</h3>
+                    </div>
+                    <div class="medication-resources">
+                        <div class="resource-category">
+                            <h4>Drug-Food Interaction Databases</h4>
+                            <a href="https://www.drugs.com/food-interactions/" target="_blank" class="resource-link">
+                                <i class="fas fa-external-link-alt"></i>
+                                Drugs.com Food Interactions Database
+                            </a>
+                            <a href="https://www.webmd.com/drugs/2/index" target="_blank" class="resource-link">
+                                <i class="fas fa-external-link-alt"></i>
+                                WebMD Drug Information
+                            </a>
+                        </div>
+                        <div class="resource-category">
+                            <h4>Clinical Guidelines</h4>
+                            <a href="https://www.cancer.gov/about-cancer/treatment/side-effects/appetite-loss/nutrition-pdq" target="_blank" class="resource-link">
+                                <i class="fas fa-external-link-alt"></i>
+                                NCI Nutrition Guidelines for Cancer Patients
+                            </a>
+                            <a href="https://www.asco.org/practice-patients/patient-information/side-effects/nutrition" target="_blank" class="resource-link">
+                                <i class="fas fa-external-link-alt"></i>
+                                ASCO Nutrition Recommendations
+                            </a>
+                        </div>
+                        <div class="resource-category">
+                            <h4>Pharmacist Consultation</h4>
+                            <div class="consultation-info">
+                                <i class="fas fa-user-md"></i>
+                                <p>Always consult with your pharmacist or healthcare provider before making dietary changes that may affect your medications.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- Bottom Navigation -->
@@ -1181,6 +1284,10 @@
         <button class="nav-item" onclick="showSection('trackingSection')" data-section="tracking">
             <i class="fas fa-chart-line"></i>
             <span>Track</span>
+        </button>
+        <button class="nav-item" onclick="showSection('medicationsSection')" data-section="medications">
+            <i class="fas fa-pills"></i>
+            <span>Meds</span>
         </button>
         <button class="nav-item" onclick="showSection('learnSection')" data-section="learn">
             <i class="fas fa-graduation-cap"></i>
@@ -1331,6 +1438,61 @@
                     <p id="modalNutritionTips">Nutrition information will be displayed here.</p>
                     <p id="modalCancerBenefits">Cancer-specific benefits will be displayed here.</p>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Medication Modal -->
+    <div id="medicationModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Medication</h3>
+                <button class="close-modal" onclick="closeMedicationModal()" aria-label="Close add medication modal" title="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="medicationName">Medication Name *</label>
+                    <input type="text" id="medicationName" name="medicationName" required 
+                           placeholder="e.g., Methotrexate, Doxorubicin">
+                </div>
+                <div class="form-group">
+                    <label for="medicationDosage">Dosage</label>
+                    <input type="text" id="medicationDosage" name="medicationDosage" 
+                           placeholder="e.g., 10mg, 2.5ml">
+                </div>
+                <div class="form-group">
+                    <label for="medicationFrequency">Frequency</label>
+                    <select id="medicationFrequency" name="medicationFrequency">
+                        <option value="once-daily">Once daily</option>
+                        <option value="twice-daily">Twice daily</option>
+                        <option value="three-times-daily">Three times daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="as-needed">As needed</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="medicationTime">Best Time to Take</label>
+                    <select id="medicationTime" name="medicationTime">
+                        <option value="with-food">With food</option>
+                        <option value="before-food">Before food</option>
+                        <option value="after-food">After food</option>
+                        <option value="empty-stomach">Empty stomach</option>
+                        <option value="anytime">Anytime</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="medicationNotes">Notes (Optional)</label>
+                    <textarea id="medicationNotes" name="medicationNotes" rows="2" 
+                              placeholder="Any special instructions or reminders..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeMedicationModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="addMedication()">Add Medication</button>
             </div>
         </div>
     </div>
