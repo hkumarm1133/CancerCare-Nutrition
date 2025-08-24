@@ -125,33 +125,108 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="specificLocation">Specific Country/Region</label>
-                    <input type="text" id="specificLocation" placeholder="e.g., United States, Germany, Japan...">
-                </div>
-
-                <div class="form-group">
                     <fieldset>
-                        <legend>Current Symptoms (check all that apply)</legend>
-                        <div class="checkbox-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="symptoms" value="nausea"> Nausea/Vomiting
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="symptoms" value="appetite-loss"> Loss of Appetite
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="symptoms" value="mouth-sores"> Mouth Sores
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="symptoms" value="fatigue"> Severe Fatigue
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="symptoms" value="taste-changes"> Taste Changes
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="symptoms" value="digestive"> Digestive Issues
-                            </label>
+                        <legend>Current Symptoms (select all that apply)</legend>
+                        <div class="symptoms-container">
+                            
+                            <div class="symptom-category">
+                                <label for="gastrointestinal-symptoms" class="category-label">
+                                    <span class="category-icon">🍽️</span>
+                                    Gastrointestinal Symptoms
+                                </label>
+                                <select id="gastrointestinal-symptoms" name="symptoms" multiple class="category-select">
+                                    <option value="nausea">Nausea/Vomiting</option>
+                                    <option value="appetite-loss">Loss of Appetite</option>
+                                    <option value="taste-changes">Taste Changes (Dysgeusia)</option>
+                                    <option value="mouth-sores">Mouth Sores/Mucositis</option>
+                                    <option value="dry-mouth">Dry Mouth (Xerostomia)</option>
+                                    <option value="digestive">Digestive Issues</option>
+                                    <option value="diarrhea">Diarrhea</option>
+                                    <option value="constipation">Constipation</option>
+                                    <option value="swallowing-difficulty">Difficulty Swallowing (Dysphagia)</option>
+                                    <option value="acid-reflux">Acid Reflux/Heartburn</option>
+                                    <option value="bloating">Bloating/Gas</option>
+                                </select>
+                            </div>
+
+                            <div class="symptom-category">
+                                <label for="physical-symptoms" class="category-label">
+                                    <span class="category-icon">💪</span>
+                                    Physical Symptoms
+                                </label>
+                                <select id="physical-symptoms" name="symptoms" multiple class="category-select">
+                                    <option value="fatigue">Severe Fatigue</option>
+                                    <option value="weight-loss">Unintended Weight Loss</option>
+                                    <option value="weight-gain">Weight Gain</option>
+                                    <option value="muscle-wasting">Muscle Wasting (Cachexia)</option>
+                                    <option value="weakness">General Weakness</option>
+                                    <option value="pain">Pain</option>
+                                    <option value="shortness-breath">Shortness of Breath</option>
+                                    <option value="skin-changes">Skin Changes/Rash</option>
+                                    <option value="hair-loss">Hair Loss</option>
+                                </select>
+                            </div>
+
+                            <div class="symptom-category">
+                                <label for="neurological-symptoms" class="category-label">
+                                    <span class="category-icon">🧠</span>
+                                    Neurological Symptoms
+                                </label>
+                                <select id="neurological-symptoms" name="symptoms" multiple class="category-select">
+                                    <option value="neuropathy">Peripheral Neuropathy</option>
+                                    <option value="brain-fog">Brain Fog/Cognitive Issues</option>
+                                    <option value="memory-problems">Memory Problems</option>
+                                    <option value="concentration-difficulty">Difficulty Concentrating</option>
+                                    <option value="dizziness">Dizziness</option>
+                                    <option value="headaches">Headaches</option>
+                                </select>
+                            </div>
+
+                            <div class="symptom-category">
+                                <label for="blood-immune-symptoms" class="category-label">
+                                    <span class="category-icon">🩸</span>
+                                    Blood & Immune
+                                </label>
+                                <select id="blood-immune-symptoms" name="symptoms" multiple class="category-select">
+                                    <option value="low-blood-counts">Low Blood Counts</option>
+                                    <option value="anemia">Anemia</option>
+                                    <option value="infection-risk">Increased Infection Risk</option>
+                                    <option value="bruising">Easy Bruising/Bleeding</option>
+                                </select>
+                            </div>
+
+                            <div class="symptom-category">
+                                <label for="emotional-sleep-symptoms" class="category-label">
+                                    <span class="category-icon">😴</span>
+                                    Emotional & Sleep
+                                </label>
+                                <select id="emotional-sleep-symptoms" name="symptoms" multiple class="category-select">
+                                    <option value="anxiety">Anxiety</option>
+                                    <option value="depression">Depression</option>
+                                    <option value="sleep-problems">Sleep Problems/Insomnia</option>
+                                    <option value="mood-changes">Mood Changes</option>
+                                    <option value="stress">High Stress Levels</option>
+                                </select>
+                            </div>
+
+                            <div class="symptom-category">
+                                <label for="other-symptoms" class="category-label">
+                                    <span class="category-icon">📋</span>
+                                    Other Symptoms
+                                </label>
+                                <select id="other-symptoms" name="symptoms" multiple class="category-select">
+                                    <option value="lymphedema">Lymphedema/Swelling</option>
+                                    <option value="hot-flashes">Hot Flashes</option>
+                                    <option value="cold-sensitivity">Cold Sensitivity</option>
+                                    <option value="fever">Fever</option>
+                                    <option value="urinary-issues">Urinary Issues</option>
+                                    <option value="sexual-dysfunction">Sexual Dysfunction</option>
+                                    <option value="hearing-changes">Hearing Changes</option>
+                                    <option value="vision-changes">Vision Changes</option>
+                                </select>
+                            </div>
                         </div>
+                        <small class="form-help">Hold Ctrl (Windows) or Cmd (Mac) to select multiple symptoms in each category</small>
                     </fieldset>
                 </div>
 
@@ -1493,6 +1568,83 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeMedicationModal()">Cancel</button>
                 <button class="btn btn-primary" onclick="addMedication()">Add Medication</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- General Guidelines Modal -->
+    <div id="guidelinesModal" class="modal hidden">
+        <div class="modal-content guidelines-modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-book-medical"></i> General Dietary Guidance</h2>
+                <button class="close-btn" onclick="closeGuidelinesModal()" aria-label="Close Guidelines">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-subtitle">Evidence-based nutrition principles for cancer patients</p>
+                
+                <div class="guidance-grid">
+                    <div class="guidance-card">
+                        <div class="card-icon icon-medical">
+                            <i class="fas fa-shield-virus"></i>
+                        </div>
+                        <h3>Food Safety First</h3>
+                        <ul>
+                            <li>Wash hands frequently with antibacterial soap</li>
+                            <li>Cook foods to safe internal temperatures</li>
+                            <li>Avoid raw or undercooked foods during treatment</li>
+                            <li>Store foods properly and check expiration dates</li>
+                            <li>Use separate cutting boards for raw and cooked foods</li>
+                        </ul>
+                    </div>
+
+                    <div class="guidance-card">
+                        <div class="card-icon icon-wellness">
+                            <i class="fas fa-tint"></i>
+                        </div>
+                        <h3>Stay Hydrated</h3>
+                        <ul>
+                            <li>Aim for 8-10 glasses of water daily minimum</li>
+                            <li>Include herbal teas, broths, and electrolyte drinks</li>
+                            <li>Limit caffeine and avoid alcohol during treatment</li>
+                            <li>Monitor urine color as hydration indicator</li>
+                            <li>Sip fluids throughout the day, not just at meals</li>
+                        </ul>
+                    </div>
+
+                    <div class="guidance-card">
+                        <div class="card-icon icon-nutrition">
+                            <i class="fas fa-dumbbell"></i>
+                        </div>
+                        <h3>Protein Power</h3>
+                        <ul>
+                            <li>Include high-quality protein at every meal</li>
+                            <li>Choose lean sources: fish, poultry, eggs, legumes</li>
+                            <li>Consider protein supplements if needed</li>
+                            <li>Aim for 1.2-1.6g per kg body weight daily</li>
+                            <li>Combine plant proteins for complete amino acids</li>
+                        </ul>
+                    </div>
+
+                    <div class="guidance-card">
+                        <div class="card-icon icon-exercise">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <h3>Nutritious Choices</h3>
+                        <ul>
+                            <li>Eat a rainbow of colorful fruits and vegetables</li>
+                            <li>Choose whole grains over refined options</li>
+                            <li>Include healthy fats: avocado, nuts, olive oil</li>
+                            <li>Consider small, frequent meals (5-6 per day)</li>
+                            <li>Focus on nutrient-dense, anti-inflammatory foods</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="guidelines-disclaimer">
+                    <p><small><i class="fas fa-info-circle"></i> These are general guidelines. Always consult with your healthcare team and registered dietitian for personalized recommendations based on your specific treatment plan and individual needs.</small></p>
+                </div>
             </div>
         </div>
     </div>

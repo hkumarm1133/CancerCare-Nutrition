@@ -999,8 +999,16 @@ function getRecipeCounts(recipeData) {
     let total = 0;
     
     for (const category in recipeData) {
-        counts[category] = recipeData[category].length;
-        total += recipeData[category].length;
+        // Apply allergy filtering before counting
+        const safeRecipes = filterRecipesForAllergies(recipeData[category]);
+        counts[category] = safeRecipes.length;
+        total += safeRecipes.length;
+        
+        // Debug logging
+        console.log(`Category ${category}: ${recipeData[category].length} total recipes, ${safeRecipes.length} safe recipes`);
+        if (recipeData[category].length > 0 && safeRecipes.length === 0) {
+            console.warn(`All recipes in category ${category} were filtered out due to allergies!`);
+        }
     }
     
     counts.all = total;
@@ -3712,14 +3720,64 @@ function loadRecipes(skipDefaultFilter = false) {
     }
 }
 
+// Allergy and restriction filtering functions
+function getAllergenList() {
+    const allergiesField = document.getElementById('allergies');
+    if (!allergiesField || !allergiesField.value.trim()) {
+        console.log('No allergies specified');
+        return [];
+    }
+    
+    // Split by common delimiters and clean up
+    const allergies = allergiesField.value
+        .split(/[,;|\n]/)
+        .map(item => item.trim().toLowerCase())
+        .filter(item => item.length > 0);
+    
+    console.log('User allergies detected:', allergies);
+    return allergies;
+}
+
+function isRecipeSafeForUser(recipe) {
+    const userAllergies = getAllergenList();
+    
+    // If no allergies specified, recipe is safe
+    if (userAllergies.length === 0) {
+        return true;
+    }
+    
+    // Check recipe ingredients and name for allergens
+    const textToCheck = [
+        recipe.name || '',
+        recipe.description || '',
+        ...(recipe.ingredients || [])
+    ].join(' ').toLowerCase();
+    
+    // Check for any allergen matches
+    for (const allergen of userAllergies) {
+        if (textToCheck.includes(allergen)) {
+            console.log(`Recipe "${recipe.name}" contains allergen: "${allergen}"`);
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+function filterRecipesForAllergies(recipes) {
+    const safeRecipes = recipes.filter(recipe => isRecipeSafeForUser(recipe));
+    
+    // Log filtering results for user awareness
+    if (recipes.length !== safeRecipes.length) {
+        const filtered = recipes.length - safeRecipes.length;
+        console.log(`Filtered out ${filtered} recipes due to allergy/restriction constraints`);
+    }
+    
+    return safeRecipes;
+}
+
 function filterRecipes(category, skipHighlight = false, showCategoryHeader = false) {
     console.log(`Filtering recipes for category: ${category}, showHeader: ${showCategoryHeader}`);
-    
-    // Remove any existing recommendation notice when manually filtering
-    const existingNotice = document.querySelector('.recommendation-notice');
-    if (existingNotice && category !== 'recommended') {
-        existingNotice.remove();
-    }
     
     // Get current recipe data based on mode
     const currentRecipeData = currentRecipeMode === 'conventional' ? conventionalRecipeData : camRecipeData;
@@ -3730,6 +3788,8 @@ function filterRecipes(category, skipHighlight = false, showCategoryHeader = fal
         for (const cat in currentRecipeData) {
             recipesToShow = recipesToShow.concat(currentRecipeData[cat]);
         }
+        // Apply allergy filtering
+        recipesToShow = filterRecipesForAllergies(recipesToShow);
         renderRecipes(recipesToShow);
         showCategoryHeader = false; // Never show header for "all"
     } else if (category === 'recommended') {
@@ -3738,6 +3798,8 @@ function filterRecipes(category, skipHighlight = false, showCategoryHeader = fal
         return; // Early return as showRecommendedRecipesGrid handles everything
     } else if (currentRecipeData[category]) {
         recipesToShow = currentRecipeData[category];
+        // Apply allergy filtering
+        recipesToShow = filterRecipesForAllergies(recipesToShow);
         
         // If showing category header for specific filter, use single category rendering
         if (showCategoryHeader && recipesToShow.length > 0) {
@@ -3828,17 +3890,20 @@ function showRecommendedRecipes() {
     
     console.log(`Total recommended recipes: ${allRecommendedRecipes.length}`);
     
+    // Apply allergy filtering to recommended recipes
+    const safeRecommendedRecipes = filterRecipesForAllergies(allRecommendedRecipes);
+    
     // Update filter buttons with counts and show recommended button as active
-    updateFilterButtonsWithCounts(targetMode, true, allRecommendedRecipes.length, recommendedFilters);
+    updateFilterButtonsWithCounts(targetMode, true, safeRecommendedRecipes.length, recommendedFilters);
     
     // Sort recipes by region for consistency
-    const sortedRecipes = [...allRecommendedRecipes].sort((a, b) => {
+    const sortedRecipes = [...safeRecommendedRecipes].sort((a, b) => {
         const regionA = a.region || 'ZZZ';
         const regionB = b.region || 'ZZZ';
         return regionA.localeCompare(regionB);
     });
     
-    // Render all recommended recipes together (mixed view)
+    // Render all safe recommended recipes together (mixed view)
     renderRecipes(sortedRecipes);
     
     // Show notification about personalized recommendations
@@ -3850,7 +3915,7 @@ function showRecommendedRecipes() {
             messageDiv.className = 'recommendation-notice';
             messageDiv.innerHTML = `
                 <i class="fas fa-star"></i>
-                <span>Showing ${allRecommendedRecipes.length} recipes personalized for your profile</span>
+                <span>Showing ${safeRecommendedRecipes.length} recipes personalized for your profile</span>
                 <div class="recommendation-actions">
                     <button onclick="restoreAllRecipes()" class="btn-link">View all recipes</button>
                     <button onclick="dismissRecommendationNotice()" class="btn-link close-notice" title="Dismiss notification">
@@ -3913,7 +3978,9 @@ function showRecommendedRecipesGrouped() {
     let totalRecommendedCount = 0;
     recommendedFilters.forEach(filterName => {
         const categoryRecipes = currentRecipeData[filterName] || [];
-        totalRecommendedCount += categoryRecipes.length;
+        // Apply allergy filtering before counting
+        const safeRecipes = filterRecipesForAllergies(categoryRecipes);
+        totalRecommendedCount += safeRecipes.length;
     });
     
     // Update filter buttons with counts and show recommended button as active
@@ -3984,11 +4051,18 @@ function renderRecipes(recipes) {
     
     console.log('Rendering recipes:', recipes.length, 'recipes in mode:', currentRecipeMode);
     
+    // Check for existing recommendation notice to preserve it
+    const existingNotice = container.querySelector('.recommendation-notice');
+    let noticeHTML = '';
+    if (existingNotice) {
+        noticeHTML = existingNotice.outerHTML;
+    }
+    
     // Reset container classes to ensure clean grid layout
     container.className = 'recipes-grid cam-recipes-grid';
     
     if (recipes.length === 0) {
-        container.innerHTML = '<p class="no-recipes">No recipes found for this filter.</p>';
+        container.innerHTML = noticeHTML + '<p class="no-recipes">No recipes found for this filter.</p>';
         return;
     }
 
@@ -4064,7 +4138,7 @@ function renderRecipes(recipes) {
         }
     }).join('');
     
-    container.innerHTML = html;
+    container.innerHTML = noticeHTML + html;
 }
 
 function renderSingleCategoryWithHeader(category, recipes) {
@@ -4172,8 +4246,15 @@ function renderSingleCategoryWithHeader(category, recipes) {
         }
     }).join('');
     
+    // Check for existing recommendation notice to preserve it
+    const existingNotice = recipesGrid.querySelector('.recommendation-notice');
+    let noticeHTML = '';
+    if (existingNotice) {
+        noticeHTML = existingNotice.outerHTML;
+    }
+    
     // Render header + recipes
-    recipesGrid.innerHTML = headerHTML + `
+    recipesGrid.innerHTML = noticeHTML + headerHTML + `
         <div class="recipes-grid" style="
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -4402,7 +4483,10 @@ function renderGroupedRecommendedRecipes(userData, recommendedFilters, currentRe
         for (const cat in currentRecipeData) {
             allRecipes = allRecipes.concat(currentRecipeData[cat]);
         }
-        renderRecipes(allRecipes);
+        
+        // Apply allergy filtering to all recipes
+        const safeAllRecipes = filterRecipesForAllergies(allRecipes);
+        renderRecipes(safeAllRecipes);
         return;
     }
     
@@ -4453,12 +4537,22 @@ function renderGroupedRecommendedRecipes(userData, recommendedFilters, currentRe
         
         if (currentRecipeData[filter] && currentRecipeData[filter].length > 0) {
             const categoryRecipes = currentRecipeData[filter];
-            totalRecipes += categoryRecipes.length;
             
-            console.log(`Adding ${categoryRecipes.length} recipes for category: ${filter}`);
+            // Apply allergy filtering to category recipes
+            const safeCategoryRecipes = filterRecipesForAllergies(categoryRecipes);
+            
+            // Skip category if no safe recipes remain after filtering
+            if (safeCategoryRecipes.length === 0) {
+                console.log(`No safe recipes found for category: ${filter}, skipping`);
+                return;
+            }
+            
+            totalRecipes += safeCategoryRecipes.length;
+            
+            console.log(`Adding ${safeCategoryRecipes.length} safe recipes for category: ${filter}`);
             
             // Sort recipes by region within each category
-            const sortedCategoryRecipes = [...categoryRecipes].sort((a, b) => {
+            const sortedCategoryRecipes = [...safeCategoryRecipes].sort((a, b) => {
                 const regionA = a.region || 'ZZZ';
                 const regionB = b.region || 'ZZZ';
                 return regionA.localeCompare(regionB);
@@ -4474,7 +4568,7 @@ function renderGroupedRecommendedRecipes(userData, recommendedFilters, currentRe
                                 <i class="${getCategoryIcon(filter)}"></i>
                                 <h3 class="category-title">${getCategoryDisplayName(filter)}</h3>
                             </div>
-                            <span class="recipe-count">(${categoryRecipes.length} recipes)</span>
+                            <span class="recipe-count">(${safeCategoryRecipes.length} recipes)</span>
                         </div>
                         <p class="category-description">${getCategoryDescription(filter, userData)}</p>
                     </div>
@@ -4707,8 +4801,15 @@ function renderRecommendedRecipesGroupedHorizontal(recommendedCategories, curren
     
     html += '</div>';
     
+    // Check for existing recommendation notice to preserve it
+    const existingNotice = recipesGrid.querySelector('.recommendation-notice');
+    let noticeHTML = '';
+    if (existingNotice) {
+        noticeHTML = existingNotice.outerHTML;
+    }
+    
     // Update the recipes grid
-    recipesGrid.innerHTML = html;
+    recipesGrid.innerHTML = noticeHTML + html;
     
     console.log(`Rendered ${recommendedCategories.length} categories with horizontal layout`);
 }
@@ -4763,9 +4864,6 @@ function showRecommendedRecipesGrid() {
     
     console.log(`Total recommended recipes: ${allRecommendedRecipes.length}`);
     
-    // Update filter buttons with counts and show recommended button as active
-    updateFilterButtonsWithCounts(targetMode, true, allRecommendedRecipes.length, recommendedFilters);
-    
     // Sort recipes by region for consistency
     const sortedRecipes = [...allRecommendedRecipes].sort((a, b) => {
         const regionA = a.region || 'ZZZ';
@@ -4773,8 +4871,14 @@ function showRecommendedRecipesGrid() {
         return regionA.localeCompare(regionB);
     });
     
-    // Render all recommended recipes in a simple grid (no category headers)
-    renderRecipes(sortedRecipes);
+    // Apply allergy filtering to recommended recipes
+    const safeRecommendedRecipes = filterRecipesForAllergies(sortedRecipes);
+    
+    // Update filter buttons with counts and show recommended button as active
+    updateFilterButtonsWithCounts(targetMode, true, safeRecommendedRecipes.length, recommendedFilters);
+    
+    // Render all safe recommended recipes in a simple grid (no category headers)
+    renderRecipes(safeRecommendedRecipes);
     
     // Show notification about personalized recommendations
     const recipesGrid = document.getElementById('recipesGrid');
@@ -4785,7 +4889,7 @@ function showRecommendedRecipesGrid() {
             messageDiv.className = 'recommendation-notice';
             messageDiv.innerHTML = `
                 <i class="fas fa-star"></i>
-                <span>Showing ${allRecommendedRecipes.length} recipes personalized for your profile</span>
+                <span>Showing ${safeRecommendedRecipes.length} recipes personalized for your profile</span>
                 <div class="recommendation-actions">
                     <button onclick="restoreAllRecipes()" class="btn-link">View all recipes</button>
                     <button onclick="dismissRecommendationNotice()" class="btn-link close-notice" title="Dismiss notification">
@@ -4836,7 +4940,9 @@ function updateFilterButtonsWithCounts(mode, showRecommendedAsActive = false, re
     
     // Always calculate total recipes for "All Recipes" button
     for (const category in currentRecipeData) {
-        totalRecipes += currentRecipeData[category].length;
+        // Apply allergy filtering before counting total recipes
+        const safeRecipes = filterRecipesForAllergies(currentRecipeData[category]);
+        totalRecipes += safeRecipes.length;
     }
     
     if (showRecommendedAsActive && recommendedFilters.length > 0) {
@@ -4846,8 +4952,10 @@ function updateFilterButtonsWithCounts(mode, showRecommendedAsActive = false, re
         
         for (const category in currentRecipeData) {
             if (recommendedFilters.includes(category)) {
-                counts[category] = currentRecipeData[category].length;
-                recommendedRecipesTotal += currentRecipeData[category].length;
+                // Apply allergy filtering before counting recommended recipes
+                const safeRecipes = filterRecipesForAllergies(currentRecipeData[category]);
+                counts[category] = safeRecipes.length;
+                recommendedRecipesTotal += safeRecipes.length;
             } else {
                 counts[category] = 0; // Show 0 for non-recommended categories
             }
@@ -5170,7 +5278,7 @@ function generatePersonalizedRecommendations(userData) {
                     <button class="btn btn-secondary" onclick="showSection('trackingSection')">
                         <i class="fas fa-chart-pie"></i> Start Tracking Nutrition
                     </button>
-                    <button class="btn btn-secondary" onclick="showSection('guidanceSection')">
+                    <button class="btn btn-secondary" onclick="openGuidelinesModal()">
                         <i class="fas fa-book-medical"></i> View General Guidelines
                     </button>
                 </div>
@@ -5246,12 +5354,60 @@ function getSymptomBasedRecommendations(symptoms) {
     if (!symptoms || symptoms.length === 0) return '';
     
     const symptomGuides = {
+        // Gastrointestinal Symptoms
         'nausea': 'Try ginger tea, bland foods, and small frequent meals',
         'appetite-loss': 'Focus on nutrient-dense, high-calorie foods and protein smoothies',
-        'mouth-sores': 'Choose soft, smooth foods and avoid acidic or spicy items',
-        'fatigue': 'Prioritize easy-to-prepare, energy-dense meals',
         'taste-changes': 'Experiment with herbs, spices, and temperature variations',
-        'digestive': 'Consider low-fiber options and probiotic foods'
+        'mouth-sores': 'Choose soft, smooth foods and avoid acidic or spicy items',
+        'dry-mouth': 'Increase fluid intake, try ice chips, and choose moist foods',
+        'digestive': 'Consider low-fiber options and probiotic foods',
+        'diarrhea': 'Choose low-fiber, BRAT diet foods (bananas, rice, applesauce, toast)',
+        'constipation': 'Increase fiber gradually, drink more fluids, and include prunes',
+        'swallowing-difficulty': 'Use soft, pureed textures and thickened liquids as needed',
+        'acid-reflux': 'Avoid acidic foods, eat smaller meals, and stay upright after eating',
+        'bloating': 'Limit gas-producing foods, eat slowly, and consider digestive enzymes',
+        
+        // Physical Symptoms
+        'fatigue': 'Prioritize easy-to-prepare, energy-dense meals and balanced nutrition',
+        'weight-loss': 'Focus on calorie-dense foods, add healthy fats, and eat frequently',
+        'weight-gain': 'Control portions, choose nutrient-dense foods, and limit processed foods',
+        'muscle-wasting': 'Increase protein intake (1.2-2g/kg body weight) and resistance exercise',
+        'weakness': 'Focus on iron-rich foods, B-vitamins, and adequate protein',
+        'pain': 'Consider anti-inflammatory foods like omega-3s and antioxidant-rich foods',
+        'shortness-breath': 'Eat smaller, frequent meals and avoid gas-producing foods',
+        'skin-changes': 'Stay hydrated, eat antioxidant-rich foods, and include healthy fats',
+        'hair-loss': 'Focus on protein, iron, biotin, and zinc-rich foods',
+        
+        // Neurological Symptoms
+        'neuropathy': 'Include B-vitamins, especially B12, and omega-3 fatty acids',
+        'brain-fog': 'Focus on omega-3s, antioxidants, and maintain stable blood sugar',
+        'memory-problems': 'Include choline-rich foods, antioxidants, and stay hydrated',
+        'concentration-difficulty': 'Maintain steady blood sugar and include brain-healthy foods',
+        'dizziness': 'Stay hydrated, avoid sudden position changes, and eat regularly',
+        'headaches': 'Stay hydrated, avoid trigger foods, and maintain regular meal times',
+        
+        // Blood & Immune
+        'low-blood-counts': 'Include iron, folate, and B12-rich foods',
+        'anemia': 'Focus on iron-rich foods with vitamin C for better absorption',
+        'infection-risk': 'Boost immune system with zinc, vitamin C, and probiotics',
+        'bruising': 'Include vitamin K-rich foods and foods high in vitamin C',
+        
+        // Emotional & Sleep
+        'anxiety': 'Limit caffeine, include magnesium-rich foods, and maintain regular meals',
+        'depression': 'Include omega-3s, folate, and maintain stable blood sugar',
+        'sleep-problems': 'Avoid caffeine late in day, include tryptophan-rich foods',
+        'mood-changes': 'Focus on stable blood sugar and omega-3 fatty acids',
+        'stress': 'Include magnesium, B-vitamins, and adaptogenic foods',
+        
+        // Other Symptoms
+        'lymphedema': 'Limit sodium, stay hydrated, and include anti-inflammatory foods',
+        'hot-flashes': 'Include phytoestrogen-rich foods and avoid triggers like spicy foods',
+        'cold-sensitivity': 'Include warming foods like ginger and adequate calorie intake',
+        'fever': 'Stay hydrated, include electrolytes, and focus on easy-to-digest foods',
+        'urinary-issues': 'Stay hydrated, limit bladder irritants like caffeine',
+        'sexual-dysfunction': 'Include zinc, vitamin E, and foods that support circulation',
+        'hearing-changes': 'Include antioxidants and foods rich in folate and potassium',
+        'vision-changes': 'Focus on vitamin A, lutein, and antioxidant-rich foods'
     };
 
     return `
@@ -5788,12 +5944,11 @@ function getRecommendedRecipeCategories(userData) {
     currentUserRecommendedFilters = categories.map(cat => cat.filter);
     console.log('Updated currentUserRecommendedFilters:', currentUserRecommendedFilters);
     
-    return categories.map(cat => `
-        <div class="recipe-category-display">
-            <i class="${cat.icon}"></i>
-            <span>${cat.name}</span>
-        </div>
-    `).join('');
+    return `
+        <ul>
+            ${categories.map(cat => `<li><i class="${cat.icon}"></i> ${cat.name}</li>`).join('')}
+        </ul>
+    `;
 }
 
 function initializeTracking() {
@@ -5925,9 +6080,11 @@ function updateFoodLog(foods) {
                                     <span class="calories">${food.calories || 0} cal</span>
                                     <span class="protein">${food.protein || 0}g protein</span>
                                 </div>
-                                <button class="remove-food-btn" onclick="removeFoodItem('${food.id}')" aria-label="Remove ${food.name}" title="Remove this food item">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                                <div class="food-actions">
+                                    <button class="remove-food-btn" onclick="removeFoodItem('${food.id}')" aria-label="Remove ${food.name}" title="Remove this food item">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
                             </div>
                         `).join('')}
                     </div>
@@ -5952,9 +6109,12 @@ function updateFoodLog(foods) {
                                 <span class="calories">${fluid.calories || 0} cal</span>
                                 <span class="fluids">${fluid.fluids || 0}ml</span>
                             </div>
-                            <button class="remove-food-btn" onclick="removeFoodItem('${fluid.id}')" aria-label="Remove ${fluid.name}" title="Remove this fluid item">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            <div class="food-actions">
+
+                                <button class="remove-food-btn" onclick="removeFoodItem('${fluid.id}')" aria-label="Remove ${fluid.name}" title="Remove this fluid item">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
                         </div>
                     `).join('')}
                 </div>
@@ -6257,6 +6417,316 @@ function removeFoodItem(foodId) {
     // Refresh displays
     updateNutritionSummary(nutritionData.totals);
     updateFoodLog(nutritionData.foods);
+}
+
+// Edit food item
+function editFoodItem(foodId) {
+    const today = new Date();
+    const dateString = today.toISOString().split('T')[0];
+    
+    // Get existing nutrition data
+    const nutritionData = JSON.parse(localStorage.getItem(`nutrition_${dateString}`) || '{"foods": [], "totals": {"calories": 0, "protein": 0, "fluids": 0}}');
+    
+    // Find the food item to edit
+    const foodToEdit = nutritionData.foods.find(food => food.id.toString() === foodId.toString());
+    if (!foodToEdit) {
+        console.warn('Food item not found for editing:', foodId);
+        alert('Error: Could not find food item to edit.');
+        return;
+    }
+    
+    console.log('Editing food item:', foodToEdit);
+    
+    // Set global variable to track editing mode
+    window.editingFoodId = foodId;
+    
+    // Check if it's a fluid item or food item and pre-fill appropriate form
+    if (foodToEdit.type === 'fluid') {
+        // Pre-fill fluid form
+        document.getElementById('fluidName').value = foodToEdit.name || '';
+        document.getElementById('fluidAmount').value = foodToEdit.amount.replace(/ml$/, '') || '';
+        document.getElementById('fluidType').value = foodToEdit.fluidType || 'water';
+        document.getElementById('fluidTime').value = foodToEdit.time || '';
+        
+        // Update fluid modal title and button
+        const fluidModal = document.getElementById('fluidModal');
+        const fluidModalTitle = fluidModal.querySelector('h3');
+        const fluidSubmitBtn = fluidModal.querySelector('button[onclick="addFluidIntake()"]');
+        
+        if (fluidModalTitle) fluidModalTitle.textContent = 'Edit Fluid Entry';
+        if (fluidSubmitBtn) {
+            fluidSubmitBtn.textContent = 'Update Fluid';
+            fluidSubmitBtn.setAttribute('onclick', 'updateFluidIntake()');
+        }
+        
+        // Show fluid modal
+        fluidModal.classList.remove('hidden');
+        
+    } else {
+        // Pre-fill food form
+        document.getElementById('foodName').value = foodToEdit.name || '';
+        document.getElementById('foodPortion').value = foodToEdit.portion || foodToEdit.amount || '';
+        document.getElementById('foodMeal').value = foodToEdit.meal || 'breakfast';
+        
+        // Update add food section title and button
+        const addFoodSection = document.querySelector('#tracking .add-food');
+        const addFoodTitle = addFoodSection.querySelector('h4');
+        const foodSubmitBtn = addFoodSection.querySelector('button[onclick="addFoodItem()"]');
+        
+        if (addFoodTitle) addFoodTitle.textContent = 'Edit Food Entry';
+        if (foodSubmitBtn) {
+            foodSubmitBtn.textContent = 'Update Food';
+            foodSubmitBtn.setAttribute('onclick', 'updateFoodItem()');
+        }
+        
+        // Scroll to food form
+        addFoodSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+// Update food item (called when editing)
+function updateFoodItem() {
+    try {
+        if (!window.editingFoodId) {
+            console.error('No food ID found for editing');
+            alert('Error: No food item selected for editing.');
+            return;
+        }
+        
+        const nameField = document.getElementById('foodName');
+        const portionField = document.getElementById('foodPortion');
+        const mealField = document.getElementById('foodMeal');
+        
+        if (!nameField || !portionField || !mealField) {
+            console.error('Required food form fields not found');
+            alert('Error: Form fields not found. Please refresh the page.');
+            return;
+        }
+        
+        const name = nameField.value.trim();
+        const portion = portionField.value.trim();
+        const meal = mealField.value;
+        
+        if (!name) {
+            alert('Please enter a food name');
+            nameField.focus();
+            return;
+        }
+        
+        if (!portion) {
+            alert('Please enter a portion size');
+            portionField.focus();
+            return;
+        }
+        
+        const today = new Date();
+        const dateString = today.toISOString().split('T')[0];
+        
+        // Get existing nutrition data
+        const nutritionData = JSON.parse(localStorage.getItem(`nutrition_${dateString}`) || '{"foods": [], "totals": {"calories": 0, "protein": 0, "fluids": 0}}');
+        
+        // Find the food item to update
+        const foodIndex = nutritionData.foods.findIndex(food => food.id.toString() === window.editingFoodId.toString());
+        if (foodIndex === -1) {
+            console.error('Food item not found for update');
+            alert('Error: Could not find food item to update.');
+            return;
+        }
+        
+        const oldFood = nutritionData.foods[foodIndex];
+        
+        // Calculate new nutrition values
+        const calories = estimateCalories(name, portion);
+        const protein = estimateProtein(name, portion);
+        
+        // Update the food item
+        const updatedFood = {
+            ...oldFood,
+            name: name,
+            portion: portion,
+            meal: meal,
+            calories: calories,
+            protein: protein,
+            lastUpdated: new Date().toISOString()
+        };
+        
+        // Update totals by removing old values and adding new ones
+        nutritionData.totals.calories = nutritionData.totals.calories - oldFood.calories + calories;
+        nutritionData.totals.protein = nutritionData.totals.protein - oldFood.protein + protein;
+        
+        // Ensure totals don't go below 0
+        nutritionData.totals.calories = Math.max(0, nutritionData.totals.calories);
+        nutritionData.totals.protein = Math.max(0, nutritionData.totals.protein);
+        
+        // Replace the food item
+        nutritionData.foods[foodIndex] = updatedFood;
+        
+        console.log('Food item updated successfully:', updatedFood);
+        
+        // Save updated data
+        localStorage.setItem(`nutrition_${dateString}`, JSON.stringify(nutritionData));
+        
+        // Automatically save to weekly history
+        autoSaveToWeeklyHistory(dateString, nutritionData);
+        
+        // Reset form
+        nameField.value = '';
+        portionField.value = '';
+        mealField.value = 'breakfast';
+        
+        // Reset form title and button
+        const addFoodSection = document.querySelector('#tracking .add-food');
+        const addFoodTitle = addFoodSection.querySelector('h4');
+        const foodSubmitBtn = addFoodSection.querySelector('button[onclick="updateFoodItem()"]');
+        
+        if (addFoodTitle) addFoodTitle.textContent = 'Add Food';
+        if (foodSubmitBtn) {
+            foodSubmitBtn.textContent = 'Add Food';
+            foodSubmitBtn.setAttribute('onclick', 'addFoodItem()');
+        }
+        
+        // Clear editing state
+        window.editingFoodId = null;
+        
+        // Refresh displays
+        updateNutritionSummary(nutritionData.totals);
+        updateFoodLog(nutritionData.foods);
+        
+        console.log('Food item update completed successfully');
+        
+    } catch (error) {
+        console.error('Error updating food item:', error);
+        alert('Error updating food item. Please try again.');
+    }
+}
+
+// Update fluid intake (called when editing)
+function updateFluidIntake() {
+    try {
+        if (!window.editingFoodId) {
+            console.error('No fluid ID found for editing');
+            alert('Error: No fluid item selected for editing.');
+            return;
+        }
+        
+        const nameField = document.getElementById('fluidName');
+        const amountField = document.getElementById('fluidAmount');
+        const typeField = document.getElementById('fluidType');
+        const timeField = document.getElementById('fluidTime');
+        
+        if (!nameField || !amountField || !typeField || !timeField) {
+            console.error('Required fluid form fields not found');
+            alert('Error: Form fields not found. Please refresh the page.');
+            return;
+        }
+        
+        const name = nameField.value.trim();
+        const amount = parseFloat(amountField.value);
+        const fluidType = typeField.value;
+        const time = timeField.value;
+        
+        if (!name) {
+            alert('Please enter a fluid name');
+            nameField.focus();
+            return;
+        }
+        
+        if (isNaN(amount) || amount <= 0) {
+            alert('Please enter a valid amount in ml');
+            amountField.focus();
+            return;
+        }
+        
+        if (!time) {
+            alert('Please select a time');
+            timeField.focus();
+            return;
+        }
+        
+        const today = new Date();
+        const dateString = today.toISOString().split('T')[0];
+        
+        // Get existing nutrition data
+        const nutritionData = JSON.parse(localStorage.getItem(`nutrition_${dateString}`) || '{"foods": [], "totals": {"calories": 0, "protein": 0, "fluids": 0}}');
+        
+        // Find the fluid item to update
+        const fluidIndex = nutritionData.foods.findIndex(food => food.id.toString() === window.editingFoodId.toString());
+        if (fluidIndex === -1) {
+            console.error('Fluid item not found for update');
+            alert('Error: Could not find fluid item to update.');
+            return;
+        }
+        
+        const oldFluid = nutritionData.foods[fluidIndex];
+        
+        // Calculate new nutrition values
+        const calories = calculateFluidCalories(amount, fluidType);
+        
+        // Update the fluid item
+        const updatedFluid = {
+            ...oldFluid,
+            name: name,
+            amount: `${amount}ml`,
+            fluidType: fluidType,
+            time: time,
+            calories: calories,
+            fluids: amount,
+            type: 'fluid',
+            lastUpdated: new Date().toISOString()
+        };
+        
+        // Update totals by removing old values and adding new ones
+        nutritionData.totals.calories = nutritionData.totals.calories - oldFluid.calories + calories;
+        nutritionData.totals.fluids = nutritionData.totals.fluids - oldFluid.fluids + amount;
+        
+        // Ensure totals don't go below 0
+        nutritionData.totals.calories = Math.max(0, nutritionData.totals.calories);
+        nutritionData.totals.fluids = Math.max(0, nutritionData.totals.fluids);
+        
+        // Replace the fluid item
+        nutritionData.foods[fluidIndex] = updatedFluid;
+        
+        console.log('Fluid item updated successfully:', updatedFluid);
+        
+        // Save updated data
+        localStorage.setItem(`nutrition_${dateString}`, JSON.stringify(nutritionData));
+        
+        // Automatically save to weekly history
+        autoSaveToWeeklyHistory(dateString, nutritionData);
+        
+        // Reset form
+        nameField.value = '';
+        amountField.value = '';
+        typeField.value = 'water';
+        timeField.value = '';
+        
+        // Reset fluid modal title and button
+        const fluidModal = document.getElementById('fluidModal');
+        const fluidModalTitle = fluidModal.querySelector('h3');
+        const fluidSubmitBtn = fluidModal.querySelector('button[onclick="updateFluidIntake()"]');
+        
+        if (fluidModalTitle) fluidModalTitle.textContent = 'Add Fluid Intake';
+        if (fluidSubmitBtn) {
+            fluidSubmitBtn.textContent = 'Add Fluid';
+            fluidSubmitBtn.setAttribute('onclick', 'addFluidIntake()');
+        }
+        
+        // Clear editing state
+        window.editingFoodId = null;
+        
+        // Close modal
+        fluidModal.classList.add('hidden');
+        
+        // Refresh displays
+        updateNutritionSummary(nutritionData.totals);
+        updateFoodLog(nutritionData.foods);
+        
+        console.log('Fluid item update completed successfully');
+        
+    } catch (error) {
+        console.error('Error updating fluid item:', error);
+        alert('Error updating fluid item. Please try again.');
+    }
 }
 
 // Simple nutrition estimation functions (could be enhanced with a real nutrition database)
@@ -6678,6 +7148,52 @@ function closeResourceModal() {
     }
 }
 
+// Guidelines Modal Functions
+function openGuidelinesModal() {
+    const modal = document.getElementById('guidelinesModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        
+        // Focus management for accessibility
+        const closeButton = modal.querySelector('.close-btn');
+        if (closeButton) {
+            closeButton.focus();
+        }
+        
+        // Add escape key listener
+        document.addEventListener('keydown', handleGuidelinesModalEscape);
+        
+        // Add click outside to close
+        modal.addEventListener('click', handleGuidelinesModalClickOutside);
+    }
+}
+
+function closeGuidelinesModal() {
+    const modal = document.getElementById('guidelinesModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+        
+        // Remove event listeners
+        document.removeEventListener('keydown', handleGuidelinesModalEscape);
+        modal.removeEventListener('click', handleGuidelinesModalClickOutside);
+    }
+}
+
+function handleGuidelinesModalEscape(event) {
+    if (event.key === 'Escape') {
+        closeGuidelinesModal();
+    }
+}
+
+function handleGuidelinesModalClickOutside(event) {
+    const modalContent = event.target.closest('.guidelines-modal-content');
+    if (!modalContent) {
+        closeGuidelinesModal();
+    }
+}
+
 // Recipe Mode Management
 function initializeRecipeModeSelector() {
     const modeSelector = document.getElementById('recipeMode');
@@ -6926,10 +7442,12 @@ document.addEventListener('DOMContentLoaded', function() {
         assessmentForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Get symptoms
+            // Get symptoms from multi-select dropdowns
             const symptoms = [];
-            document.querySelectorAll('input[name="symptoms"]:checked').forEach(checkbox => {
-                symptoms.push(checkbox.value);
+            document.querySelectorAll('select[name="symptoms"]').forEach(select => {
+                Array.from(select.selectedOptions).forEach(option => {
+                    symptoms.push(option.value);
+                });
             });
             
             // Get holistic preferences
@@ -6947,7 +7465,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 cancerType: document.getElementById('cancerType').value,
                 treatmentStage: document.getElementById('treatmentStage').value,
                 location: document.getElementById('location').value,
-                specificLocation: document.getElementById('specificLocation').value,
                 symptoms: symptoms,
                 allergies: document.getElementById('allergies').value,
                 nutritionApproach: document.getElementById('nutritionApproach').value,
@@ -7058,15 +7575,17 @@ function clearProfileForm() {
         document.getElementById('cancerType').value = '';
         document.getElementById('treatmentStage').value = '';
         document.getElementById('location').value = '';
-        document.getElementById('specificLocation').value = '';
         document.getElementById('allergies').value = '';
         document.getElementById('nutritionApproach').value = '';
         document.getElementById('constitution').value = '';
         
-        // Clear all checkboxes
-        const symptomCheckboxes = document.querySelectorAll('input[name="symptoms"]');
-        symptomCheckboxes.forEach(checkbox => {
-            checkbox.checked = false;
+        // Clear symptoms multi-select dropdowns
+        const symptomSelects = document.querySelectorAll('select[name="symptoms"]');
+        symptomSelects.forEach(select => {
+            select.selectedIndex = -1; // Clear all selections
+            Array.from(select.options).forEach(option => {
+                option.selected = false;
+            });
         });
         
         const traditionalMedicineCheckboxes = document.querySelectorAll('input[name="traditions"]');
@@ -7184,7 +7703,6 @@ function addFormChangeListeners() {
         'cancerType',
         'treatmentStage',
         'location',
-        'specificLocation',
         'allergies',
         'nutritionApproach',
         'constitution'
@@ -8558,6 +9076,177 @@ function removeMedication(medicationId) {
     }
 }
 
+// Edit medication
+function editMedication(medicationId) {
+    try {
+        console.log('Editing medication with ID:', medicationId);
+        
+        // Find the medication to edit
+        const medicationToEdit = medicationData.find(med => 
+            med.id === medicationId || 
+            med.id.toString() === medicationId.toString() || 
+            String(med.id) === String(medicationId)
+        );
+        
+        if (!medicationToEdit) {
+            console.error('No medication found with ID:', medicationId);
+            alert('Error: Could not find medication to edit.');
+            return;
+        }
+        
+        console.log('Found medication to edit:', medicationToEdit.name);
+        
+        // Set global variable to track editing mode
+        window.editingMedicationId = medicationId;
+        
+        // Pre-fill the modal with existing data
+        document.getElementById('medicationName').value = medicationToEdit.name || '';
+        document.getElementById('medicationDosage').value = medicationToEdit.dosage || '';
+        document.getElementById('medicationFrequency').value = medicationToEdit.frequency || '';
+        document.getElementById('medicationTime').value = medicationToEdit.time || '';
+        document.getElementById('medicationNotes').value = medicationToEdit.notes || '';
+        
+        // Update modal title and button text to indicate editing
+        const modal = document.getElementById('medicationModal');
+        const modalTitle = modal.querySelector('h3');
+        const submitBtn = modal.querySelector('button[onclick="addMedication()"]');
+        
+        if (modalTitle) modalTitle.textContent = 'Edit Medication';
+        if (submitBtn) {
+            submitBtn.textContent = 'Update Medication';
+            submitBtn.setAttribute('onclick', 'updateMedication()');
+        }
+        
+        // Show the modal
+        modal.classList.remove('hidden');
+        
+    } catch (error) {
+        console.error('Error editing medication:', error);
+        alert('Error editing medication. Please try again.');
+    }
+}
+
+// Update medication (called when editing)
+function updateMedication() {
+    try {
+        if (!window.editingMedicationId) {
+            console.error('No medication ID found for editing');
+            alert('Error: No medication selected for editing.');
+            return;
+        }
+        
+        // Prevent duplicate submissions
+        if (isSubmittingMedication) {
+            console.log('Already submitting medication, preventing duplicate');
+            return;
+        }
+        
+        isSubmittingMedication = true;
+        
+        const nameField = document.getElementById('medicationName');
+        const dosageField = document.getElementById('medicationDosage');
+        const frequencyField = document.getElementById('medicationFrequency');
+        const timeField = document.getElementById('medicationTime');
+        const notesField = document.getElementById('medicationNotes');
+        
+        if (!nameField || !dosageField || !frequencyField || !timeField) {
+            console.error('Required medication form fields not found');
+            alert('Error: Form fields not found. Please refresh the page.');
+            return;
+        }
+        
+        const name = nameField.value.trim();
+        const dosage = dosageField.value.trim();
+        const frequency = frequencyField.value;
+        const time = timeField.value;
+        const notes = notesField ? notesField.value.trim() : '';
+        
+        if (!name) {
+            alert('Please enter a medication name');
+            nameField.focus();
+            return;
+        }
+        
+        if (!frequency) {
+            alert('Please select a frequency');
+            frequencyField.focus();
+            return;
+        }
+        
+        if (!time) {
+            alert('Please select a timing');
+            timeField.focus();
+            return;
+        }
+        
+        // Find and update the medication
+        const medicationIndex = medicationData.findIndex(med => 
+            med.id === window.editingMedicationId || 
+            med.id.toString() === window.editingMedicationId.toString() || 
+            String(med.id) === String(window.editingMedicationId)
+        );
+        
+        if (medicationIndex === -1) {
+            console.error('Medication not found for update');
+            alert('Error: Could not find medication to update.');
+            return;
+        }
+        
+        // Update the medication
+        medicationData[medicationIndex] = {
+            ...medicationData[medicationIndex],
+            name: name,
+            dosage: dosage,
+            frequency: frequency,
+            time: time,
+            notes: notes,
+            lastUpdated: new Date().toISOString()
+        };
+        
+        console.log('Medication updated successfully:', medicationData[medicationIndex]);
+        
+        // Save to localStorage
+        saveMedications();
+        
+        // Reset form and close modal
+        nameField.value = '';
+        dosageField.value = '';
+        frequencyField.value = '';
+        timeField.value = '';
+        if (notesField) notesField.value = '';
+        
+        // Reset modal to add mode
+        const modal = document.getElementById('medicationModal');
+        const modalTitle = modal.querySelector('h3');
+        const submitBtn = modal.querySelector('button[onclick="updateMedication()"]');
+        
+        if (modalTitle) modalTitle.textContent = 'Add New Medication';
+        if (submitBtn) {
+            submitBtn.textContent = 'Add Medication';
+            submitBtn.setAttribute('onclick', 'addMedication()');
+        }
+        
+        // Clear editing state
+        window.editingMedicationId = null;
+        
+        // Close modal
+        modal.classList.add('hidden');
+        
+        // Update display and interactions
+        displayMedications();
+        updateInteractionAlerts();
+        updateNutrientRecommendations();
+        
+        console.log('Medication update completed successfully');
+        
+    } catch (error) {
+        console.error('Error updating medication:', error);
+        alert('Error updating medication. Please try again.');
+    } finally {
+        isSubmittingMedication = false;
+    }
+}
+
 // Display medications
 function displayMedications() {
     console.log('Displaying medications, count:', medicationData.length);
@@ -8583,14 +9272,29 @@ function displayMedications() {
     if (emptyState) emptyState.style.display = 'none';
     if (clearAllBtn) clearAllBtn.style.display = 'inline-block';
     
-    const medicationsHTML = medicationData.map(med => `
+    const medicationsHTML = medicationData.map(med => {
+        // Check if medication is high-risk based on drug interactions database
+        const medLowerCase = med.name.toLowerCase();
+        const interaction = drugFoodInteractions[medLowerCase];
+        const isHighRisk = interaction && interaction.risk === 'high';
+        
+        return `
         <div class="medication-item">
-            <div class="medication-header">
-                <h3 class="medication-name">${escapeHtml(med.name)}</h3>
-                <button class="medication-remove" onclick="removeMedication('${med.id}')" 
-                        aria-label="Remove ${escapeHtml(med.name)}" title="Remove medication">
-                    <i class="fas fa-times"></i>
-                </button>
+            <div class="medication-header ${isHighRisk ? 'high-risk' : ''}">
+                <div class="medication-header-content">
+                    <h3 class="medication-name">${escapeHtml(med.name)}</h3>
+                    ${isHighRisk ? '<span class="risk-indicator">High-Risk Medication</span>' : ''}
+                </div>
+                <div class="medication-actions">
+                    <button class="medication-edit" onclick="editMedication('${med.id}')" 
+                            aria-label="Edit ${escapeHtml(med.name)}" title="Edit medication">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="medication-remove" onclick="removeMedication('${med.id}')" 
+                            aria-label="Remove ${escapeHtml(med.name)}" title="Remove medication">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
             </div>
             <div class="medication-content">
                 <div class="medication-details">
@@ -8616,7 +9320,8 @@ function displayMedications() {
                 ` : ''}
             </div>
         </div>
-    `).join('');
+    `;
+    }).join('');
     
     container.innerHTML = medicationsHTML;
     console.log('Medications displayed successfully');
@@ -8716,7 +9421,10 @@ function updateInteractionAlerts() {
     const interactionsHTML = interactions.map(interaction => `
         <div class="medication-item">
             <div class="medication-header ${interaction.risk === 'high' ? 'high-risk' : ''}">
-                <h3 class="medication-name">${escapeHtml(interaction.medication)}</h3>
+                <div class="medication-header-content">
+                    <h3 class="medication-name">${escapeHtml(interaction.medication)}</h3>
+                    ${interaction.risk === 'high' ? '<span class="risk-indicator">High-Risk Medication</span>' : ''}
+                </div>
                 <div class="alert-badge">
                     <i class="fas fa-exclamation-triangle"></i>
                 </div>
