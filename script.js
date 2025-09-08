@@ -11,6 +11,57 @@ let userHolisticPreferences = {
     constitution: ''
 };
 
+// Global variables for weekly history navigation
+let currentWeekStart = new Date();
+currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay()); // Start of current week
+
+// Function to show/hide sections
+function showSection(sectionId) {
+    // Hide all sections first
+    document.querySelectorAll('.content-section').forEach(section => {
+        section.classList.add('hidden');
+    });
+    
+    // Show the requested section
+    const section = document.getElementById(sectionId);
+    if (section) {
+        section.classList.remove('hidden');
+        // Scroll into view smoothly
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+// Helper functions for date handling
+function getWeekRange(startDate) {
+    const start = new Date(startDate);
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    return { start, end };
+}
+
+function formatWeekRange(range) {
+    const options = { month: 'short', day: 'numeric' };
+    return `${range.start.toLocaleDateString('en-US', options)} - ${range.end.toLocaleDateString('en-US', options)}`;
+}
+
+function formatDate(date) {
+    return date.toISOString().split('T')[0];
+}
+
+// Helper: return storage date string (YYYY-MM-DD) for a given Date object (normalized to noon)
+function getStorageDateStringFrom(d) {
+    const dt = new Date(d);
+    dt.setHours(12,0,0,0);
+    return dt.toISOString().split('T')[0];
+}
+
+// Helper: return storage date string for currently selected tracking date or today
+function getSelectedStorageDateString() {
+    const sel = window.currentTrackingDate ? new Date(window.currentTrackingDate) : new Date();
+    sel.setHours(12,0,0,0);
+    return sel.toISOString().split('T')[0];
+}
+
 // Utility functions for safe localStorage operations
 function safeLocalStorageGet(key, defaultValue = null) {
     try {
@@ -5922,18 +5973,140 @@ function getRecommendedCategoriesArray(userData) {
             console.log('Added: Mind-Body Energy');
         }
         
-        // Always add core CAM categories for alternative/integrated approaches
-        if (!categories.some(cat => cat.filter === 'ayurveda')) {
-            categories.push({name: 'Ayurvedic', filter: 'ayurveda', icon: 'fas fa-leaf'});
-            console.log('Added: Ayurveda (default for CAM)');
-        }
-        if (!categories.some(cat => cat.filter === 'tcm')) {
-            categories.push({name: 'Traditional Chinese Medicine', filter: 'tcm', icon: 'fas fa-mountain'});
-            console.log('Added: TCM (default for CAM)');
-        }
+    // Always add core CAM categories for alternative/integrated approaches
+    if (!categories.some(cat => cat.filter === 'ayurveda')) {
+        categories.push({name: 'Ayurvedic', filter: 'ayurveda', icon: 'fas fa-leaf'});
+        console.log('Added: Ayurveda (default for CAM)');
     }
-    
-    console.log('Final categories array:', categories);
+    if (!categories.some(cat => cat.filter === 'tcm')) {
+        categories.push({name: 'Traditional Chinese Medicine', filter: 'tcm', icon: 'fas fa-mountain'});
+        console.log('Added: TCM (default for CAM)');
+    }
+}
+
+// Global variable to track current week
+let currentWeekStart = new Date();
+currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay()); // Set to start of week (Sunday)
+
+function getWeekRange(startDate) {
+    const endDate = new Date(startDate);
+    endDate.setDate(startDate.getDate() + 6);
+    return {
+        start: startDate,
+        end: endDate
+    };
+}
+
+function formatWeekRange(weekRange) {
+    const options = { month: 'short', day: 'numeric' };
+    return `${weekRange.start.toLocaleDateString('en-US', options)} - ${weekRange.end.toLocaleDateString('en-US', options)}`;
+}
+
+function navigateWeek(direction) {
+    // direction is either 'previous' or 'next'
+    const days = direction === 'previous' ? -7 : 7;
+    currentWeekStart.setDate(currentWeekStart.getDate() + days);
+    loadWeeklyHistory();
+}
+
+function loadWeeklyNutritionData() {
+    try {
+        const weekRange = getWeekRange(currentWeekStart);
+        const weeklyLogs = JSON.parse(localStorage.getItem('weeklyNutritionLogs') || '{}');
+        
+        // Update week range display
+        const weekRangeElement = document.querySelector('#weeklyHistorySection .date-range');
+        if (weekRangeElement) {
+            weekRangeElement.textContent = formatWeekRange(weekRange);
+        }
+        
+        let weekData = {
+            days: [],
+            averages: {
+                calories: 0,
+                protein: 0,
+                fluids: 0
+            }
+        };
+        
+        let validDaysCount = 0;
+        
+        // Collect data for each day in the week
+        for (let d = new Date(weekRange.start); d <= weekRange.end; d.setDate(d.getDate() + 1)) {
+            const dateKey = d.toISOString().split('T')[0];
+            const dayData = weeklyLogs[dateKey] || null;
+            
+            if (dayData) {
+                weekData.days.push({
+                    date: dateKey,
+                    ...dayData
+                });
+                weekData.averages.calories += parseFloat(dayData.calories || 0);
+                weekData.averages.protein += parseFloat(dayData.protein || 0);
+                weekData.averages.fluids += parseFloat(dayData.fluids || 0);
+                validDaysCount++;
+            }
+        }
+        
+        // Calculate averages
+        if (validDaysCount > 0) {
+            weekData.averages.calories = Math.round(weekData.averages.calories / validDaysCount);
+            weekData.averages.protein = Math.round(weekData.averages.protein / validDaysCount);
+            weekData.averages.fluids = Math.round(weekData.averages.fluids / validDaysCount);
+        }
+                // ...legacy weekly nutrition loader removed (now using loadWeeklyHistory)
+        
+        // Update the UI
+        const contentDiv = document.getElementById('weeklyHistoryContent');
+        if (contentDiv) {
+            contentDiv.innerHTML = `
+                <div class="weekly-averages">
+                    <div class="average-item">
+                        <h4>${weekData.averages.calories}</h4>
+                        <p>Avg Calories/day</p>
+                    </div>
+                    <div class="average-item">
+                        <h4>${weekData.averages.protein}g</h4>
+                        <p>Avg Protein/day</p>
+                    </div>
+                    <div class="average-item">
+                        <h4>${weekData.averages.fluids}ml</h4>
+                        <p>Avg Fluids/day</p>
+                    </div>
+                </div>
+                <div class="daily-logs">
+                    ${weekData.days.map(day => `
+                        <div class="day-log">
+                            <h5>${new Date(day.date).toLocaleDateString('en-US', {weekday: 'long', month: 'short', day: 'numeric'})}</h5>
+                            <div class="log-details">
+                                <p>Calories: ${day.calories}</p>
+                                <p>Protein: ${day.protein}g</p>
+                                <p>Fluids: ${day.fluids}ml</p>
+                                <p>Items: ${day.foods ? day.foods.length : 0}</p>
+                                ${day.foods ? `
+                                    <div class="food-list">
+                                        <strong>Foods logged:</strong>
+                                        <p>${day.foods.join(', ')}</p>
+                                    </div>
+                                ` : ''}
+                                ${day.fluidsLog ? `
+                                    <div class="fluids-list">
+                                        <strong>Fluids logged:</strong>
+                                        <p>${day.fluidsLog.join(', ')}</p>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+    } catch (error) {
+        console.error('Error loading weekly nutrition data:', error);
+        alert('Error loading weekly nutrition data. Please try again.');
+    }
+}    console.log('Final categories array:', categories);
     return categories;
 }
 
@@ -5954,8 +6127,13 @@ function getRecommendedRecipeCategories(userData) {
 function initializeTracking() {
     // Initialize current date
     const today = new Date();
+    // Set time to noon to avoid timezone issues
+    today.setHours(12, 0, 0, 0);
     let currentTrackingDate = new Date(today);
     updateDateDisplay();
+    
+    // Store the current tracking date globally
+    window.currentTrackingDate = currentTrackingDate;
     
     // Load today's nutrition data
     loadNutritionData(formatDateForStorage(currentTrackingDate));
@@ -5969,7 +6147,11 @@ function initializeTracking() {
     
     if (prevDayBtn) {
         prevDayBtn.addEventListener('click', () => {
-            currentTrackingDate.setDate(currentTrackingDate.getDate() - 1);
+            const newDate = new Date(currentTrackingDate);
+            newDate.setDate(newDate.getDate() - 1);
+            newDate.setHours(12, 0, 0, 0); // Set to noon to avoid timezone issues
+            currentTrackingDate = newDate;
+            window.currentTrackingDate = currentTrackingDate;
             updateDateDisplay();
             loadNutritionData(formatDateForStorage(currentTrackingDate));
         });
@@ -5977,7 +6159,11 @@ function initializeTracking() {
     
     if (nextDayBtn) {
         nextDayBtn.addEventListener('click', () => {
-            currentTrackingDate.setDate(currentTrackingDate.getDate() + 1);
+            const newDate = new Date(currentTrackingDate);
+            newDate.setDate(newDate.getDate() + 1);
+            newDate.setHours(12, 0, 0, 0); // Set to noon to avoid timezone issues
+            currentTrackingDate = newDate;
+            window.currentTrackingDate = currentTrackingDate;
             updateDateDisplay();
             loadNutritionData(formatDateForStorage(currentTrackingDate));
         });
@@ -6190,9 +6376,10 @@ function addFoodItem() {
         timestamp: new Date().toISOString()
     };
     
-    // Get current date for storage
-    const today = new Date();
-    const dateString = today.toISOString().split('T')[0];
+    // Determine storage date from currently selected tracking date (fallback to today)
+    const storageDateObj = window.currentTrackingDate ? new Date(window.currentTrackingDate) : new Date();
+    storageDateObj.setHours(12,0,0,0); // normalize to noon
+    const dateString = storageDateObj.toISOString().split('T')[0];
     
     // Get existing nutrition data
     const nutritionData = JSON.parse(localStorage.getItem(`nutrition_${dateString}`) || '{"foods": [], "totals": {"calories": 0, "protein": 0, "fluids": 0}}');
@@ -6314,9 +6501,10 @@ function addFluidItem() {
         timestamp: new Date().toISOString()
     };
     
-    // Get current date for storage
-    const today = new Date();
-    const dateString = today.toISOString().split('T')[0];
+    // Determine storage date from currently selected tracking date (fallback to today)
+    const storageDateObj = window.currentTrackingDate ? new Date(window.currentTrackingDate) : new Date();
+    storageDateObj.setHours(12,0,0,0);
+    const dateString = storageDateObj.toISOString().split('T')[0];
     
     // Get existing nutrition data
     const nutritionData = JSON.parse(localStorage.getItem(`nutrition_${dateString}`) || '{"foods": [], "totals": {"calories": 0, "protein": 0, "fluids": 0}}');
@@ -6382,8 +6570,10 @@ function getFluidCalories(fluidType, amount) {
 }
 
 function removeFoodItem(foodId) {
-    const today = new Date();
-    const dateString = today.toISOString().split('T')[0];
+    // Determine storage date from currently selected tracking date (fallback to today)
+    const storageDateObj = window.currentTrackingDate ? new Date(window.currentTrackingDate) : new Date();
+    storageDateObj.setHours(12,0,0,0);
+    const dateString = storageDateObj.toISOString().split('T')[0];
     
     // Get existing nutrition data
     const nutritionData = JSON.parse(localStorage.getItem(`nutrition_${dateString}`) || '{"foods": [], "totals": {"calories": 0, "protein": 0, "fluids": 0}}');
@@ -6421,8 +6611,10 @@ function removeFoodItem(foodId) {
 
 // Edit food item
 function editFoodItem(foodId) {
-    const today = new Date();
-    const dateString = today.toISOString().split('T')[0];
+    // Determine storage date from currently selected tracking date (fallback to today)
+    const storageDateObj = window.currentTrackingDate ? new Date(window.currentTrackingDate) : new Date();
+    storageDateObj.setHours(12,0,0,0);
+    const dateString = storageDateObj.toISOString().split('T')[0];
     
     // Get existing nutrition data
     const nutritionData = JSON.parse(localStorage.getItem(`nutrition_${dateString}`) || '{"foods": [], "totals": {"calories": 0, "protein": 0, "fluids": 0}}');
@@ -6519,8 +6711,10 @@ function updateFoodItem() {
             return;
         }
         
-        const today = new Date();
-        const dateString = today.toISOString().split('T')[0];
+    // Determine storage date from currently selected tracking date (fallback to today)
+    const storageDateObj = window.currentTrackingDate ? new Date(window.currentTrackingDate) : new Date();
+    storageDateObj.setHours(12,0,0,0);
+    const dateString = storageDateObj.toISOString().split('T')[0];
         
         // Get existing nutrition data
         const nutritionData = JSON.parse(localStorage.getItem(`nutrition_${dateString}`) || '{"foods": [], "totals": {"calories": 0, "protein": 0, "fluids": 0}}');
@@ -6643,8 +6837,10 @@ function updateFluidIntake() {
             return;
         }
         
-        const today = new Date();
-        const dateString = today.toISOString().split('T')[0];
+    // Determine storage date from currently selected tracking date (fallback to today)
+    const storageDateObj = window.currentTrackingDate ? new Date(window.currentTrackingDate) : new Date();
+    storageDateObj.setHours(12,0,0,0);
+    const dateString = storageDateObj.toISOString().split('T')[0];
         
         // Get existing nutrition data
         const nutritionData = JSON.parse(localStorage.getItem(`nutrition_${dateString}`) || '{"foods": [], "totals": {"calories": 0, "protein": 0, "fluids": 0}}');
@@ -7635,10 +7831,9 @@ function clearProfileForm() {
 // Clear Today's Tracking Data Function
 function clearTodayTracking() {
     if (confirm('Are you sure you want to clear all food and fluid entries for today? This action cannot be undone.')) {
-        const today = new Date();
-        const dateString = today.toISOString().split('T')[0];
+        const dateString = getSelectedStorageDateString();
         
-        // Clear today's nutrition data from localStorage
+        // Clear selected day's nutrition data from localStorage
         localStorage.removeItem(`nutrition_${dateString}`);
         
         // Reset the UI
@@ -7771,7 +7966,7 @@ function addSampleNutritionData() {
     for (let i = 0; i < 5; i++) {
         const testDate = new Date();
         testDate.setDate(testDate.getDate() - i);
-        const dateString = testDate.toISOString().split('T')[0];
+        const dateString = getStorageDateStringFrom(testDate);
         
         const sampleData = {
             foods: [
@@ -7818,8 +8013,7 @@ function debugNutritionStorage() {
     console.log('=== Debugging Nutrition Storage ===');
     
     // Check daily nutrition data
-    const today = new Date();
-    const dateString = today.toISOString().split('T')[0];
+    const dateString = getSelectedStorageDateString();
     const todayData = localStorage.getItem(`nutrition_${dateString}`);
     console.log(`Today's data (${dateString}):`, todayData ? JSON.parse(todayData) : 'No data');
     
@@ -7853,8 +8047,7 @@ window.debugNutritionStorage = debugNutritionStorage;
 function testWeeklyHistoryUpdate() {
     console.log('=== Testing Weekly History Update ===');
     
-    const today = new Date();
-    const dateString = today.toISOString().split('T')[0];
+    const dateString = getSelectedStorageDateString();
     
     // Check today's nutrition data
     const todayData = localStorage.getItem(`nutrition_${dateString}`);
@@ -7885,8 +8078,7 @@ window.testWeeklyHistoryUpdate = testWeeklyHistoryUpdate;
 function testCompletNutritionFlow() {
     console.log('=== Testing Complete Nutrition Flow ===');
     
-    const today = new Date();
-    const dateString = today.toISOString().split('T')[0];
+    const dateString = getSelectedStorageDateString();
     
     console.log('Step 1: Adding test food item...');
     
@@ -7949,8 +8141,7 @@ window.testCompletNutritionFlow = testCompletNutritionFlow;
 function forceSyncTodayToWeeklyHistory() {
     console.log('=== Forcing sync of today\'s data to weekly history ===');
     
-    const today = new Date();
-    const dateString = today.toISOString().split('T')[0];
+    const dateString = getSelectedStorageDateString();
     
     // Get today's nutrition data
     const todayData = localStorage.getItem(`nutrition_${dateString}`);
@@ -8056,8 +8247,7 @@ function debugFluidInclusion() {
     console.log('=== DEBUGGING FLUID INCLUSION IN WEEKLY HISTORY ===');
     
     // Get today's nutrition data
-    const today = new Date();
-    const dateString = today.toISOString().split('T')[0];
+    const dateString = getSelectedStorageDateString();
     const nutritionData = JSON.parse(localStorage.getItem(`nutrition_${dateString}`) || '{"foods": [], "totals": {"calories": 0, "protein": 0, "fluids": 0}}');
     
     console.log('Today\'s nutrition data:', nutritionData);
@@ -8097,16 +8287,23 @@ function autoSaveToWeeklyHistory(dateString, nutritionData) {
     console.log('Auto-saving to weekly history for date:', dateString); // Debug log
     try {
         // Only save if there's actual food data
-        if (nutritionData.foods.length === 0) {
-            // If no food data, remove from weekly history if it exists
+        if (!nutritionData || !nutritionData.foods || nutritionData.foods.length === 0) {
+            console.log('No food data to save');
             removeFromWeeklyHistory(dateString);
             return;
         }
         
-        // Create daily summary
+        // Parse and validate the date
         const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            console.error('Invalid date string:', dateString);
+            return;
+        }
+        
+        // Create daily summary
         const dailySummary = {
-            date: dateString,
+            date: dateString, // Original ISO date string
+            timestamp: date.getTime(), // Unix timestamp for consistent date handling
             displayDate: date.toLocaleDateString('en-US', { 
                 weekday: 'long', 
                 year: 'numeric', 
@@ -8133,13 +8330,14 @@ function autoSaveToWeeklyHistory(dateString, nutritionData) {
             weeklyLogs.push(dailySummary);
         }
         
-        // Sort logs by date (newest first)
-        weeklyLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
+        // Sort logs by timestamp (newest first)
+        weeklyLogs.sort((a, b) => b.timestamp - a.timestamp);
         
         // Keep only last 30 days to manage storage
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        const filteredLogs = weeklyLogs.filter(log => new Date(log.date) >= thirtyDaysAgo);
+        const thirtyDaysAgoTime = thirtyDaysAgo.getTime();
+        const filteredLogs = weeklyLogs.filter(log => log.timestamp >= thirtyDaysAgoTime);
         
         // Save back to localStorage
         localStorage.setItem('weeklyNutritionLogs', JSON.stringify(filteredLogs));
@@ -8214,8 +8412,16 @@ function syncExistingDataToWeeklyHistory() {
 function saveDailyLog() {
     console.log('saveDailyLog function called'); // Debug log
     try {
-        const today = new Date();
-        const dateString = today.toISOString().split('T')[0];
+        // Get the currently selected date from the UI
+        const selectedDateStr = document.getElementById('currentDate').textContent;
+        console.log('Selected date string:', selectedDateStr);
+        
+        // Parse the date string (e.g., "Sunday, September 7, 2025")
+        const selectedDate = new Date(selectedDateStr);
+        // Set the time to noon to avoid timezone issues
+        selectedDate.setHours(12, 0, 0, 0);
+        
+        const dateString = selectedDate.toISOString().split('T')[0];
         console.log('Saving log for date:', dateString); // Debug log
         
         // Get current nutrition data
@@ -8267,7 +8473,6 @@ function saveDailyLog() {
 function viewWeeklyHistory() {
     console.log('viewWeeklyHistory function called'); // Debug log
     try {
-        currentWeekOffset = 0; // Reset to current week
         const historySection = document.getElementById('weeklyHistorySection');
         const foodLogSection = document.querySelector('.food-log');
         
@@ -8276,6 +8481,16 @@ function viewWeeklyHistory() {
         
         if (historySection && foodLogSection) {
             historySection.classList.remove('hidden');
+            
+            // Ensure navigation buttons are initialized (initializeWeeklyHistory binds by ID on DOMContentLoaded)
+            // Reset to start of current week (Sunday)
+            const now = new Date();
+            const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            start.setDate(start.getDate() - start.getDay());
+            start.setHours(12,0,0,0);
+            currentWeekStart = start;
+            
+            // Load the weekly data
             loadWeeklyHistory();
             
             // Scroll to history section
@@ -8299,6 +8514,33 @@ function hideWeeklyHistory() {
         historySection.classList.add('hidden');
     }
 }
+
+function initializeWeeklyHistory() {
+    // Add event listeners for week navigation
+    const historySection = document.getElementById('weeklyHistorySection');
+    if (!historySection) return;
+    const prevWeekBtn = document.getElementById('prevWeekBtn');
+    const nextWeekBtn = document.getElementById('nextWeekBtn');
+
+    if (prevWeekBtn) {
+        prevWeekBtn.addEventListener('click', () => changeWeek(-1));
+    }
+    if (nextWeekBtn) {
+        nextWeekBtn.addEventListener('click', () => changeWeek(1));
+    }
+}
+
+// Call this when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    initializeWeeklyHistory();
+    
+    // Initialize the current week display
+    const weekDisplay = document.getElementById('currentWeekDisplay');
+    if (weekDisplay) {
+        const range = getWeekRange(currentWeekStart);
+        weekDisplay.textContent = formatWeekRange(range);
+    }
+});
 
 function clearWeeklyHistory() {
     console.log('clearWeeklyHistory function called'); // Debug log
@@ -8351,58 +8593,72 @@ function clearWeeklyHistory() {
     }
 }
 
-function changeWeek(direction) {
-    currentWeekOffset += direction;
+function navigateWeek(direction) {
+    const days = direction === 'previous' ? -7 : 7;
+    currentWeekStart.setDate(currentWeekStart.getDate() + days);
+    loadWeeklyHistory();
+}
+
+// Week navigation handler for the UI buttons
+function changeWeek(offset) {
+    console.log('Changing week by offset:', offset);
+    const newDate = new Date(currentWeekStart);
+    newDate.setDate(newDate.getDate() + (offset * 7));
+    // Set to noon to avoid timezone issues
+    newDate.setHours(12, 0, 0, 0);
+    currentWeekStart = newDate;
     loadWeeklyHistory();
 }
 
 function loadWeeklyHistory() {
-    console.log('loadWeeklyHistory function called with offset:', currentWeekOffset); // Debug log
+    console.log('loadWeeklyHistory function called'); // Debug log
     try {
-        const weeklyLogs = JSON.parse(localStorage.getItem('weeklyNutritionLogs') || '[]');
-        const historyContent = document.getElementById('weeklyHistoryContent');
-        const weekDisplay = document.getElementById('currentWeekDisplay');
+        // Initialize weekly logs if not exists or if it's not an array
+        const storedLogs = localStorage.getItem('weeklyNutritionLogs');
+        let weeklyLogs = [];
         
-        console.log('Weekly logs found:', weeklyLogs.length); // Debug log
-        console.log('History content element:', !!historyContent); // Debug log
-        console.log('Week display element:', !!weekDisplay); // Debug log
+        try {
+            const parsedLogs = JSON.parse(storedLogs);
+            weeklyLogs = Array.isArray(parsedLogs) ? parsedLogs : [];
+        } catch (e) {
+            console.error('Error parsing weekly logs, resetting to empty array:', e);
+            localStorage.setItem('weeklyNutritionLogs', '[]');
+        }
         
-        if (!historyContent || !weekDisplay) {
-            console.error('Required elements not found for weekly history loading');
+    const historyContent = document.getElementById('weeklyHistoryContent');
+    const weekDisplay = document.getElementById('currentWeekDisplay');
+        
+        if (!historyContent) {
+            console.error('History content element not found');
             return;
         }
         
-        // Calculate week range using local dates to avoid timezone issues
-        const today = new Date();
-        
-        // For the current week (offset 0), show a more user-friendly range
-        // that includes recent data (last 7 days from today)
-        let startOfWeek, endOfWeek;
-        
-        if (currentWeekOffset === 0) {
-            // Current week: show last 7 days ending today (more inclusive)
-            endOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-            endOfWeek.setHours(23, 59, 59, 999);
-            
-            startOfWeek = new Date(endOfWeek);
-            startOfWeek.setDate(endOfWeek.getDate() - 6); // 7 days including today
-            startOfWeek.setHours(0, 0, 0, 0);
-        } else {
-            // For other weeks, use standard Sunday-Saturday logic
-            const referenceDate = new Date(today);
-            referenceDate.setDate(today.getDate() + (currentWeekOffset * 7));
-            
-            startOfWeek = new Date(referenceDate.getFullYear(), referenceDate.getMonth(), referenceDate.getDate());
-            const dayOffset = referenceDate.getDay(); // 0 = Sunday, 1 = Monday, etc.
-            startOfWeek.setDate(referenceDate.getDate() - dayOffset);
-            startOfWeek.setHours(0, 0, 0, 0);
-            
-            endOfWeek = new Date(startOfWeek);
-            endOfWeek.setDate(startOfWeek.getDate() + 6);
-            endOfWeek.setHours(23, 59, 59, 999);
+        // Get week range first and display it
+        const weekRange = getWeekRange(currentWeekStart);
+        if (weekDisplay) {
+            weekDisplay.textContent = formatWeekRange(weekRange);
         }
+
+        // Week data initialization
+        let weekData = {
+            days: [],
+            averages: {
+                calories: 0,
+                protein: 0,
+                fluids: 0
+            }
+        };
+        
+    // Calculate week range using the currentWeekStart as the week's starting date
+    let startOfWeek = new Date(currentWeekStart);
+    startOfWeek.setHours(0, 0, 0, 0);
+    let endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
         
         console.log('Week range:', startOfWeek.toISOString(), 'to', endOfWeek.toISOString()); // Debug log
+        // Ensure 'today' is defined locally to avoid ReferenceError when called from other scopes
+        const today = new Date();
         console.log('Today info:', {
             date: today.toLocaleDateString(),
             dayOfWeek: today.getDay(),
@@ -8412,39 +8668,29 @@ function loadWeeklyHistory() {
             isCurrentWeekMode: currentWeekOffset === 0
         }); // Debug log
         
-        // Update week display
-        const weekText = currentWeekOffset === 0 ? 'Recent 7 Days' :
-                        currentWeekOffset === -1 ? 'Previous Week' :
-                        currentWeekOffset < -1 ? `${Math.abs(currentWeekOffset)} Weeks Ago` :
-                        currentWeekOffset === 1 ? 'Next Week' :
-                        `${currentWeekOffset} Weeks Ahead`;
-        
-        weekDisplay.textContent = `${weekText} (${startOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })})`;
+    // weekDisplay already set above to the formatted range
         
         // Filter logs for this week
         const weekLogs = weeklyLogs.filter(log => {
-            // Parse log date as local date (YYYY-MM-DD format)
-            const logDateParts = log.date.split('-');
-            const logDate = new Date(parseInt(logDateParts[0]), parseInt(logDateParts[1]) - 1, parseInt(logDateParts[2]));
-            logDate.setHours(12, 0, 0, 0); // Set to noon to avoid timezone issues
-            
-            console.log('Checking log date:', log.date, '(', logDate.toISOString(), ') against week range'); // Debug log
-            console.log('Log date info:', {
-                originalDate: log.date,
-                parsedDate: logDate.toLocaleDateString(),
-                logTime: logDate.getTime(),
-                startTime: startOfWeek.getTime(),
-                endTime: endOfWeek.getTime(),
-                logDayOfWeek: logDate.getDay(),
-                logMonth: logDate.getMonth() + 1,
-                logDay: logDate.getDate()
-            }); // Debug log
-            
-            // Check if the log date is within the week range
-            // Use >= and <= for inclusive comparison
-            const isInRange = (logDate.getTime() >= startOfWeek.getTime() && logDate.getTime() <= endOfWeek.getTime());
-            console.log('Is in range:', isInRange, '(logTime >= startTime && logTime <= endTime)'); // Debug log
-            return isInRange;
+            try {
+                // Handle both timestamp and date string formats
+                const logDate = log.timestamp ? new Date(log.timestamp) : new Date(log.date);
+                
+                // Reset hours to avoid timezone issues
+                logDate.setHours(0, 0, 0, 0);
+                
+                console.log('Checking log:', {
+                    date: log.date,
+                    parsed: logDate.toISOString(),
+                    start: startOfWeek.toISOString(),
+                    end: endOfWeek.toISOString()
+                });
+                
+                return logDate >= startOfWeek && logDate <= endOfWeek;
+            } catch (e) {
+                console.error('Error processing log:', log, e);
+                return false;
+            }
         });
         
         console.log('Logs for current week:', weekLogs.length); // Debug log
@@ -8692,6 +8938,21 @@ document.addEventListener('DOMContentLoaded', () => {
 let medicationData = [];
 let isSubmittingMedication = false; // Flag to prevent duplicate submissions
 
+// Wait for DOM and resources to be fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Checking drug interactions availability...');
+    // Initialize drug interactions if not already done
+    if (typeof window.drugInteractions === 'undefined') {
+        console.warn('Drug interactions database not found, creating empty database');
+        window.drugInteractions = {};
+    } else {
+        console.log('Drug interactions database loaded successfully');
+    }
+    
+    // Initialize medications
+    initializeMedications();
+});
+
 // Known drug-food interactions database
 const drugFoodInteractions = {
     // Chemotherapy drugs
@@ -8855,6 +9116,32 @@ function initializeMedications() {
                     med.id = 'med_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
                     needsUpdate = true;
                 }
+
+                // Auto-detect medication type from the drugInteractions database when missing
+                // or correct it if the database marks it as a cancer drug.
+                try {
+                    const medKey = med.name ? med.name.toLowerCase().trim() : null;
+                    const known = medKey && typeof drugInteractions !== 'undefined' && drugInteractions[medKey];
+
+                    if (!med.type) {
+                        if (known && drugInteractions[medKey].type === 'cancer') {
+                            med.type = 'cancer';
+                        } else {
+                            med.type = 'non-cancer';
+                        }
+                        needsUpdate = true;
+                    } else if (med.type !== 'cancer' && known && drugInteractions[medKey].type === 'cancer') {
+                        // If stored type is non-cancer but the DB shows it's a cancer drug, correct it
+                        med.type = 'cancer';
+                        needsUpdate = true;
+                    }
+                } catch (e) {
+                    // If anything goes wrong (e.g., drugInteractions not loaded), default to non-cancer
+                    if (!med.type) {
+                        med.type = 'non-cancer';
+                        needsUpdate = true;
+                    }
+                }
             });
             
             if (needsUpdate) {
@@ -8925,6 +9212,99 @@ function closeMedicationModal() {
     modal.classList.add('hidden');
 }
 
+// Medication name auto-detection helpers
+function normalizeKey(str) {
+    return String(str || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+// Simple fuzzy contains match (case-insensitive) for partial matches
+function fuzzyMatchName(input, candidate) {
+    if (!input || !candidate) return false;
+    const inorm = input.toLowerCase().trim();
+    const cnorm = candidate.toLowerCase().trim();
+    return cnorm.includes(inorm) || inorm.includes(cnorm);
+}
+
+let medDetectTimer = null;
+function detectMedicationTypeForInput() {
+    const nameField = document.getElementById('medicationName');
+    const hintEl = document.getElementById('medTypeHint');
+    const hiddenField = document.getElementById('medicationTypeHidden');
+    if (!nameField || !hintEl || !hiddenField) return;
+
+    const name = nameField.value.trim();
+    if (!name) {
+        hintEl.textContent = '';
+        hiddenField.value = '';
+        return;
+    }
+
+    // Debounce while typing
+    if (medDetectTimer) clearTimeout(medDetectTimer);
+    medDetectTimer = setTimeout(() => {
+        try {
+            if (typeof drugInteractions === 'undefined') {
+                hintEl.textContent = 'Type: Unknown (drug DB not loaded)';
+                hiddenField.value = '';
+                return;
+            }
+
+            const normalizedInput = normalizeKey(name);
+            let detected = null;
+
+            // 1) exact normalized key match
+            if (drugInteractions[normalizedInput]) {
+                detected = drugInteractions[normalizedInput].type;
+            }
+
+            // 2) exact match on stored data.name
+            if (!detected) {
+                for (const data of Object.values(drugInteractions)) {
+                    if (normalizeKey(data.name) === normalizedInput) {
+                        detected = data.type;
+                        break;
+                    }
+                }
+            }
+
+            // 3) fuzzy/partial match
+            if (!detected) {
+                for (const data of Object.values(drugInteractions)) {
+                    if (fuzzyMatchName(name, data.name)) {
+                        detected = data.type;
+                        break;
+                    }
+                }
+            }
+
+            // Update UI
+            if (detected === 'cancer') {
+                hintEl.textContent = 'Detected: Cancer medication';
+                hiddenField.value = 'cancer';
+            } else if (detected === 'non-cancer') {
+                hintEl.textContent = 'Detected: Non-cancer medication';
+                hiddenField.value = 'non-cancer';
+            } else {
+                hintEl.textContent = 'Detected: Unknown; defaulting to Non-cancer when saved';
+                hiddenField.value = '';
+            }
+        } catch (e) {
+            console.error('Medication detection failed:', e);
+            hintEl.textContent = '';
+            hiddenField.value = '';
+        }
+    }, 350);
+}
+
+// Bind auto-detection on DOM ready
+document.addEventListener('DOMContentLoaded', function() {
+    const nameField = document.getElementById('medicationName');
+    if (nameField) {
+        nameField.addEventListener('input', detectMedicationTypeForInput);
+        nameField.addEventListener('blur', detectMedicationTypeForInput);
+    }
+});
+
 // Add medication
 function addMedication() {
     // Prevent duplicate submissions
@@ -8936,6 +9316,13 @@ function addMedication() {
     isSubmittingMedication = true;
     
     try {
+        console.log('Starting medication addition...');
+        
+        // Verify drug interactions database is available
+        if (typeof window.drugInteractions === 'undefined') {
+            console.warn('Drug interactions database not available, will proceed without it');
+        }
+
         const nameField = document.getElementById('medicationName');
         const dosageField = document.getElementById('medicationDosage');
         const frequencyField = document.getElementById('medicationFrequency');
@@ -8987,8 +9374,40 @@ function addMedication() {
             }
         }
         
+    // get medication type from hidden detected field, then form (cancer / non-cancer), then drug interactions DB
+    let medType = document.getElementById('medicationTypeHidden')?.value || document.querySelector('input[name="medicationType"]:checked')?.value;
+        
+        // Try to get type from drug interactions database by normalizing the name
+        const normalizedName = name.toLowerCase().trim().replace(/\s+/g, '');
+        try {
+            // First check exact key match
+            if (!medType && drugInteractions[normalizedName]) {
+                medType = drugInteractions[normalizedName].type;
+                console.log(`Found medication type by exact key match: ${medType}`);
+            }
+            
+            // If no match, try case-insensitive name matching
+            if (!medType) {
+                for (const [key, data] of Object.entries(drugInteractions)) {
+                    const keyNormalized = key.toLowerCase().replace(/\s+/g, '');
+                    const nameNormalized = data.name.toLowerCase().replace(/\s+/g, '');
+                    if (normalizedName === keyNormalized || normalizedName === nameNormalized) {
+                        medType = data.type;
+                        console.log(`Found medication type by normalized name match: ${medType}`);
+                        break;
+                    }
+                }
+            }
+        } catch (e) {
+            console.error('Error checking drug type:', e);
+        }
+        
+        // Default to non-cancer if no type found
+        if (!medType) medType = 'non-cancer';
+
         const medication = {
             id: 'med_' + Date.now() + '_' + Math.floor(Math.random() * 1000), // String ID to avoid parsing issues
+            type: medType,
             name: name,
             dosage: dosage,
             frequency: frequency,
@@ -9013,11 +9432,15 @@ function addMedication() {
         
     } catch (error) {
         console.error('Error adding medication:', error);
-        alert('Error adding medication. Please try again.');
+        alert('Error adding medication: ' + (error.message || 'Please try again.'));
     } finally {
         // Reset submission flag
         isSubmittingMedication = false;
     }
+    
+    // For debugging
+    console.log('Current medication data:', medicationData);
+    console.log('Drug interactions database available:', typeof drugInteractions !== 'undefined');
 }
 
 // Remove medication
@@ -9274,15 +9697,41 @@ function displayMedications() {
     
     const medicationsHTML = medicationData.map(med => {
         // Check if medication is high-risk based on drug interactions database
-        const medLowerCase = med.name.toLowerCase();
+        const medLowerCase = med.name ? med.name.toLowerCase().trim() : '';
         const interaction = drugFoodInteractions[medLowerCase];
         const isHighRisk = interaction && interaction.risk === 'high';
-        
+
+        // Determine medication type robustly: prefer stored type, else infer from drugInteractions DB
+        let medType = med.type ? String(med.type).toLowerCase().trim() : null;
+        try {
+            if (!medType && typeof drugInteractions !== 'undefined') {
+                // Normalize the medication name to match against drug interactions
+                const normalizedName = med.name.toLowerCase().trim().replace(/\s+/g, '');
+                for (const [key, data] of Object.entries(drugInteractions)) {
+                    if (normalizedName === key.toLowerCase().replace(/\s+/g, '') ||
+                        normalizedName === data.name.toLowerCase().replace(/\s+/g, '')) {
+                        medType = data.type;
+                        break;
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn('Error checking drug type:', e);
+        }
+        if (!medType) medType = 'non-cancer';
+
+        // If we inferred a type different from stored value, persist it so future renders use correct badge
+        if (med.type !== medType) {
+            med.type = medType;
+            try { saveMedications(); } catch (e) { /* ignore */ }
+        }
+
         return `
         <div class="medication-item">
-            <div class="medication-header ${isHighRisk ? 'high-risk' : ''}">
+            <div class="medication-header ${isHighRisk ? 'high-risk' : ''} ${medType === 'cancer' ? 'cancer-med' : 'non-cancer-med'}">
                 <div class="medication-header-content">
                     <h3 class="medication-name">${escapeHtml(med.name)}</h3>
+                    ${medType ? `<span class="medication-type-badge ${medType}">${medType === 'cancer' ? 'Cancer Medication' : 'Non-Cancer Medication'}</span>` : ''}
                     ${isHighRisk ? '<span class="risk-indicator">High-Risk Medication</span>' : ''}
                 </div>
                 <div class="medication-actions">
@@ -9552,5 +10001,33 @@ function escapeHtml(text) {
 // Initialize medications when the page loads
 document.addEventListener('DOMContentLoaded', function() {
     initializeMedications();
+    // Run migration to relabel medication types immediately (no reload required)
+    migrateMedicationTypes();
 });
+
+// Migration: update medication.type using drugInteractions DB and re-render
+function migrateMedicationTypes() {
+    try {
+        if (!Array.isArray(medicationData) || typeof drugInteractions === 'undefined') return;
+        let changed = false;
+        medicationData.forEach(med => {
+            const key = med.name ? med.name.toLowerCase().trim() : null;
+            if (!key) return;
+            const known = drugInteractions[key];
+            if (known && known.type === 'cancer' && med.type !== 'cancer') {
+                med.type = 'cancer';
+                changed = true;
+            }
+        });
+        if (changed) {
+            saveMedications();
+            displayMedications();
+            updateInteractionAlerts && updateInteractionAlerts();
+            updateNutrientRecommendations && updateNutrientRecommendations();
+            console.log('Medication types migrated and UI updated');
+        }
+    } catch (e) {
+        console.warn('Migration failed:', e);
+    }
+}
 

@@ -1,0 +1,80 @@
+.medication-type-group {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.radio-group {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    background: white;
+    border: 1px solid #dee2e6;
+    transition: all 0.3s ease;
+}
+
+.radio-label:hover {
+    background: #e9ecef;
+}
+
+.radio-label input[type="radio"] {
+    margin: 0;
+}
+
+.radio-label input[type="radio"]:checked + .radio-label {
+    background: #007bff;
+    color: white;
+    border-color: #0056b3;
+}
+
+/* Medication suggestions styling */
+.medication-suggestions {
+    position: absolute;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: none;
+    z-index: 1000;
+}
+
+.medication-suggestion-item {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.medication-suggestion-item:hover {
+    background: #f8f9fa;
+}
+
+.medication-suggestion-item .medication-type-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8em;
+    margin-left: 0.5rem;
+}
+
+.medication-type-badge.cancer {
+    background: #ffdce0;
+    color: #dc3545;
+}
+
+.medication-type-badge.non-cancer {
+    background: #d1e7dd;
+    color: #146c43;
+}

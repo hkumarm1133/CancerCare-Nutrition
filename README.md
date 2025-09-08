@@ -174,141 +174,111 @@ A comprehensive, accessible web application providing perso#### 4. *#### 5. **Ge
 - Tailored dietary advice based on cancer type
 - Treatment-specific nutritional modifications
 - Dynamic recommendation generation
-- Side effect management through targeted nutrition
-- Integration with user profile for personalized content
+# CancerCare Nutrition Hub
 
-#### 2. **Comprehensive Recipe System**
-##### Conventional Nutrition Recipes
-- **High-Protein Recipes**: For muscle maintenance and recovery
-- **Anti-Nausea Options**: Gentle foods to manage treatment side effects
-- **Soft Food Recipes**: For patients with mouth sores or swallowing difficulties
-- **High-Calorie Meals**: For weight maintenance during treatment
-- **Easy-Preparation Foods**: For patients experiencing fatigue
+An offline-first, client-side web application to help cancer patients, caregivers, and clinicians with personalized nutrition guidance, recipe recommendations, medication tracking, and daily nutrition logging.
 
-##### Holistic & Complementary Alternative Medicine (CAM) Recipes
-- **Ayurvedic Healing**: Traditional Indian medicine-inspired recipes
-- **Traditional Chinese Medicine (TCM)**: Balanced energy and healing foods
-- **Mediterranean Wellness**: Heart-healthy, anti-inflammatory cuisine
-- **Anti-Inflammatory Foods**: Natural inflammation reduction through diet
-- **Immune-Boosting Recipes**: Foods to support immune system function
-- **Detox & Cleansing**: Gentle detoxification support recipes
-- **Herbal & Adaptogenic**: Stress-reducing and healing herb recipes
-- **Mindful Eating**: Recipes promoting conscious food consumption
+This README is written to be both a technical reference and a concise presentation script you can use to create a demo video or slide deck.
 
-##### Advanced Recipe Features
-- Dual-mode recipe system (Conventional vs. Holistic & CAM)
-- Over 40+ recipes across all categories (5+ recipes per filter)
-- Advanced filtering system with multiple categories
-- Detailed nutritional information (prep time, protein content, calories)
-- Traditional origin and cultural context for CAM recipes
-- Evidence-based research links for holistic approaches
-- Visual recipe cards with consistent nature-inspired imagery
+Last updated: 2025-09-07
 
-#### 7. **Food Tracking System**
-- Daily nutrition monitoring and logging
-- Calorie, protein, and fluid intake tracking
-- Visual progress indicators
-- Date navigation for historical data review
-- Meal categorization (breakfast, lunch, dinner, snacks)
-- Smart alerts for recommended/restricted foods based on profile
-- Data persistence using localStorage
+## Quick summary (one-liner)
+- Client-side nutrition assistant for cancer care: recipes, tailored guidance, medication food-interaction checks, daily logging, weekly history, and accessibility-first UI — all stored locally in the browser.
 
-#### 8. **Personalized Suggestions**
-- Dynamic recommendations based on user assessment
-- Symptom-specific dietary advice
-- Treatment stage-appropriate guidance
-- Real-time food alerts and suggestions
-- Adaptive content that evolves with user input
+## Short feature list
+- Daily Log: add meals and fluids, automatic calorie/protein/fluids totals per day
+- Weekly Nutrition History: view weekly averages, navigate previous/next weeks, export CSV
+- Medication Management: add medications, auto-detect type (cancer vs non-cancer), food interaction warnings
+- Recipes: dual-mode recipe filters (conventional vs CAM), recipe mod suggestions for meds
+- Accessibility: screen-reader friendly, keyboard navigation, high-contrast support
+- Local persistence: all data saved in `localStorage` (no server required)
 
-#### 9. **Educational Resources**
-- Curated links to WHO cancer nutrition guidelines
-- NIH research articles and studies
-- Peer-reviewed journal references for conventional nutrition
-- Evidence-based nutritional information
-- Holistic and CAM research references
-- Traditional medicine practice documentation
-- Complementary therapy safety guidelines
-- Integrative nutrition approach studies
-- Trusted source verification and categorization
+## How to run locally (very quick)
+1. Download the project folder to your computer.
+2. Open `index.html` in any modern browser (Chrome, Edge, Firefox, Safari).
 
-#### 10. **Accessibility Features**
-- High contrast mode toggle for visual accessibility
-- Large, clear fonts optimized for readability
-- Keyboard navigation support with Alt+number shortcuts
-- Screen reader compatible markup
-- Touch-friendly interface with minimum 48px touch targets
-- Skip links for efficient navigation
-- Focus management and visual indicators
-- Support for users with cognitive challenges through simplified design
+No installation or backend required.
 
-## Technical Architecture
+## User flow / Demo steps (recommended order for video or slides)
+1. Open the app (`index.html`) — show the Home / Assessment area.
+2. Create a quick profile (select cancer type, treatment stage) to show personalization.
+3. Add a medication via the My Medications section — demonstrate auto-type and the risk badge.
+4. Show the Recipes tab — filter by treatment symptom (e.g., nausea) and switch Conventional/CAM mode.
+5. Open a recipe modal, highlight safe substitutions for the current medication profile.
+6. Add foods to the Daily Log for the selected date (use the date picker to pick a past date).
+7. Save the Daily Log and open Weekly Nutrition History — demonstrate Prev/Next week navigation and export.
+8. Show accessibility features (keyboard navigation or high-contrast toggle) and notes area.
 
-### Frontend Technologies
-- **HTML5**: Semantic, accessible markup with comprehensive ARIA support
-- **CSS3**: Modern responsive design using CSS Grid, Flexbox, and custom properties
-- **JavaScript (ES6+)**: Modular architecture with comprehensive error handling
-- **Font Awesome**: Professional iconography system
-- **Local Storage**: Client-side data persistence with fallback mechanisms
+## Slide-by-slide script for a 6–8 minute demo video or PPT (concise narrator lines)
 
-### Performance & Security
-- **Efficient Data Structures**: Optimized recipe filtering and search algorithms
-- **Error Recovery**: Robust fallback mechanisms for data integrity
-- **No Server Communication**: Complete client-side operation ensuring data privacy
-- **Local Data Storage**: All personal information stays on user's device
-- **No Analytics Tracking**: Zero external data collection or user monitoring
+Slide 1 — Title (10s)
+- Title: CancerCare Nutrition Hub
+- Narration: "This is CancerCare Nutrition Hub — a privacy-first nutrition assistant for cancer patients and caregivers." 
 
-## Browser Support & Setup
+Slide 2 — Problem & Goal (20s)
+- Narration: "Patients often need tailored dietary guidance during treatment. Our app provides personalized recommendations, medication-aware recipes, and simple tracking — all stored locally." 
 
-### Installation (No Setup Required)
-1. **Download** the project files to your local computer
-2. **Open** `index.html` in any modern web browser
-3. **Start** using immediately - no installation, registration, or internet connection required
+Slide 3 — Key capabilities (30s)
+- Narration: "Key features: daily logging, weekly history with export, medication food-interaction checks, recipe recommendations, and strong accessibility support." 
 
-### Browser Compatibility
-- **Chrome 90+**: Full feature set with optimal performance
-- **Firefox 88+**: Complete functionality including accessibility features  
-- **Safari 14+**: Native iOS/macOS integration with touch optimization
-- **Edge 90+**: Comprehensive Windows integration and accessibility tools
+Slide 4 — Medication management demo (60s)
+- Narration: "Add medications with dosage and frequency. The app auto-detects medication type and surfaces interaction warnings and nutrient support recommendations." 
+- Action: Show adding a med, the card color/badge, and a sample interaction alert.
 
-### Quick Start Guide
-1. **Complete Assessment**: Create your personalized health profile
-2. **Choose Nutrition Approach**: Select conventional, holistic/CAM, or integrated approach
-3. **Add Medications**: Input current medications for food interaction monitoring
-4. **Explore Recommendations**: Review personalized dietary guidance
-5. **Browse Recipes**: Filter by your specific needs and preferences
-6. **Start Tracking**: Log meals and monitor nutritional progress
-7. **Access Learning**: Explore educational resources and evidence-based information
+Slide 5 — Recipe recommendations (45s)
+- Narration: "Switch between conventional and holistic modes, filter for symptoms, and open recipes. The app suggests safe substitutions when a medication interacts with a recipe ingredient." 
+- Action: Filter to 'anti-nausea' and open one recipe.
 
-## Medical Disclaimer & Legal Information
+Slide 6 — Daily Log and saving (45s)
+- Narration: "Log meals and fluids for any date. Totals update live. Save the daily log to include it in weekly history." 
+- Action: Add two foods and one fluid, save, show confirmation.
 
-### Educational Purpose Statement
-This application is designed for educational and informational purposes only. It is not intended to replace professional medical advice, diagnosis, or treatment. All nutritional recommendations should be discussed with qualified healthcare providers.
+Slide 7 — Weekly Nutrition History (60s)
+- Narration: "Weekly History aggregates daily logs, shows averages, and lets you navigate weeks. Export a CSV for clinicians." 
+- Action: Open history, click previous/next week, and export.
 
-### Data Disclaimer
-Nutritional calculations are approximations based on standard food databases. Individual nutritional needs vary significantly based on treatment protocols, metabolic factors, and other health conditions. Consult with registered dietitians for precise nutritional planning.
+Slide 8 — Accessibility & data privacy (20s)
+- Narration: "Designed for accessibility and privacy: keyboard-first navigation, ARIA-friendly markup, and no external data transmission — everything stays on the user's device." 
 
-### Evidence-Based Content
-All conventional nutrition recommendations are based on peer-reviewed research and established clinical guidelines. Traditional medicine content is presented with appropriate cultural context and available scientific validation.
+Slide 9 — Technical notes & how it works (30s)
+- Narration: "Built with just HTML/CSS/vanilla JavaScript. Data stored in browser `localStorage`. Easy to run and extend." 
 
-## For Healthcare Providers
+Slide 10 — Closing & call to action (15s)
+- Narration: "Try it locally, share with your care team, and adapt recipes to your treatment plan with clinical support." 
 
-### Clinical Integration Benefits
-- **Patient Engagement**: Interactive tool for nutrition education and self-monitoring
-- **Data Collection**: Comprehensive nutrition tracking for clinical assessment
-- **Treatment Support**: Evidence-based resources for nutrition intervention planning
-- **Caregiver Education**: Resources for family involvement in nutritional care
+## Presenter tips (short)
+- Use the date picker to demo historical saves — this highlights correct date-based saving.
+- Add a medication first to show recipe substitution behavior.
+- Keep browser DevTools closed during recording to avoid exposing localStorage keys.
 
-### Professional Use Guidelines
-- **Supplement to Care**: Tool enhances but does not replace professional nutrition counseling
-- **Data Interpretation**: Clinical expertise required for personalized application
-- **Cultural Competency**: Framework for integrative and culturally sensitive care
-- **Evidence Integration**: Resources for combining conventional and CAM approaches safely
+## Technical details (for developers)
+- Storage keys:
+	- Daily nutrition: `nutrition_YYYY-MM-DD`
+	- Weekly archive: `weeklyNutritionLogs`
+	- Medications: `medications`
+- Main files:
+	- `index.html` — app shell and page layout
+	- `script.js` — main application logic (logs, weekly history, meds, recipes)
+	- `interactions.css` — medication & interaction card styles
+	- `drugInteractions.js` — medication metadata & card generator
+- Important functions:
+	- `saveDailyLog()` — saves current day to weekly archive
+	- `autoSaveToWeeklyHistory(dateString, nutritionData)` — maintains weekly logs
+	- `loadWeeklyHistory()` — renders the weekly summary and day cards
+
+## Testing & verification notes
+- Manual checks: add sample entries for multiple dates, then use Weekly History Prev/Next to verify entries appear in the selected week.
+- Export: use Export CSV to validate the week range and values.
+
+## Accessibility and privacy notes
+- No server calls. All data remains in the browser's `localStorage`.
+- Designed with WCAG principles: high-contrast mode, keyboard navigation, and readable fonts.
+
+## Legal / Medical disclaimer
+This app is educational only and not a substitute for professional medical advice. Always consult a registered dietitian or physician for tailored recommendations. The authors are not responsible for medical decisions made using this tool.
 
 ---
 
-**Version**: 3.0.0  
-**Last Updated**: January 2025  
-**Compatibility**: Modern browsers with JavaScript enabled  
-**Target Users**: Cancer patients, caregivers, healthcare providers, integrative medicine practitioners  
-**License**: Educational and clinical use permitted  
-**Data Privacy**: No external data collection or transmission
+Version: 3.0.0
+Last Updated: 2025-09-07
+Compatibility: Modern browsers (Chrome, Edge, Firefox, Safari)

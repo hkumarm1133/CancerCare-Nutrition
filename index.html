@@ -522,7 +522,7 @@
 
                 <div class="food-log">
                     <div class="food-log-header">
-                        <h3>Today's Food Log</h3>
+                        <h3>Daily Log</h3>
                         <div class="log-actions">
                             <button class="btn btn-success btn-sm" onclick="saveDailyLog()">
                                 <i class="fas fa-save"></i> Save Daily Log
@@ -560,11 +560,11 @@
                         </div>
                     </div>
                     <div class="week-selector">
-                        <button class="btn btn-sm" onclick="changeWeek(-1)">
+                        <button id="prevWeekBtn" class="btn btn-sm" type="button">
                             <i class="fas fa-chevron-left"></i> Previous Week
                         </button>
                         <span id="currentWeekDisplay">Current Week</span>
-                        <button class="btn btn-sm" onclick="changeWeek(1)">
+                        <button id="nextWeekBtn" class="btn btn-sm" type="button">
                             <i class="fas fa-chevron-right"></i> Next Week
                         </button>
                     </div>
@@ -1529,8 +1529,11 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label for="medicationName">Medication Name *</label>
-                    <input type="text" id="medicationName" name="medicationName" required 
-                           placeholder="e.g., Methotrexate, Doxorubicin">
+              <input type="text" id="medicationName" name="medicationName" required 
+                  placeholder="e.g., Methotrexate, Doxorubicin">
+              <!-- Auto-detected medication type will appear here -->
+              <input type="hidden" id="medicationTypeHidden" name="medicationTypeHidden" value="">
+              <div id="medTypeHint" class="med-type-hint" aria-live="polite" style="margin-top:6px;font-size:0.9rem;color:#555;"></div>
                 </div>
                 <div class="form-group">
                     <label for="medicationDosage">Dosage</label>
@@ -1655,6 +1658,9 @@
         <p>Loading your personalized recommendations...</p>
     </div>
 
+    <!-- Load drug interactions database first -->
+    <script src="drugInteractions.js"></script>
+    <!-- Then load the main script -->
     <script src="script.js"></script>
 </body>
 </html>

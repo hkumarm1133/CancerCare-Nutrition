@@ -1,0 +1,168 @@
+/* Medication Card Styles */
+.medication-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* High-risk cancer medication - much softer red */
+.medication-card.cancer-medication.high-risk {
+    border-left: 4px solid #f8e7e7; /* Very soft pink */
+    background-color: #fdf5f5; /* Extremely soft rose background */
+    box-shadow: 0 2px 4px rgba(244, 230, 230, 0.4);
+}
+
+/* Non-high-risk cancer medication - soft blue */
+.medication-card.cancer-medication:not(.high-risk) {
+    border-left: 4px solid #e7eaf8; /* Very soft blue */
+    background-color: #f5f6fd; /* Extremely soft blue background */
+    box-shadow: 0 2px 4px rgba(230, 234, 244, 0.4);
+}
+
+/* Non-cancer medication - softer green */
+.medication-card.non-cancer-medication {
+    border-left: 4px solid #e7f8ed; /* Very soft mint */
+    background-color: #f5fdf7; /* Extremely soft sage background */
+    box-shadow: 0 2px 4px rgba(230, 244, 235, 0.4);
+}
+
+.medication-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.medication-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.medication-type-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* High-risk cancer badge */
+.medication-type-badge.cancer.high-risk {
+    background-color: #faf2f2; /* Very soft pink */
+    color: #8d4646; /* Muted burgundy */
+    border: 1px solid #ebdada;
+}
+
+/* Non-high-risk cancer badge */
+.medication-type-badge.cancer:not(.high-risk) {
+    background-color: #f2f4fa; /* Soft blue-lavender */
+    color: #4c5a8d; /* Muted blue */
+    border: 1px solid #dadceb;
+}
+
+/* Non-cancer badge */
+.medication-type-badge.non-cancer {
+    background-color: #f2faf4; /* Soft mint */
+    color: #467a54; /* Muted forest green */
+    border: 1px solid #daebde;
+}
+
+/* Risk badge - now softer for high-risk medications */
+.risk-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* High-risk badge */
+.risk-badge.high-risk {
+    background-color: #faf2f2; /* Very soft pink */
+    color: #8d4646; /* Muted burgundy */
+    border: 1px solid #ebdada;
+}
+
+/* Medium-risk badge */
+.risk-badge.medium-risk {
+    background-color: #faf8f2; /* Soft cream */
+    color: #8d7446; /* Muted brown */
+    border: 1px solid #ebe6da;
+}
+
+/* Low-risk badge */
+.risk-badge.low-risk {
+    background-color: #f2faf4; /* Soft mint */
+    color: #467a54; /* Muted forest green */
+    border: 1px solid #daebde;
+}
+
+.medication-details {
+    margin-top: 1rem;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.detail-label {
+    color: #666;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.detail-value {
+    color: #333;
+    font-weight: 500;
+}
+
+.medication-notes {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #fbfbfc; /* even subtler neutral */
+    border-radius: 8px;
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+}
+
+.medication-notes i {
+    color: #6c757d;
+    margin-top: 0.2rem;
+}
+
+.medication-notes p {
+    margin: 0;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+/* Interaction styles */
+.interaction-card {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid;
+}
+
+.interaction-card.severity-high {
+    border-left-color: #fbebec; /* even softer high severity */
+}
+
+.interaction-card.severity-moderate {
+    border-left-color: #fff7e6; /* very soft warm yellow */
+}
+
+.interaction-card.severity-low {
+    border-left-color: #e9f5ea; /* very soft low severity green */
+}

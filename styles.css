@@ -5965,6 +5965,44 @@ legend {
     overflow: hidden;
 }
 
+.medication-header.cancer-med {
+    background: linear-gradient(135deg, #e85a5a, #d53a3a);
+}
+
+.medication-header.non-cancer-med {
+    background: linear-gradient(135deg, #3ab77a, #2a9a5a);
+}
+
+.medication-type-badge {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-left: 0.5rem;
+}
+
+/* Modal form medication type radios */
+.medication-type-group {
+    margin-bottom: 1rem;
+}
+.medication-type-group .radio-group {
+    display: flex;
+    gap: 1rem;
+}
+.medication-type-group .radio-label {
+    background: #fff;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #e6e6e6;
+    cursor: pointer;
+}
+.medication-type-group .radio-label input[type="radio"] {
+    margin-right: 0.5rem;
+}
+
 /* Medication Header Content Container */
 .medication-header-content {
     display: flex;

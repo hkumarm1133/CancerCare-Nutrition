@@ -1,0 +1,118 @@
+<!-- Medication Form Modal -->
+<div class="modal-content medication-form">
+    <div class="modal-header">
+        <h3>Add Medication</h3>
+        <button type="button" class="close-btn" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+        <form id="addMedicationForm">
+            <div class="form-group medication-type-group">
+                <label>Medication Type *</label>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="medicationType" value="cancer" required>
+                        Cancer Medication
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="medicationType" value="non-cancer">
+                        Non-Cancer Medication
+                    </label>
+                </div>
+            </div>
+
+                <script>
+                    // Sync visible fields with legacy IDs used by script.js
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const form = document.getElementById('addMedicationForm');
+                        const visibleDosage = document.getElementById('dosage');
+                        const hiddenDosage = document.getElementById('medicationDosage');
+
+                        const visibleFrequency = document.getElementById('frequency');
+                        const hiddenFrequency = document.getElementById('medicationFrequency');
+
+                        const visibleTime = document.getElementById('bestTimeToTake');
+                        const hiddenTime = document.getElementById('medicationTime');
+
+                        const visibleNotes = document.getElementById('notes');
+                        const hiddenNotes = document.getElementById('medicationNotes');
+
+                        function syncAll() {
+                            if (hiddenDosage && visibleDosage) hiddenDosage.value = visibleDosage.value || '';
+                            if (hiddenFrequency && visibleFrequency) hiddenFrequency.value = visibleFrequency.value || 'once_daily';
+                            if (hiddenTime && visibleTime) hiddenTime.value = visibleTime.value || 'with_food';
+                            if (hiddenNotes && visibleNotes) hiddenNotes.value = visibleNotes.value || '';
+                        }
+
+                        // Sync on change
+                        [visibleDosage, visibleFrequency, visibleTime, visibleNotes].forEach(el => {
+                            if (!el) return;
+                            el.addEventListener('input', syncAll);
+                            el.addEventListener('change', syncAll);
+                        });
+
+                        // Ensure sync before form submit
+                        form?.addEventListener('submit', () => syncAll());
+                    });
+                </script>
+
+            <div class="form-group">
+                <label for="medicationName">Medication Name *</label>
+                <input type="text" id="medicationName" placeholder="e.g., Methotrexate, Doxorubicin" required>
+                <div class="medication-suggestions" id="medicationSuggestions"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="dosage">Dosage</label>
+                <input type="text" id="dosage" placeholder="e.g., 10mg, 2.5ml">
+                <!-- Backwards-compatible id used by script.js -->
+                <input type="hidden" id="medicationDosage" value="">
+            </div>
+
+            <div class="form-group">
+                <label for="frequency">Frequency</label>
+                <select id="frequency">
+                    <option value="once_daily">Once daily</option>
+                    <option value="twice_daily">Twice daily</option>
+                    <option value="three_times">Three times a day</option>
+                    <option value="four_times">Four times a day</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="as_needed">As needed</option>
+                </select>
+                <!-- Backwards-compatible id used by script.js -->
+                <input type="hidden" id="medicationFrequency" value="once_daily">
+            </div>
+
+            <div class="form-group">
+                <label for="bestTimeToTake">Best Time to Take</label>
+                <select id="bestTimeToTake">
+                    <option value="with_food">With food</option>
+                    <option value="before_food">Before food</option>
+                    <option value="after_food">After food</option>
+                    <option value="empty_stomach">On empty stomach</option>
+                    <option value="bedtime">At bedtime</option>
+                </select>
+                <!-- Backwards-compatible id used by script.js -->
+                <input type="hidden" id="medicationTime" value="with_food">
+            </div>
+
+            <div class="form-group">
+                <label for="notes">Notes (Optional)</label>
+                <textarea id="notes" placeholder="Any special instructions or reminders..."></textarea>
+                <!-- Backwards-compatible id used by script.js -->
+                <input type="hidden" id="medicationNotes" value="">
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" id="cancelMedication">Cancel</button>
+                <button type="button" class="btn btn-primary" id="addMedicationBtn" onclick="addMedication()">Add Medication</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('addMedicationForm').addEventListener('submit', function(e) {
+        e.preventDefault(); // Prevent form submission
+        addMedication(); // Call our add medication function
+    });
+</script>
